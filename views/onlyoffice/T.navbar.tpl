@@ -59,19 +59,20 @@
           <input type="hidden" name="productid" id="productid" value="{{.Category.Id}}">
           <button type="submit" class="btn btn-default" id="search">Submit</button>
       </form>
-      <li class="dropdown">
+      <li {{if or .IsStandard .IsLegislation}}class="dropdown active"{{end}} class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           规范 <b class="caret"></b>
         </a>
         <ul class="dropdown-menu">
-          <li>
-            <a href="http://standard" target="_blank">查询</a>
+          <li {{if .IsStandard}}class="active"{{end}}>
+            <a href="/standard" target="_blank">查询</a>
           </li>
-          <li>
-            <a href="http://legislation" target="_blank">对标</a>
+          <li {{if .IsLegislation}}class="active"{{end}}>
+            <a href="/legislation" target="_blank">对标</a>
           </li>
         </ul>
       </li>
+
       <li {{if or .IsMeetingroomCalendar .IsCarCalendar .IsOrderCalendar .IsAttendanceCalendar}}class="dropdown active"{{end}} >
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           预订 <b class="caret"></b>

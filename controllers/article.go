@@ -1190,7 +1190,7 @@ func (c *ArticleController) AddWxArticle() {
 	// content := c.Input().Get("content")
 	title := c.Input().Get("title")
 	content := c.Input().Get("content")
-	content = "<p style='font-size: 18px;'>" + openID + "~" + content + "</p>" //<span style="font-size: 18px;">这个字体到底是多大才好看</span>
+	content = "<p style='font-size: 18px;'>" + content + "</p>" //<span style="font-size: 18px;">这个字体到底是多大才好看</span>
 	imagesurl := c.Input().Get("images")
 	array := strings.Split(imagesurl, ",")
 	for _, v := range array {

@@ -696,18 +696,26 @@ func (c *MainController) Pdf() {
 // @Title dowload wx pdf
 // @Description get wx pdf by id
 // @Param id path string  true "The id of pdf"
+// @Param code query string  true "The code of wx"
+// @Param app_version query string  true "The app_version of wx"
 // @Success 200 {object} models.GetAttachbyId
 // @Failure 400 Invalid page supplied
 // @Failure 404 pdf not found
 // @router /wxpdf/:id [get]
 func (c *MainController) WxPdf() {
 	JSCODE := c.Input().Get("code")
-	beego.Info(JSCODE)
-	APPID := beego.AppConfig.String("wxAPPID4")
-	SECRET := beego.AppConfig.String("wxSECRET4")
-	beego.Info(APPID)
-	// APPID := "wx7f77b90a1a891d93"
-	// SECRET := "f58ca4f28cbb52ccd805d66118060449"
+	// beego.Info(JSCODE)
+	app_version := c.Input().Get("app_version")
+	var APPID, SECRET string
+	if app_version == "1" {
+		APPID = beego.AppConfig.String("wxAPPID")
+		SECRET = beego.AppConfig.String("wxSECRET")
+	} else if app_version == "4" {
+		APPID = beego.AppConfig.String("wxAPPID4")
+		SECRET = beego.AppConfig.String("wxSECRET4")
+		// beego.Info(APPID)
+	}
+
 	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
 	resp, err := http.Get(requestUrl)
 	if err != nil {
@@ -723,7 +731,7 @@ func (c *MainController) WxPdf() {
 	if err != nil {
 		beego.Error(err)
 	}
-	beego.Info(data)
+	// beego.Info(data)
 	var openID, useridstring, projurl string
 	var user models.User
 	// var sessionKey string
