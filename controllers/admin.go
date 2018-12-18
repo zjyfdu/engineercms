@@ -71,23 +71,6 @@ type CatalogLinkEditable struct {
 // @Failure 404 page not found
 // @router / [get]
 func (c *AdminController) Get() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
-	// c.Data["IsProjects"] = true
-	// c.Data["Ip"] = c.Ctx.Input.IP()
-	// c.Data["role"] = role
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
@@ -100,30 +83,12 @@ func (c *AdminController) Get() {
 		route := c.Ctx.Request.URL.String()
 		c.Data["Url"] = route
 		c.Redirect("/roleerr?url="+route, 302)
-		// c.Redirect("/roleerr", 302)
 		return
 	}
 	c.TplName = "admin.tpl"
 }
 
 func (c *AdminController) Admin() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
-	// c.Data["IsProjects"] = true
-	// c.Data["Ip"] = c.Ctx.Input.IP()
-	// c.Data["role"] = role
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
@@ -189,178 +154,7 @@ func (c *AdminController) Admin() {
 	}
 }
 
-// @Title Get Category list
-// @Description Get Category list by some info
-// @Success 200 {object} models.GetAdminCategory
-// @Param   id     path   string false       "category id"
-// @router /category/:id [get]
-//根据数字id或空查询分类，如果有pid，则查询下级，如果pid为空，则查询类别
-func (c *AdminController) Category() {
-	id := c.Ctx.Input.Param(":id")
-	c.Data["Id"] = id
-	c.Data["Ip"] = c.Ctx.Input.IP()
-	// var categories []*models.AdminCategory
-	var err error
-	if id == "" { //如果id为空，则查询类别
-		id = "0"
-	}
-	//pid转成64为
-	idNum, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		beego.Error(err)
-	}
-	categories, err := models.GetAdminCategory(idNum)
-	if err != nil {
-		beego.Error(err)
-	}
 
-	c.Data["json"] = categories
-	c.ServeJSON()
-	// c.TplName = "admin_category.tpl"
-}
-
-// @Title Get Category by title
-// @Description Get Category list by title info
-// @Success 200 {object} models.GetAdminCategory
-// @Param   title   query   string  false       "title of search"
-// @router /categorytitle [get]
-//根据名称title查询分级表
-func (c *AdminController) CategoryTitle() {
-	// title := c.Ctx.Input.Param(":id")
-	title := c.Input().Get("title")
-	// beego.Info(title)
-	categories, err := models.GetAdminCategoryTitle(title)
-	// beego.Info(categories)
-	if err != nil {
-		beego.Error(err)
-	}
-	c.Data["json"] = categories
-	c.ServeJSON()
-	// c.TplName = "admin_category.tpl"
-}
-
-// @Title Post Category by pid title code grade
-// @Description Get Category list by title info
-// @Success 200 {object} models.AddAdminCategory
-// @Param   pid   query   string  false       "parentid of category"
-// @Param   title   query   string  false       "title of category"
-// @Param   code   query   string  false       "code of category"
-// @Param   grade   query   string  false       "grade of category"
-// @router /category/addcategory [post]
-//添加
-func (c *AdminController) AddCategory() {
-	_, role, _, _, _ := checkprodRole(c.Ctx)
-	if role != "1" {
-		route := c.Ctx.Request.URL.String()
-		c.Data["Url"] = route
-		c.Redirect("/roleerr?url="+route, 302)
-		// c.Redirect("/roleerr", 302)
-		return
-	}
-	// pid := c.Ctx.Input.Param(":id")
-	pid := c.Input().Get("pid")
-	title := c.Input().Get("title")
-	code := c.Input().Get("code")
-	grade := c.Input().Get("grade")
-	//pid转成64为
-	var pidNum int64
-	var err error
-	if pid != "" {
-		pidNum, err = strconv.ParseInt(pid, 10, 64)
-		if err != nil {
-			beego.Error(err)
-		}
-	} else {
-		pidNum = 0
-	}
-	gradeNum, err := strconv.Atoi(grade)
-	if err != nil {
-		beego.Error(err)
-	}
-	_, err = models.AddAdminCategory(pidNum, title, code, gradeNum)
-	if err != nil {
-		beego.Error(err)
-	} else {
-		c.Data["json"] = "ok"
-		c.ServeJSON()
-	}
-}
-
-//修改
-func (c *AdminController) UpdateCategory() {
-	_, role, _, _, _ := checkprodRole(c.Ctx)
-
-	if role != "1" {
-		route := c.Ctx.Request.URL.String()
-		c.Data["Url"] = route
-		c.Redirect("/roleerr?url="+route, 302)
-		// c.Redirect("/roleerr", 302)
-		return
-	}
-	// pid := c.Ctx.Input.Param(":id")
-	cid := c.Input().Get("cid")
-	title := c.Input().Get("title")
-	code := c.Input().Get("code")
-	grade := c.Input().Get("grade")
-	//pid转成64为
-	cidNum, err := strconv.ParseInt(cid, 10, 64)
-	if err != nil {
-		beego.Error(err)
-	}
-	gradeNum, err := strconv.Atoi(grade)
-	if err != nil {
-		beego.Error(err)
-	}
-	err = models.UpdateAdminCategory(cidNum, title, code, gradeNum)
-	if err != nil {
-		beego.Error(err)
-	} else {
-		c.Data["json"] = "ok"
-		c.ServeJSON()
-	}
-}
-
-//删除，如果有下级，一起删除
-func (c *AdminController) DeleteCategory() {
-	_, role, _, _, _ := checkprodRole(c.Ctx)
-
-	if role != "1" {
-		route := c.Ctx.Request.URL.String()
-		c.Data["Url"] = route
-		c.Redirect("/roleerr?url="+route, 302)
-		// c.Redirect("/roleerr", 302)
-		return
-	}
-	ids := c.GetString("ids")
-	array := strings.Split(ids, ",")
-	for _, v := range array {
-		// pid = strconv.FormatInt(v1, 10)
-		//id转成64位
-		idNum, err := strconv.ParseInt(v, 10, 64)
-		if err != nil {
-			beego.Error(err)
-		}
-		//查询下级，即分级
-		categories, err := models.GetAdminCategory(idNum)
-		if err != nil {
-			beego.Error(err)
-		} else {
-			for _, v1 := range categories {
-				err = models.DeleteAdminCategory(v1.Id)
-				if err != nil {
-					beego.Error(err)
-				}
-			}
-		}
-		err = models.DeleteAdminCategory(idNum)
-		if err != nil {
-			beego.Error(err)
-		} else {
-			c.Data["json"] = "ok"
-			c.ServeJSON()
-		}
-	}
-}
 
 //添加ip地址段
 func (c *AdminController) AddIpsegment() {
@@ -464,10 +258,8 @@ func (c *AdminController) Ipsegment() {
 	if err != nil {
 		beego.Error(err)
 	}
-
 	c.Data["json"] = ipsegments
 	c.ServeJSON()
-	// c.TplName = "admin_category.tpl"
 }
 
 // 1 init函数是用于程序执行前做包的初始化的函数，比如初始化包里的变量等
@@ -699,6 +491,178 @@ func processFlag(arg []string) (maps map[string]int) {
 	//	close(ipAddrs)
 }
 
+// @Title Get Category list
+// @Description Get Category list by some info
+// @Success 200 {object} models.GetAdminCategory
+// @Param   id     path   string false       "category id"
+// @router /category/:id [get]
+//根据数字id或空查询分类，如果有pid，则查询下级，如果pid为空，则查询类别
+func (c *AdminController) Category() {
+	id := c.Ctx.Input.Param(":id")
+	c.Data["Id"] = id
+	c.Data["Ip"] = c.Ctx.Input.IP()
+	// var categories []*models.AdminCategory
+	var err error
+	if id == "" { //如果id为空，则查询类别
+		id = "0"
+	}
+	//pid转成64为
+	idNum, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	categories, err := models.GetAdminCategory(idNum)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	c.Data["json"] = categories
+	c.ServeJSON()
+	// c.TplName = "admin_category.tpl"
+}
+
+// @Title Get Category by title
+// @Description Get Category list by title info
+// @Success 200 {object} models.GetAdminCategory
+// @Param   title   query   string  false       "title of search"
+// @router /categorytitle [get]
+//根据名称title查询分级表
+func (c *AdminController) CategoryTitle() {
+	// title := c.Ctx.Input.Param(":id")
+	title := c.Input().Get("title")
+	// beego.Info(title)
+	categories, err := models.GetAdminCategoryTitle(title)
+	// beego.Info(categories)
+	if err != nil {
+		beego.Error(err)
+	}
+	c.Data["json"] = categories
+	c.ServeJSON()
+	// c.TplName = "admin_category.tpl"
+}
+
+// @Title Post Category by pid title code grade
+// @Description Get Category list by title info
+// @Success 200 {object} models.AddAdminCategory
+// @Param   pid   query   string  false       "parentid of category"
+// @Param   title   query   string  false       "title of category"
+// @Param   code   query   string  false       "code of category"
+// @Param   grade   query   string  false       "grade of category"
+// @router /category/addcategory [post]
+//添加
+func (c *AdminController) AddCategory() {
+	_, role, _, _, _ := checkprodRole(c.Ctx)
+	if role != "1" {
+		route := c.Ctx.Request.URL.String()
+		c.Data["Url"] = route
+		c.Redirect("/roleerr?url="+route, 302)
+		// c.Redirect("/roleerr", 302)
+		return
+	}
+	// pid := c.Ctx.Input.Param(":id")
+	pid := c.Input().Get("pid")
+	title := c.Input().Get("title")
+	code := c.Input().Get("code")
+	grade := c.Input().Get("grade")
+	//pid转成64为
+	var pidNum int64
+	var err error
+	if pid != "" {
+		pidNum, err = strconv.ParseInt(pid, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	} else {
+		pidNum = 0
+	}
+	gradeNum, err := strconv.Atoi(grade)
+	if err != nil {
+		beego.Error(err)
+	}
+	_, err = models.AddAdminCategory(pidNum, title, code, gradeNum)
+	if err != nil {
+		beego.Error(err)
+	} else {
+		c.Data["json"] = "ok"
+		c.ServeJSON()
+	}
+}
+
+//修改
+func (c *AdminController) UpdateCategory() {
+	_, role, _, _, _ := checkprodRole(c.Ctx)
+
+	if role != "1" {
+		route := c.Ctx.Request.URL.String()
+		c.Data["Url"] = route
+		c.Redirect("/roleerr?url="+route, 302)
+		// c.Redirect("/roleerr", 302)
+		return
+	}
+	// pid := c.Ctx.Input.Param(":id")
+	cid := c.Input().Get("cid")
+	title := c.Input().Get("title")
+	code := c.Input().Get("code")
+	grade := c.Input().Get("grade")
+	//pid转成64为
+	cidNum, err := strconv.ParseInt(cid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	gradeNum, err := strconv.Atoi(grade)
+	if err != nil {
+		beego.Error(err)
+	}
+	err = models.UpdateAdminCategory(cidNum, title, code, gradeNum)
+	if err != nil {
+		beego.Error(err)
+	} else {
+		c.Data["json"] = "ok"
+		c.ServeJSON()
+	}
+}
+
+//删除，如果有下级，一起删除
+func (c *AdminController) DeleteCategory() {
+	_, role, _, _, _ := checkprodRole(c.Ctx)
+
+	if role != "1" {
+		route := c.Ctx.Request.URL.String()
+		c.Data["Url"] = route
+		c.Redirect("/roleerr?url="+route, 302)
+		// c.Redirect("/roleerr", 302)
+		return
+	}
+	ids := c.GetString("ids")
+	array := strings.Split(ids, ",")
+	for _, v := range array {
+		// pid = strconv.FormatInt(v1, 10)
+		//id转成64位
+		idNum, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+		//查询下级，即分级
+		categories, err := models.GetAdminCategory(idNum)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			for _, v1 := range categories {
+				err = models.DeleteAdminCategory(v1.Id)
+				if err != nil {
+					beego.Error(err)
+				}
+			}
+		}
+		err = models.DeleteAdminCategory(idNum)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			c.Data["json"] = "ok"
+			c.ServeJSON()
+		}
+	}
+}
 //********************日历开始**************
 //添加日历
 func (c *AdminController) AddCalendar() {

@@ -637,6 +637,127 @@ func (c *AttachController) SaveDwgfile() {
 	}
 }
 
+//向某个侧栏id下新建dwg文件
+func (c *AttachController) NewDwg() {
+	uname, _, uid, _, _ := checkprodRole(c.Ctx)
+	var catalog models.PostMerit
+	var news string
+	var cid int64
+
+	pid := c.Input().Get("pid")
+	code := c.Input().Get("code")
+	title := c.Input().Get("title")
+	// subtext := c.Input().Get("subtext")
+	label := c.Input().Get("label")
+	principal := c.Input().Get("principal")
+	// relevancy := c.Input().Get("relevancy")
+	// content := c.Input().Get("content")
+
+	//id转成64为
+	pidNum, err := strconv.ParseInt(pid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//根据pid查出项目id
+	proj, err := models.GetProj(pidNum)
+	if err != nil {
+		beego.Error(err)
+	}
+	parentidpath := strings.Replace(strings.Replace(proj.ParentIdPath, "#$", "-", -1), "$", "", -1)
+	parentidpath1 := strings.Replace(parentidpath, "#", "", -1)
+	patharray := strings.Split(parentidpath1, "-")
+	topprojectid, err := strconv.ParseInt(patharray[0], 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//根据项目id添加成果code, title, label, principal, content string, projectid int64
+	Id, err := models.AddProduct(code, title, label, principal, uid, pidNum, topprojectid)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	//*****添加成果关联信息
+	// if relevancy != "" {
+	// 	_, err = models.AddRelevancy(Id, relevancy)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 	}
+	// }
+	//*****添加成果关联信息结束
+
+	//成果写入postmerit表，准备提交merit*********
+	Number, Name, DesignStage, Section, err := GetProjTitleNumber(pidNum)
+	if err != nil {
+		beego.Error(err)
+	}
+	catalog.ProjectNumber = Number
+	catalog.ProjectName = Name
+	catalog.DesignStage = DesignStage
+	catalog.Section = Section
+
+	catalog.Tnumber = code
+	catalog.Name = title
+	catalog.Count = 1
+	catalog.Drawn = ""   //Nickname
+	catalog.Designd = "" //Nickname
+	catalog.Author = uname
+	catalog.Drawnratio = 0.4
+	catalog.Designdratio = 0.4
+
+	const lll = "2006-01-02"
+	convdate := time.Now().Format(lll)
+	t1, err := time.Parse(lll, convdate) //这里t1要是用t1:=就不是前面那个t1了
+	if err != nil {
+		beego.Error(err)
+	}
+	catalog.Datestring = convdate
+	catalog.Date = t1
+
+	catalog.Created = time.Now() //.Add(+time.Duration(hours) * time.Hour)
+	catalog.Updated = time.Now() //.Add(+time.Duration(hours) * time.Hour)
+
+	catalog.Complex = 1
+	catalog.State = 0
+	//生成提交merit的清单结束*******************
+
+	//将dwg文件添加到成果id下
+	//如果附件名称相同，则覆盖上传，但数据库不追加
+	attachmentname := code + title + ".dwg"
+	aid, err := models.AddAttachment(attachmentname, 0, 0, Id)
+	if err != nil {
+		beego.Error(err)
+	} else {
+		//存入文件夹
+		// 	err = c.SaveToFile("file", filepath) //.Join("attachment", attachment)) //存文件    WaterMark(filepath)    //给文件加水印
+		// 	if err != nil {
+		// 		beego.Error(err)
+		// 	}
+		// 	c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": attachment, "original": attachment, "url": Url + "/" + attachment}
+		// 	c.ServeJSON()
+		// }
+		// aid, err := models.AddArticle(subtext, content, Id)
+		// if err != nil {
+		// 	beego.Error(err)
+		// } else {
+		//生成提交merit的清单*******************
+		cid, err, news = models.AddPostMerit(catalog)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			link1 := "/downloadattachment?id=" + strconv.FormatInt(aid, 10) //附件链接地址
+			_, err = models.AddCatalogLink(cid, link1)
+			if err != nil {
+				beego.Error(err)
+			}
+			data := news
+			c.Ctx.WriteString(data)
+		}
+		//生成提交merit的清单结束*******************
+		c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "Id": aid}
+		c.ServeJSON()
+	}
+}
+
 //向某个侧栏id下添加成果——用于第二种添加，多附件模式
 func (c *AttachController) AddAttachment2() {
 	//取得客户端用户名

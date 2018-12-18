@@ -3,13 +3,13 @@ package controllers
 import (
 	// "bytes"
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"github.com/astaxie/beego"
 	"github.com/pborman/uuid"
 	// "image/png"
 	"io"
 	"log"
-	"net/http"
+	// "net/http"
 	"os"
 	"path"
 	// "hydrocms/models"
@@ -154,7 +154,6 @@ func (c *UeditorController) ControllerUE() {
 			if err != nil {
 				beego.Error(err)
 			}
-			beego.Info(h.Filename)
 			fileSuffix := path.Ext(h.Filename)
 			// random_name
 			newname := strconv.FormatInt(time.Now().UnixNano(), 10) + fileSuffix // + "_" + filename
@@ -279,39 +278,14 @@ func (c *UeditorController) ControllerUE() {
 		type Catchimage struct {
 			State string `json:"state"` //这些第一个字母要大写，否则不出结果
 			List  []List `json:"list"`
-			// Start int
-			// Total int
-			// Name        string
-			// Age         int
-			// Slices      []string //slice
-			// Mapstring   map[string]string
-			// StructArray []List            //结构体的切片型
-			// MapStruct   map[string][]List //map:key类型是string或struct，value类型是切片，切片的类型是string或struct
-			//	Desks  List
 		}
-		// var m map[string]string = make(map[string]string)
-		// m["Go"] = "No.1"
-		// m["Java"] = "No.2"
-		// m["C"] = "No.3"
-		// fmt.Println(m)
+
 		list := []List{
 			{"/static/upload/1.jpg", "https://pic2.zhimg.com/7c4a389acaa008a6d1fe5a0083c86975_b.png", "SUCCESS"},
 			{"/static/upload/2.jpg", "https://pic2.zhimg.com/7c4a389acaa008a6d1fe5a0083c86975_b.png", "SUCCESS"},
-			// {"upload/1.jpg", "http://a.com/1.jpg", "SUCCESS"},
-			// {"upload/2.jpg", "http://b.com/2.jpg", "SUCCESS"},
 		}
-		// var mm map[string][]List = make(map[string][]List)
-		// mm["Go"] = list
-		// mm["Java"] = list
-		// fmt.Println(mm)
 		catchimage := Catchimage{"SUCCESS", list}
-		// beego.Info(catchimage){SUCCESS [{/static/upload/1.jpg} {/static/upload/2.jpg}] 1 21}
-		// fmt.Println(catchimage)
-		// b, _ := json.Marshal(catchimage)
-		// mystruct := { ... }
-		// c.Data["jsonp"] = catchimage
-		// beego.Info(string(b)){"State":"SUCCESS","List":[{"Url":"/static/upload/1.jpg"},{"Url":"/static/upload/2.jpg"}],"Start":1,"Total":21}
-		// c.ServeJSONP()
+
 		c.Data["json"] = catchimage
 		c.ServeJSON()
 
@@ -335,53 +309,54 @@ func (c *UeditorController) ControllerUE() {
 	}
 }
 
-func UploadImage(w http.ResponseWriter, r *http.Request) { //这个没用
-	file, header, err := r.FormFile("upfile")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + path.Ext(header.Filename)
-	err = os.MkdirAll(path.Join("static", "upload"), 0775)
-	if err != nil {
-		panic(err)
-	}
-	outFile, err := os.Create(path.Join("static", "upload", filename))
-	if err != nil {
-		panic(err)
-	}
-	defer outFile.Close()
-	io.Copy(outFile, file)
-	b, err := json.Marshal(map[string]string{
-		"url":      fmt.Sprintf("/static/upload/%s", filename), //保存后的文件路径
-		"title":    "",                                         //文件描述，对图片来说在前端会添加到title属性上
-		"original": header.Filename,                            //原始文件名
-		"state":    "SUCCESS",                                  //上传状态，成功时返回SUCCESS,其他任何值将原样返回至图片上传框中
-	})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(b))
-	w.Write(b)
-}
+// func UploadImage(w http.ResponseWriter, r *http.Request) { //这个没用
+// 	file, header, err := r.FormFile("upfile")
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	defer file.Close()
+// 	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + path.Ext(header.Filename)
+// 	err = os.MkdirAll(path.Join("static", "upload"), 0775)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	outFile, err := os.Create(path.Join("static", "upload", filename))
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	defer outFile.Close()
+// 	io.Copy(outFile, file)
+// 	b, err := json.Marshal(map[string]string{
+// 		"url":      fmt.Sprintf("/static/upload/%s", filename), //保存后的文件路径
+// 		"title":    "",                                         //文件描述，对图片来说在前端会添加到title属性上
+// 		"original": header.Filename,                            //原始文件名
+// 		"state":    "SUCCESS",                                  //上传状态，成功时返回SUCCESS,其他任何值将原样返回至图片上传框中
+// 	})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	fmt.Println(string(b))
+// 	w.Write(b)
+// }
 
-func (c *UeditorController) UploadImage() { //对应这个路由 beego.Router("/controller", &controllers.UeditorController{}, "post:UploadImage")
-	file, header, err := c.GetFile("upfile") // r.FormFile("upfile")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + path.Ext(header.Filename)
-	err = os.MkdirAll(path.Join("static", "upload"), 0775)
-	if err != nil {
-		panic(err)
-	}
-	outFile, err := os.Create(path.Join("static", "upload", filename))
-	if err != nil {
-		panic(err)
-	}
-	defer outFile.Close()
-	io.Copy(outFile, file)
-	c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "url": "/static/upload/" + filename, "title": "111", "original": "demo.jpg"}
-	c.ServeJSON()
-}
+// func (c *UeditorController) UploadImage() { //对应这个路由 beego.Router("/controller", &controllers.UeditorController{}, "post:UploadImage")
+
+// 	file, header, err := c.GetFile("upfile") // r.FormFile("upfile")
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	defer file.Close()
+// 	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + path.Ext(header.Filename)
+// 	err = os.MkdirAll(path.Join("static", "upload"), 0775)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	outFile, err := os.Create(path.Join("static", "upload", filename))
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	defer outFile.Close()
+// 	io.Copy(outFile, file)
+// 	c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "url": "/static/upload/" + filename, "title": "111", "original": "demo.jpg"}
+// 	c.ServeJSON()
+// }

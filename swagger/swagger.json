@@ -679,6 +679,20 @@
                         "description": "The id of pdf",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "description": "The code of wx",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "app_version",
+                        "description": "The app_version of wx",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -716,6 +730,20 @@
                         "in": "query",
                         "name": "password",
                         "description": "The password of account",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "code",
+                        "description": "The code of wx",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "app_version",
+                        "description": "The app_version of wx",
                         "required": true,
                         "type": "string"
                     }

@@ -236,9 +236,9 @@ func init() {
 	beego.Router("/admin/role/get/?:id:string", &controllers.RoleController{}, "get:Get")
 	//添加用户角色
 	beego.Router("/admin/role/userrole", &controllers.RoleController{}, "post:UserRole")
-	//添加角色权限
+	//添加角色对项目目录文件操作权限
 	beego.Router("/admin/role/permission", &controllers.RoleController{}, "post:RolePermission")
-	//查询角色权限
+	//查询角色对项目目录文件操作的权限
 	beego.Router("/admin/role/getpermission", &controllers.RoleController{}, "get:GetRolePermission")
 
 	//meritbasic表格数据填充
@@ -382,6 +382,8 @@ func init() {
 	beego.Router("/project/product/addattachment", &controllers.AttachController{}, "post:AddAttachment")
 	//dwg写入服务器
 	beego.Router("/project/product/savedwgfile", &controllers.AttachController{}, "post:SaveDwgfile")
+	//新建dwg文件
+	beego.Router("/project/product/newdwg", &controllers.AttachController{}, "post:NewDwg")
 
 	//向成果里添加附件：多附件模式
 	beego.Router("/project/product/addattachment2", &controllers.AttachController{}, "post:AddAttachment2")

@@ -46,6 +46,7 @@
     #modalDialog5 .modal-header {cursor: move;}
     #modalDialog6 .modal-header {cursor: move;}
     #modalDialog7 .modal-header {cursor: move;}
+    #modalNewDwg .modal-header {cursor: move;}
       /*body {
           text-align: center;
       }*/
@@ -92,6 +93,9 @@
         </button>
         <button {{if ne "true" .RoleDelete}} style="display:none" {{end}} type="button" data-name="deleteButton" id="deleteButton" class="btn btn-default">
         <i class="fa fa-trash">删除</i>
+        </button>
+        <button {{if ne "true" .RoleNewDwg}} style="display:none" {{end}} type="button" data-name="newdwgButton" id="newdwgButton" class="btn btn-default">
+        <i class="fa fa-trash">NEWdwg</i>
         </button>
         <!-- <button type="button" data-name="synchIP" id="synchIP" class="btn btn-default">
         <i class="fa fa-refresh">同步</i>
@@ -291,6 +295,7 @@
   function setCode(value,row,index){
     return "<a href='/project/product/attachment/"+row.Id+"'>" + value + "</a>";
   }
+
   function setLable(value,row,index){
     // alert(value);
     if (value){//注意这里如果value未定义则出错，一定要加这个判断。
@@ -302,7 +307,8 @@
       }
         return labelarray.join(",");
       }
-  }  
+  } 
+
   function setCodetest(value,row,index){
     //保留，数组和字符串以及循环的处理
     // array=value.split(",")
@@ -1005,6 +1011,21 @@
       }  
   })
 
+  // 新建dwg文件
+  $("#newdwgButton").click(function() {
+      if ({{.RoleNewDwg}}!="true"){
+        alert("权限不够！");
+        return;
+      }
+      $("input#pid").remove();
+      var th1="<input id='pid' type='hidden' name='pid' value='" +{{.Id}}+"'/>"
+        $(".modal-body").append(th1);
+        $('#modalNewDwg').modal({
+          show:true,
+          backdrop:'static'
+        });
+  })
+
 </script>
   <!-- 批量上传 -->
   <div class="form-horizontal">
@@ -1072,9 +1093,9 @@
   <!-- 多附件 -->
   <div class="form-horizontal">
     <div class="modal fade" id="modalTable1">
-      <div class="modal-dialog"  id="modalDialog1" style="background-color: #8bc34a">
+      <div class="modal-dialog"  id="modalDialog1">
         <div class="modal-content">
-          <div class="modal-header">
+          <div class="modal-header" style="background-color: #8bc34a">
             <button type="button" class="close" data-dismiss="modal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -1120,6 +1141,50 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             <!-- <button type="button" class="btn btn-primary" onclick="save1()">保存</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- 新建dwg文件 -->
+  <div class="form-horizontal">
+    <div class="modal fade" id="modalNewDwg">
+      <div class="modal-dialog"  id="modalDialog1">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #8bc34a">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title">新建DWG文件</h3>
+          </div>
+          <div class="modal-body">
+            <div class="modal-body-content">
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">编号</label>
+                <div class="col-sm-7">
+                  <input type="text" class="form-control" id="NewDwgcode" name="NewDwgcode"></div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">名称</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="NewDwgname" name="NewDwgname"></div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">关键字</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="NewDwglabel" name="NewDwglabel" placeholder="以英文,号分割"></div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">设计</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="NewDwgprincipal" name="NewDwgprincipal"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="saveNewDwg()">保存</button>
           </div>
         </div>
       </div>
@@ -1557,6 +1622,35 @@ $('#edit').froalaEditor('destroy'); -->
       return;
     }
   }
+
+    //新建dwg文件
+  function saveNewDwg(){
+    // var radio =$("input[type='radio']:checked").val();
+    var projectid = $('#pid').val();
+    var NewDwgcode = $('#NewDwgcode').val();
+    var NewDwgname = $('#NewDwgname').val();
+    var NewDwgprincipal = $('#NewDwgprincipal').val();
+    var NewDwglabel = $('#NewDwglabel').val();
+    // var relevancy = $('#relevancy').val();
+    if (prodname&&prodcode){  
+      $.ajax({
+        type:"post",
+        url:"/project/product/newdwg",
+        data: {pid:projectid,code:NewDwgcode,title:NewDwgname,label:NewDwglabel,principal:NewDwgprincipal},
+        success:function(data,status){
+          alert("添加“"+data+"”成功！(status:"+status+".)");
+          $('#modalNewDwg').modal('hide');
+          $('#table0').bootstrapTable('refresh', {url:'/project/products/'+{{.Id}}});
+          //打开新的dwg页面
+          // window.open("/downloadattachment?id="+data.Id); 
+        },
+      });
+    }else{
+      alert("请填写编号和名称！");
+      return;
+    }
+  }
+
   // 编辑成果信息
   function updateprod(){
     // var radio =$("input[type='radio']:checked").val();
@@ -1677,7 +1771,6 @@ $('#edit').froalaEditor('destroy'); -->
     }
 
     //勾选后输入框可用
-
     function station_select(){ 
       if(box.checked){ 
         document.getElementById("relevancy").disabled=false; 
@@ -1695,6 +1788,7 @@ $('#edit').froalaEditor('destroy'); -->
         $("#modalDialog5").draggable({ handle: ".modal-header" });
         $("#modalDialog6").draggable({ handle: ".modal-header" });
         $("#modalDialog7").draggable({ handle: ".modal-header" });
+        $("#modalNewDwg").draggable({ handle: ".modal-header" });
         $("#myModal").css("overflow", "hidden");//禁止模态对话框的半透明背景滚动
     })
 </script>
