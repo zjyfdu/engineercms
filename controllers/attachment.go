@@ -386,7 +386,7 @@ func (c *AttachController) AddAttachment() {
 	}
 	var news string
 	var cid, topprojectid int64
-	var attachment, parentidpath, parentidpath1 string
+	var parentidpath, parentidpath1 string
 	var filepath, DiskDirectory, Url string
 	var catalog models.PostMerit
 	// if role == 1 {
@@ -499,12 +499,11 @@ func (c *AttachController) AddAttachment() {
 	}
 	if h != nil {
 		//保存附件
-		attachment = h.Filename
-
+		// attachment = h.Filename
 		// filepath = DiskDirectory + "/" + h.Filename
 		// f.Close() // 关闭上传的文件，不然的话会出现临时文件不能清除的情况
 		//将附件的编号和名称写入数据库
-		_, filename1, filename2, _, _, _, _ := Record(attachment)
+		_, filename1, filename2, _, _, _, _ := Record(h.Filename)
 		// filename1, filename2 := SubStrings(attachment)
 		//当2个文件都取不到filename1的时候，数据库里的tnumber的唯一性检查出错。
 		if filename1 == "" {
@@ -565,8 +564,8 @@ func (c *AttachController) AddAttachment() {
 
 		//把成果id作为附件的parentid，把附件的名称等信息存入附件数据库
 		//如果附件名称相同，则覆盖上传，但数据库不追加
-		attachmentname := filename1 + filename2 + FileSuffix
-		_, err = models.AddAttachment(attachmentname, filesize, 0, prodId)
+		// attachmentname := filename1 + filename2 + FileSuffix
+		_, err = models.AddAttachment(h.Filename, filesize, 0, prodId)
 		if err != nil {
 			beego.Error(err)
 		} else {
@@ -575,7 +574,7 @@ func (c *AttachController) AddAttachment() {
 			if err != nil {
 				beego.Error(err)
 			}
-			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": attachment, "original": attachment, "url": Url + "/" + attachment}
+			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": h.Filename, "original": h.Filename, "url": Url + "/" + h.Filename}
 			c.ServeJSON()
 		}
 	}
@@ -640,6 +639,10 @@ func (c *AttachController) SaveDwgfile() {
 //向某个侧栏id下新建dwg文件
 func (c *AttachController) NewDwg() {
 	uname, _, uid, _, _ := checkprodRole(c.Ctx)
+	user, err := models.GetUserByUsername(uname)
+	if err != nil {
+		beego.Error(err)
+	}
 	var catalog models.PostMerit
 	var news string
 	var cid int64
@@ -698,8 +701,8 @@ func (c *AttachController) NewDwg() {
 	catalog.Tnumber = code
 	catalog.Name = title
 	catalog.Count = 1
-	catalog.Drawn = ""   //Nickname
-	catalog.Designd = "" //Nickname
+	catalog.Drawn = user.Nickname
+	catalog.Designd = user.Nickname
 	catalog.Author = uname
 	catalog.Drawnratio = 0.4
 	catalog.Designdratio = 0.4
@@ -760,17 +763,6 @@ func (c *AttachController) NewDwg() {
 
 //向某个侧栏id下添加成果——用于第二种添加，多附件模式
 func (c *AttachController) AddAttachment2() {
-	//取得客户端用户名
-	// v := c.GetSession("uname")
-	// var user models.User
-	// var err error
-	// if v != nil {
-	// 	uname := v.(string)
-	// 	user, err = models.GetUserByUsername(uname)
-	// 	if err != nil {
-	// 		beego.Error(err)
-	// 	}
-	// }
 	_, _, uid, _, _ := checkprodRole(c.Ctx)
 
 	meritbasic, err := models.GetMeritBasic()
@@ -781,8 +773,6 @@ func (c *AttachController) AddAttachment2() {
 	var news string
 	var cid int64
 
-	// _, role := checkprodRole(c.Ctx)
-	// if role == 1 {
 	//解析表单
 	pid := c.Input().Get("pid")
 	// beego.Info(pid)
@@ -836,12 +826,12 @@ func (c *AttachController) AddAttachment2() {
 	if err != nil {
 		beego.Error(err)
 	}
-	var path, attachment string
+	var filepath string
 	// var filesize int64
 	if h != nil {
 		//保存附件
-		attachment = h.Filename
-		path = DiskDirectory + "/" + h.Filename
+		// attachment = h.Filename
+		filepath = DiskDirectory + "/" + h.Filename
 		// f.Close()// 关闭上传的文件，不然的话会出现临时文件不能清除的情况
 		//存入成果数据库
 		//如果编号重复，则不写入，值返回Id值。
@@ -879,7 +869,7 @@ func (c *AttachController) AddAttachment2() {
 		if err != nil {
 			beego.Error(err)
 		} else {
-			link1 := Url + "/" + attachment //附件链接地址
+			link1 := Url + "/" + h.Filename //附件链接地址
 			_, err = models.AddCatalogLink(cid, link1)
 			if err != nil {
 				beego.Error(err)
@@ -891,15 +881,15 @@ func (c *AttachController) AddAttachment2() {
 
 		//把成果id作为附件的parentid，把附件的名称等信息存入附件数据库
 		//如果附件名称相同，则覆盖上传，但数据库不追加
-		_, err = models.AddAttachment(attachment, filesize, 0, prodId)
+		_, err = models.AddAttachment(h.Filename, filesize, 0, prodId)
 		if err != nil {
 			beego.Error(err)
 		} else {
-			err = c.SaveToFile("file", path) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
+			err = c.SaveToFile("file", filepath) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
 			if err != nil {
 				beego.Error(err)
 			}
-			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": attachment, "original": attachment, "url": Url + "/" + attachment}
+			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": h.Filename, "original": h.Filename, "url": Url + "/" + h.Filename}
 			c.ServeJSON()
 		}
 	}

@@ -261,9 +261,6 @@
         //得到选择的节点
         var arr = new Array();
         arr=$('#tree').treeview('getChecked');
-        // arr=$('#tree').treeview('getSelected',0);
-        // alert(arr[0].nodeId);//节点顺序号0.0.0.1这样的
-        // alert(arr[0].id);
         if (arr.length==0){
           alert("请先勾选！");
           return;
@@ -325,7 +322,6 @@
       //获取数据，添加到树中
         var projcatename2 = $('#projcatename2').val();
         var projcatecode2 = $('#projcatecode2').val();
-        // var parentid = $('#pid').val();
         arr=$('#tree').treeview('getChecked');
         // var nid = $('#nid').val();//节点顺序号nodeId
         // alert(projcatename2);
@@ -350,19 +346,12 @@
                  }
             });  
         } 
-        // $(function(){$('#myModal').modal('hide')});  
     }
     //编辑节点
     function updatecate(){
         var projcatename3 = $('#projcatename3').val();
         var projcatecode3 = $('#projcatecode3').val();
-        // var parentid = $('#pid').val();
         arr=$('#tree').treeview('getChecked');
-        // var nid = $('#nid').val();//节点顺序号nodeId
-        // alert(projcatename2);
-        // alert(nid);
-        // $.getJSON("treeAddData.json", function (data) {
-        // }); 
       if (projcatename3)
         {
           $.ajax({
@@ -520,10 +509,6 @@
           alert("请先勾选！");
           return;
         }
-        // if (arr.length>=2){
-        //   alert("请不要勾选一个以上！");
-        //   return;
-        // }
       var ids="";
       for(var i=0;i<arr.length;i++){
         if(i==0){
@@ -532,9 +517,6 @@
           ids=ids+","+arr[i].id;
         }  
       }
-    // var obj = JSON.stringify(arr);
-    // alert(ids);
-    // alert(obj);
       if(confirm("确定删除吗？第一次提示！")){
       }else{
         return false;

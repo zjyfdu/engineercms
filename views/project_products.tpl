@@ -349,7 +349,11 @@
   function setAttachment(value,row,index){
     if (value){
       if (value.length==1){
-        var ext =/\.[^\.]+/.exec(value[0].Title);
+        // var ext =/\.[^\.]+/.exec(value[0].Title);
+        var filename=value[0].Title
+        var index1=filename.lastIndexOf(".");
+        var index2=filename.length;
+        var ext=filename.substring(index1,index2);//后缀名
         if (ext==".dwg"){
           attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="打开" target="_blank"><i class="fa fa-codepen fa-lg" style="color:Black;"></i></a>';
         }else if(ext==".doc"||ext==".docx"){
