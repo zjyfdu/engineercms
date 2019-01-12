@@ -7,8 +7,7 @@
 [Demo2](https://zsj.itdos.com/)
 ——基于engineercms的设代资料管理平台（真实应用环境）
 
-1. This system is developed with go language, and the running file is the compiled binary executable file, so it is not necessary to configure the running service environment like the web application written in other languages (PHP, nodejs, Java and other languages).
-
+1. This system is developed with golang language, and the running file is the compiled binary executable file, so it is not necessary to configure the running service environment like the web application written in other languages (PHP, nodejs, Java and other languages).
 This system can run in the engineer's personal computer, also can put on the server to run, only run the executable file can realize the network management project knowledge data, maintenance free, light, open source, complete function, using a large number of open source advanced plug-ins, is an indispensable tool for engineers.
 
 2. The database USES sqlite embedded database, so there is no need to configure the database service environment.
