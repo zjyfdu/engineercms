@@ -1,5 +1,5 @@
 <!-- 具体一个项目侧栏id下所有成果，不含子目录下的成果 -->
-<!-- office下载模式，dwg下载模式 -->
+<!-- office协作模式，dwg在线修改模式 -->
 <!DOCTYPE html>
 <head>
   <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css"/>
@@ -356,15 +356,15 @@
         var ext = filename.substring(index);
         // alert(ext);
         if (ext==".dwg"){
-          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="下载" target="_blank"><i class="fa fa-codepen fa-lg" style="color:Black;"></i></a>';
+          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="打开" target="_blank"><i class="fa fa-codepen fa-lg" style="color:Black;"></i></a>';
         }else if(ext==".doc"||ext==".docx"){
-          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="下载" target="_blank"><i class="fa fa-file-word-o fa-lg"></i></a>';
+          attachUrl= '<a href=/officeview/'+value[0].Id+' title="协作" target="_blank"><i class="fa fa-file-word-o fa-lg"></i></a>';
         }else if(ext==".xls"||ext==".xlsx"){
-          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="下载" target="_blank"><i class="fa fa-file-excel-o fa-lg" style="color:LimeGreen;"></i></a>';
+          attachUrl= '<a href=/officeview/'+value[0].Id+' title="协作" target="_blank"><i class="fa fa-file-excel-o fa-lg" style="color:LimeGreen;"></i></a>';
         }else if(ext==".ppt"||ext==".pptx"){
-          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="下载" target="_blank"><i class="fa fa-file-powerpoint-o fa-lg" style="color:Red;"></i></a>';
+          attachUrl= '<a href=/officeview/'+value[0].Id+' title="协作" target="_blank"><i class="fa fa-file-powerpoint-o fa-lg" style="color:Red;"></i></a>';
         }else{
-          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" itle="下载" target="_blank"><i class="fa fa-paperclip"></i></a>';
+          attachUrl= '<a href="/downloadattachment?id='+value[0].Id+'" title="下载" target="_blank"><i class="fa fa-paperclip"></i></a>';
         }
         return attachUrl;
       }else if(value.length==0){

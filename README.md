@@ -7,25 +7,38 @@
 [Demo2](https://zsj.itdos.com/)
 ——基于engineercms的设代资料管理平台（真实应用环境）
 
+1. This system is developed with go language, and the running file is the compiled binary executable file, so it is not necessary to configure the running service environment like the web application written in other languages (PHP, nodejs, Java and other languages).
+
+This system can run in the engineer's personal computer, also can put on the server to run, only run the executable file can realize the network management project knowledge data, maintenance free, light, open source, complete function, using a large number of open source advanced plug-ins, is an indispensable tool for engineers.
+
+2. The database USES sqlite embedded database, so there is no need to configure the database service environment.
+
+3. Out of the box, no knowledge of network development is required.
+
+4. The new secondary development of onlyoffice document server can realize real-time document collaboration of the enterprise, which is very convenient, avoids cumbersome things like document summarization, greatly improves the efficiency, and makes the collaboration more elegant and interesting. In addition to supporting office docx, XLSX and PPTX formats, it also supports domestic WPS, et and DPS formats.
+
+5. Directly preview DWG files online, avoid the trouble of converting drawings to PDF, and also avoid the trouble of downloading the attachment first and then opening the drawings with the local computer, so as to facilitate designers to check the drawings.
+
+6. The latest froala rich text editor is adopted to support direct pasting and publishing of word pictures and texts. The pictures in word are automatically uploaded, making it easy and fast to publish articles.
+
+7. Micro letter applet client to access and add graphic, opened the letter, search "pearl river delta set generation" or "green children's painting and calligraphy" can see the small program, the small program end also [open source] (https://github.com/3xxx/wechatengineercms).
+
+8. Swagger API automates documentation to facilitate separation of front and rear ends.
+
+9. 9 navigation bar menus can be customized in conf.
+
+View logs in the background.
+
 1. 本系统采用go语言开发，运行文件为编译后的二进制可执行文件，所以无需像其他语言（php、nodejs、java等语言）编写的web应用那样，需要配置运行服务环境。
 本系统既可以运行于工程师个人电脑，也可以放到服务器上运行，仅运行可执行文件即可实现网络化管理项目知识资料，免维护，轻量，开源，功能齐全，采用大量开源的先进插件，是工程师不可或缺的工具。
-
 2. 数据库采用sqlite嵌入式数据库，所以也无需配置数据库服务环境。
-
 3. 开箱即用，无需网络开发知识。
-
 4. 新增加对onlyoffice document server的二次开发，实现企业的实时文档协作，非常方便，避免了文档的汇总等繁琐事物，效率大大提高，协作更加优雅有趣。除了支持office的docx，xlsx及pptx格式外，还支持国产wps，et和dps格式。
-
 5. 在线直接预览dwg文件，避免了图纸转换成pdf的麻烦，也避免了先下载附件然后用本机电脑打开图纸的麻烦，方便设计人员查阅图纸。
-
 6. 采用最新的froala富文本编辑器，支持word图文直接粘贴发布，word中的图片自动上传，发布文章轻松快捷，文章支持视频和文件附件。
-
 7. 微信小程序客户端访问和添加图文，打开微信，搜索“珠三角设代”或“青少儿书画”即可看到小程序了，小程序端也[开源](https://github.com/3xxx/wechatengineercms)。
-
 8. swagger API自动化文档，方便前后端分离。
-
 9. 可在conf里定制9个导航条菜单。
-
 10. 后台查看日志。
 
 一 特性：

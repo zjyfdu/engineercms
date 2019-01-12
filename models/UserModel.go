@@ -623,16 +623,25 @@ func InsertUser() {
 // 	fmt.Println("insert group end")
 // }
 
-// func insertRole() {
-// 	fmt.Println("insert role ...")
-// 	r := new(Role)
-// 	r.Name = "Admin"
-// 	r.Remark = "I'm a admin role"
-// 	r.Status = 2
-// 	r.Title = "Admin role"
-// 	o.Insert(r)
-// 	fmt.Println("insert role end")
-// }
+func insertRole() {
+	fmt.Println("insert role ...")
+	// r := new(Role)
+	var r Role
+	r.Rolename = "Admin"
+	r.Rolenumber = "1"
+	r.Status = "1"
+	// r.Remark = "I'm a admin role"
+	// r.Status = 2
+	// r.Title = "Admin role"
+	// o.Insert(r)
+	id, err := SaveRole(r)
+	if err == nil && id > 0 {
+		fmt.Println("insert role end")
+	} else {
+		log.Println(err)
+	}
+	// fmt.Println("insert role end")
+}
 
 func GetRoleByUsername(username string) (roles []*Role, count int64, err error) { //*Topic, []*Attachment, error
 	roles = make([]*Role, 0)

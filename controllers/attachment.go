@@ -521,7 +521,7 @@ func (c *AttachController) AddAttachment() {
 		//改名，替换文件名中的#和斜杠
 		filename2 = strings.Replace(filename2, "#", "号", -1)
 		filename2 = strings.Replace(filename2, "/", "-", -1)
-		FileSuffix := path.Ext(h.Filename)
+		// FileSuffix := path.Ext(h.Filename)
 
 		//成果写入postmerit表，准备提交merit*********
 		catalog.Tnumber = code
@@ -551,8 +551,8 @@ func (c *AttachController) AddAttachment() {
 		if err != nil {
 			beego.Error(err)
 		} else {
-			link1 := Url + "/" + filename1 + filename2 + FileSuffix //附件链接地址
-			filepath = DiskDirectory + "/" + filename1 + filename2 + FileSuffix
+			link1 := Url + "/" + h.Filename             // + FileSuffix //附件链接地址
+			filepath = DiskDirectory + "/" + h.Filename // + FileSuffix
 			_, err = models.AddCatalogLink(cid, link1)
 			if err != nil {
 				beego.Error(err)
@@ -1137,6 +1137,7 @@ func (c *AttachController) DownloadAttachment() {
 	switch fileext {
 	case ".JPG", ".jpg", ".png", ".PNG", ".bmp", ".BMP", ".mp4", ".MP4":
 		c.Ctx.Output.Download(fileurl + "/" + attachment.FileName)
+		beego.Info("下载……" + fileurl + "/" + attachment.FileName)
 	case ".dwg", ".DWG":
 		//beego.Info(c.Ctx.Input.Site())
 		if e.Enforce(useridstring, projurl, c.Ctx.Request.Method, fileext) || isadmin { //+ strconv.Itoa(c.Ctx.Input.Port())
@@ -1170,6 +1171,7 @@ func (c *AttachController) DownloadAttachment() {
 			// http.ServeFile(c.Ctx.ResponseWriter, c.Ctx.Request, filePath)//这样写下载的文件名称不对
 			// c.Redirect(url+"/"+attachment.FileName, 302)
 			c.Ctx.Output.Download(fileurl + "/" + attachment.FileName)
+			beego.Info("下载……" + fileurl + "/" + attachment.FileName)
 			utils.FileLogs.Info(username + " " + "download" + " " + fileurl + "/" + attachment.FileName)
 		} else {
 			utils.FileLogs.Info(c.Ctx.Input.IP() + "want " + "download" + " " + fileurl + "/" + attachment.FileName)

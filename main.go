@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	// "github.com/astaxie/beego/plugins/cors"
 	"github.com/3xxx/engineercms/models"
-	_ "github.com/mattn/go-sqlite3"
+	// _ "github.com/mattn/go-sqlite3"
 	"os"
 	"time"
 )
