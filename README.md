@@ -128,6 +128,7 @@ Linux系统下请替换掉执行文件engineercms(linux)
 
 ## 第三方包
 
+0. [beego](https://github.com/astaxie/beego)
 1. [casbin权限管理](https://github.com/casbin/casbin)
 2. [simplejson](https://github.com/bitly/go-simplejson)
 3. [excelize](https://github.com/360EntSecGroup-Skylar/excelize)
