@@ -158,6 +158,9 @@ Linux系统下请替换掉执行文件engineercms(linux)
 18. [jqfileupload](https://github.com/blueimp/jQuery-File-Upload)
 19. [bootstrap-table](https://github.com/wenzhixin/bootstrap-table)
 20. [jquery.form.js](http://jquery.malsup.com/form/)
+21. [vue.js](https://github.com/vuejs/vue)
+22. [axios](https://github.com/axios/axios)
+23. [element](https://github.com/ElemeFE/element)
 
 ## LICENSE
 
