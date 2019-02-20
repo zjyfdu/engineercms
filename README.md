@@ -18,6 +18,7 @@
 8. swagger API自动化文档，方便前后端分离。
 9. 可在conf里定制9个导航条菜单。
 10. 后台查看日志。
+11. 通用的文档流程设置。文档审批，文档校审，合同评审流程，图纸校审流程，……
 
 一 特性：
 
@@ -128,14 +129,15 @@ Linux系统下请替换掉执行文件engineercms(linux)
 
 ## 第三方包
 
-0. [beego](https://github.com/astaxie/beego)
+0. [beego框架](https://github.com/astaxie/beego)
 1. [casbin权限管理](https://github.com/casbin/casbin)
 2. [simplejson](https://github.com/bitly/go-simplejson)
 3. [excelize](https://github.com/360EntSecGroup-Skylar/excelize)
 4. [xlsx](https://github.com/tealeg/xlsx)
 5. [goquery](https://github.com/PuerkitoBio/goquery)
-6. [gosqlite](https://github.com/mattn/go-sqlite3)
+6. [go-sqlite](https://github.com/mattn/go-sqlite3)
 7. [mahonia](https://github.com/axgle/mahonia)
+8. [flow文档流程](https://github.com/js-ojus/flow)
 
 ## 前端
 1. [onlyoffice document server](https://github.com/ONLYOFFICE/DocumentServer)
@@ -161,6 +163,7 @@ Linux系统下请替换掉执行文件engineercms(linux)
 21. [vue.js](https://github.com/vuejs/vue)
 22. [axios](https://github.com/axios/axios)
 23. [element](https://github.com/ElemeFE/element)
+24. [vue-element-extends表格在线编辑](https://github.com/xuliangzhan/vue-element-extends)
 
 ## LICENSE
 
