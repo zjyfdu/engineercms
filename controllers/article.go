@@ -999,6 +999,98 @@ func (c *ArticleController) GetWxArticle() {
 	// c.Data["product"] = prod
 }
 
+// @Title get wx artiles list
+// @Description get articles by page
+// @Param page query string  true "The page for articles list"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 articls not found
+// @router /getlistarticles [get]
+//小程序取得所有文章列表，分页_首页用
+func (c *ArticleController) GetListArticles() {
+	// id := c.Ctx.Input.Param(":id")
+	id := beego.AppConfig.String("wxcatalogid") //"26159" //25002珠三角设代日记id26159
+	// wxsite := beego.AppConfig.String("wxreqeustsite")
+	limit := "6"
+	limit1, err := strconv.ParseInt(limit, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	page := c.Input().Get("page")
+	page1, err := strconv.ParseInt(page, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	var idNum int64
+	//id转成64为
+	idNum, err = strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	var offset int64
+	if page1 <= 1 {
+		offset = 0
+	} else {
+		offset = (page1 - 1) * limit1
+	}
+	// articleslice := make([]*WxArticle, 0)
+	// getwxarticles(idNum, limit1, offset, articleslice, wxsite)
+	var user models.User
+	var userid int64
+	if user.Nickname != "" {
+		userid = user.Id
+	} else {
+		userid = 0
+	}
+	//根据项目id取得所有成果
+	//bug_如果5个成果里都没有文章，则显示文章失败；如果多个文章，会超过5个
+	products, err := models.GetProductsPage(idNum, limit1, offset, userid, "")
+	if err != nil {
+		beego.Error(err)
+	}
+	Articleslice := make([]WxArticle, 0)
+	for _, w := range products {
+		//取得文章
+		Articles, err := models.GetWxArticles(w.Id)
+		if err != nil {
+			beego.Error(err)
+		}
+		for _, x := range Articles {
+			//取到文章里的图片地址
+			slice2 := make([]Img, 0)
+			var r io.Reader = strings.NewReader(string(x.Content))
+			doc, err := goquery.NewDocumentFromReader(r)
+			if err != nil {
+				beego.Error(err)
+			}
+			doc.Find("img").Each(func(i int, s *goquery.Selection) {
+				sel, _ := s.Attr("src")
+				aa := make([]Img, 1)
+				aa[0].Src = sel
+				aa[0].Name = path.Base(sel)
+				slice2 = append(slice2, aa...)
+			})
+			articlearr := make([]WxArticle, 1)
+			articlearr[0].Id = x.Id
+			articlearr[0].Title = w.Title
+			articlearr[0].Subtext = x.Subtext
+			articlearr[0].Author = w.Principal
+			if len(slice2) > 0 {
+				articlearr[0].ImgUrl = slice2[0].Src
+			} else {
+				articlearr[0].ImgUrl = "/static/img/go.jpg"
+			}
+			articlearr[0].Content = x.Content
+			articlearr[0].LeassonType = 1
+			articlearr[0].ProductId = x.ProductId
+			Articleslice = append(Articleslice, articlearr...)
+		}
+	}
+	c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "articles": Articleslice}
+	c.ServeJSON()
+}
+
 //向某个侧栏id下添加文章
 func (c *ArticleController) AddArticle() {
 	_, _, uid, _, _ := checkprodRole(c.Ctx)

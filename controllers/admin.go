@@ -154,8 +154,6 @@ func (c *AdminController) Admin() {
 	}
 }
 
-
-
 //添加ip地址段
 func (c *AdminController) AddIpsegment() {
 	_, role, _, _, _ := checkprodRole(c.Ctx)
@@ -663,6 +661,7 @@ func (c *AdminController) DeleteCategory() {
 		}
 	}
 }
+
 //********************日历开始**************
 //添加日历
 func (c *AdminController) AddCalendar() {

@@ -276,3 +276,68 @@
 
 {{end}}
 
+<!--前端递归解析json 数据
+ $(function () {
+        var showlist = $("<ul></ul>");
+        showall(menulist.menulist, showlist); 
+        $("#div_menu").append(showlist);
+});
+/**
+ * parent为要组合成html的容器
+* menu_list为后台json数据
+ */
+function showall(menu_list, parent) {
+    for (var menu in menu_list) {
+        //如果有子节点，则遍历该子节点
+        if (menu_list[menu].menulist.length > 0) {
+            //创建一个子节点li
+            var li = $("<li></li>");
+            //将li的文本设置好，并马上添加一个空白的ul子节点，并且将这个li添加到父亲节点中
+            $(li).append(menu_list[menu].MName).append("<ul></ul>").appendTo(parent);
+            //将空白的ul作为下一个递归遍历的父亲节点传入
+            showall(menu_list[menu].menulist, $(li).children().eq(0));
+        }
+        //如果该节点没有子节点，则直接将该节点li以及文本创建好直接添加到父亲节点中
+        else {
+           $("<li></li>").append(menu_list[menu].MName).appendTo(parent);
+        }
+    }
+} 
+
+/**
+ * Created on 2017/6/27.
+ */
+$(function () {
+    $.getJSON({
+        type: "get",
+        url: "dist/json/nav.json",
+        success: function (data) {
+            var showList = $("<ul class='" + data.ulClass + "'><li class='header'>主导航</li></ul>");
+            showAll(data, showList);
+            $(".sidebar").append(showList);
+        }
+    });
+    //data为json数据
+    //parent为要组合成html的容器
+    function showAll(data, parent) {
+        $.each(data.children, function (index, fatherLi) {//遍历数据集
+            var li1 = $("<li class='" + fatherLi.liClass + "'><a href='" + fatherLi.link + "'><i class=" + fatherLi.iClass + "></i>" + fatherLi.label + "</a></li>");//没有children的初始li结构
+            var li2 = $("<li class='" + fatherLi.liClass + "'><a href='" + fatherLi.link + "'><i class=" + fatherLi.iClass + "></i>" + fatherLi.label + "<span class='" + fatherLi.spanClass + "'><i class='" + fatherLi.spanChildIClass + "'></i></span>" + "</a></li>");//有children的初始li结构
+            //console.log($(li1).html());
+            //console.log($(li2).html());
+            if (fatherLi.children.length > 0) { //如果有子节点，则遍历该子节点
+                var ul = $("<ul class='" + fatherLi.children[0].ulClass + "'></ul>");
+                $(li2).append(ul).appendTo(parent);//将li的初始化选择好，并马上添加带类名的ul子节点，并且将这个li添加到父亲节点中
+                showAll(fatherLi.children[0], $(li2).children().eq(1));//将空白的ul作为下一个递归遍历的父亲节点传入，递归调用showAll函数
+            } else {
+                $(li1).appendTo(parent);//如果该节点没有子节点，则直接将该节点li以及文本创建好直接添加到父亲节点中
+            }
+        });
+    }
+});
+
+js代码
+
+
+
+-->

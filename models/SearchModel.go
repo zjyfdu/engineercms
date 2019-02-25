@@ -77,7 +77,6 @@ func SearchProjProduct(pid, limit, offset int64, key, searchtext string) (count 
 	o := orm.NewOrm()
 	qs := o.QueryTable("Product")
 	qs = qs.SetCond(cond4)
-
 	// cond := orm.NewCondition()
 	// cond1 := cond.Or("Code__contains", key).Or("Title__contains", key).Or("Label__contains", key).Or("Principal__contains", key)
 	// cond2 := cond.AndCond(cond1).And("Content__contains", key)

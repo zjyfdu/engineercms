@@ -73,6 +73,14 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"] = append(beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"],
 		beego.ControllerComments{
+			Method: "GetListArticles",
+			Router: `/getlistarticles`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"] = append(beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"],
+		beego.ControllerComments{
 			Method: "GetWxArticle",
 			Router: `/getwxarticle/:id`,
 			AllowHTTPMethods: []string{"get"},
