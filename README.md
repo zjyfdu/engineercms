@@ -7,29 +7,7 @@
 [Demo2](https://zsj.itdos.com/)
 ——基于engineercms的设代资料管理平台（真实应用环境）
 
-1. This system is developed with go language, and the running file is the compiled binary executable file, so it is not necessary to configure the running service environment like the web application written in other languages (PHP, nodejs, Java and other languages).
-
-This system can run in the engineer's personal computer, also can put on the server to run, only run the executable file can realize the network management project knowledge data, maintenance free, light, open source, complete function, using a large number of open source advanced plug-ins, is an indispensable tool for engineers.
-
-2. The database USES sqlite embedded database, so there is no need to configure the database service environment.
-
-3. Out of the box, no knowledge of network development is required.
-
-4. The new secondary development of onlyoffice document server can realize real-time document collaboration of the enterprise, which is very convenient, avoids cumbersome things like document summarization, greatly improves the efficiency, and makes the collaboration more elegant and interesting. In addition to supporting office docx, XLSX and PPTX formats, it also supports domestic WPS, et and DPS formats.
-
-5. Directly preview DWG files online, avoid the trouble of converting drawings to PDF, and also avoid the trouble of downloading the attachment first and then opening the drawings with the local computer, so as to facilitate designers to check the drawings.
-
-6. The latest froala rich text editor is adopted to support direct pasting and publishing of word pictures and texts. The pictures in word are automatically uploaded, making it easy and fast to publish articles.
-
-7. Micro letter applet client to access and add graphic, opened the letter, search "pearl river delta set generation" or "green children's painting and calligraphy" can see the small program, the small program end also [open source] (https://github.com/3xxx/wechatengineercms).
-
-8. Swagger API automates documentation to facilitate separation of front and rear ends.
-
-9. 9 navigation bar menus can be customized in conf.
-
-View logs in the background.
-
-1. 本系统采用go语言开发，运行文件为编译后的二进制可执行文件，所以无需像其他语言（php、nodejs、java等语言）编写的web应用那样，需要配置运行服务环境。
+1. 本系统采用go语言（基于[beego](https://github.com/astaxie/beego)框架）开发，运行文件为编译后的二进制可执行文件，所以无需像其他语言（php、nodejs、java等语言）编写的web应用那样，需要配置运行服务环境。
 本系统既可以运行于工程师个人电脑，也可以放到服务器上运行，仅运行可执行文件即可实现网络化管理项目知识资料，免维护，轻量，开源，功能齐全，采用大量开源的先进插件，是工程师不可或缺的工具。
 2. 数据库采用sqlite嵌入式数据库，所以也无需配置数据库服务环境。
 3. 开箱即用，无需网络开发知识。
@@ -40,6 +18,7 @@ View logs in the background.
 8. swagger API自动化文档，方便前后端分离。
 9. 可在conf里定制9个导航条菜单。
 10. 后台查看日志。
+11. 通用的文档流程设置。文档审批，文档校审，合同评审流程，图纸校审流程，……
 
 一 特性：
 
@@ -150,35 +129,41 @@ Linux系统下请替换掉执行文件engineercms(linux)
 
 ## 第三方包
 
+0. [beego框架](https://github.com/astaxie/beego)
 1. [casbin权限管理](https://github.com/casbin/casbin)
 2. [simplejson](https://github.com/bitly/go-simplejson)
 3. [excelize](https://github.com/360EntSecGroup-Skylar/excelize)
 4. [xlsx](https://github.com/tealeg/xlsx)
 5. [goquery](https://github.com/PuerkitoBio/goquery)
-6. [gosqlite](https://github.com/mattn/go-sqlite3)
+6. [go-sqlite](https://github.com/mattn/go-sqlite3)
 7. [mahonia](https://github.com/axgle/mahonia)
+8. [flow文档流程](https://github.com/js-ojus/flow)
 
 ## 前端
-1. [onlyoffice document server](https://github.com/ONLYOFFICE/DocumentServer)
-2. [pdf.js](https://github.com/mozilla/pdf.js)
+1. [onlyoffice document server文档协作](https://github.com/ONLYOFFICE/DocumentServer)
+2. [pdf.js阅览pdf](https://github.com/mozilla/pdf.js)
 3. [html2canvas](https://github.com/niklasvh/html2canvas)
-4. [jQueryGantt](https://github.com/robicch/jQueryGantt)
+4. [jQueryGantt甘特图](https://github.com/robicch/jQueryGantt)
 5. [multyselect](https://github.com/davidstutz/bootstrap-multiselect)
-6. [bootstrap treeview](https://github.com/patternfly/patternfly-bootstrap-treeview)
-7. [fullcalendar](https://github.com/fullcalendar/fullcalendar)
+6. [bootstrap treeview树状目录](https://github.com/patternfly/patternfly-bootstrap-treeview)
+7. [fullcalendar日历](https://github.com/fullcalendar/fullcalendar)
 8. [daterangerpicker](https://github.com/dangrossman/daterangepicker)
 9. [datetimepicker](https://github.com/smalot/bootstrap-datetimepicker)
 10. [datepicker](https://github.com/uxsolutions/bootstrap-datepicker)
 11. [select2](https://github.com/select2/select2)
-12. [x-editable](https://github.com/vitalets/x-editable)
-13. [ztree](https://github.com/zTree/zTree_v3)
+12. [x-editable表格在线编辑](https://github.com/vitalets/x-editable)
+13. [ztree树状目录](https://github.com/zTree/zTree_v3)
 14. [request](https://github.com/mozillazg/request)
 15. [froala富文本编辑器](https://github.com/froala/wysiwyg-editor)
-16. [ueditor](https://github.com/fex-team/ueditor)
-17. [webupload](https://github.com/fex-team/webuploader)
+16. [ueditor百度富文本编辑器](https://github.com/fex-team/ueditor)
+17. [webupload百度文件上传](https://github.com/fex-team/webuploader)
 18. [jqfileupload](https://github.com/blueimp/jQuery-File-Upload)
-19. [bootstrap-table](https://github.com/wenzhixin/bootstrap-table)
-20. [jquery.form.js](http://jquery.malsup.com/form/)
+19. [bootstrap-table表格](https://github.com/wenzhixin/bootstrap-table)
+20. [jquery.form.js表单上传文件](http://jquery.malsup.com/form/)
+21. [vue.js](https://github.com/vuejs/vue)
+22. [axios](https://github.com/axios/axios)
+23. [element组件](https://github.com/ElemeFE/element)
+24. [vue-element-extends表格在线编辑](https://github.com/xuliangzhan/vue-element-extends)
 
 ## LICENSE
 
