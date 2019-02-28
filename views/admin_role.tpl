@@ -732,9 +732,10 @@
                 for(var i=0;i<data.length;i++){
                   // alert(data[i]);
                   var findCheckableNodess = function() {
-                    return $('#tree').treeview('findNodes', [data[i], 'id']);
+                    return $('#tree').treeview('findNodes', ['^'+data[i]+'$', 'id']);
                   }; 
                   var checkableNodes = findCheckableNodess();
+                  alert(checkableNodes);
                   // $('#tree').treeview('checkNode', [ checkableNodes, { silent: true } ]);
                   $('#tree').treeview('toggleNodeChecked', [ checkableNodes, { silent: true } ]);
                 }
@@ -790,7 +791,7 @@
                 for(var i=0;i<data.length;i++){
                   // alert(data[i]);
                   var findCheckableNodess = function() {
-                    return $('#tree').treeview('findNodes', [data[i], 'id']);
+                    return $('#tree').treeview('findNodes', ['^'+data[i]+'$', 'id']);
                   }; 
                   var checkableNodes = findCheckableNodess();
                   $('#tree').treeview('toggleNodeChecked', [ checkableNodes, { silent:  true } ]);
@@ -861,10 +862,35 @@
                 for(var i=0;i<data.length;i++){
                   // alert(data[i]);
                   var findCheckableNodess = function() {
-                    return $('#tree').treeview('findNodes', [data[i], 'id']);
+                    return $('#tree').treeview('findNodes', ['^'+data[i]+'$', 'id']);
+                    // return $('#tree').treeview('findNodes', ['广州北江引水（水源）工程', 'text']);
+                    // return $('#tree').treeview('getSiblings', nodes);
                   }; 
                   var checkableNodes = findCheckableNodess();
+                  // alert(checkableNodes[0].code); 
+                  // alert(checkableNodes[0].id);
+                  // alert(checkableNodes[0].text); 
+                  // var data = [
+                  //   {
+                  //     id:'item1',
+                  //     text:'选项1'
+                  //   },
+                  // ];
+                  // var singleNode = [{
+                  //   text: '广州北江引水（水源）工程',
+                  //   id:1,
+                  //   code:'SL1204'
+                  // }];
+                  // alert(singleNode[0].code); 
+                  // alert(singleNode[0].id);
+                  // alert(singleNode[0].text);
                   $('#tree').treeview('toggleNodeChecked', [ checkableNodes, { silent: true } ]);
+                  // $('#tree').treeview('toggleNodeChecked', [ singleNode, { silent: true } ]);
+                  // $('#tree').treeview('updateNode', [ arr, singleNode,{ silent: true } ]);
+                  // $('#tree').treeview('getNodes', singleNode);
+                  // $('#tree').treeview('disableNode', [ singleNode, { silent: true, keepState: true } ]);
+                  // $('#tree').treeview('checkNode', [ checkableNodes, { silent: true, ignoreChildren: true} ]);
+                  // $('#tree').treeview('collapseNode', [ singleNode, { silent: true, ignoreChildren: false } ]);
                 }
               }
             }

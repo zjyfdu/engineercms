@@ -73,6 +73,14 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"] = append(beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"],
 		beego.ControllerComments{
+			Method: "GetListArticles",
+			Router: `/getlistarticles`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"] = append(beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:ArticleController"],
+		beego.ControllerComments{
 			Method: "GetWxArticle",
 			Router: `/getwxarticle/:id`,
 			AllowHTTPMethods: []string{"get"},
@@ -132,6 +140,14 @@ func init() {
 			Method: "WxStandardPdf",
 			Router: `/wxstandardpdf/:id`,
 			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:RegistController"] = append(beego.GlobalControllerRouter["github.com/3xxx/engineercms/controllers:RegistController"],
+		beego.ControllerComments{
+			Method: "WxRegist",
+			Router: `/wxregist`,
+			AllowHTTPMethods: []string{"post"},
 			MethodParams: param.Make(),
 			Params: nil})
 
