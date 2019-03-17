@@ -126,6 +126,1353 @@
                 }
             }
         },
+        "/admin/flowaccesscontext": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post AccessContext..",
+                "operationId": "FlowController.post wf AccessContext...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of AccessContext",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowaccesscontextlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post AccessContext..",
+                "operationId": "FlowController.get wf AccessContext...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of AccessContext",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowaction": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdocaction..",
+                "operationId": "FlowController.post wf docaction...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of docaction",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowactionlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get workflowdocaction..",
+                "operationId": "FlowController.get wf docaction...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of docaction",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowdoc": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post document",
+                "operationId": "FlowController.post wf document",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The doctypeid of document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "acid",
+                        "description": "The accesscontext of document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "gid",
+                        "description": "The groupid of Group",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "data",
+                        "description": "The data of document",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowdocevent": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get docevent",
+                "operationId": "FlowController.post wf event",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of event",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowdoceventlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get doceventlist",
+                "operationId": "FlowController.get wf eventlist",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of event",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowdoclist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get workflow doclist",
+                "operationId": "FlowController.get wf doclist",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The id of doctype",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of doc",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowdocumentdetail": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get documentdetail",
+                "operationId": "FlowController.get wf document details",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The id of doctype",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "docid",
+                        "description": "The id of doc",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowdocumentlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get document",
+                "operationId": "FlowController.get wf document",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The id of doctype",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "acid",
+                        "description": "The id of accesscontext",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "gid",
+                        "description": "The id of group",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dsid",
+                        "description": "The id of docstate",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of doc",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The limit page of doc",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowgroup": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Group..",
+                "operationId": "FlowController.post wf Group...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of Group",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "grouptype",
+                        "description": "The type of Group",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowgrouplist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Group..",
+                "operationId": "FlowController.get wf Group...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of Group",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowgroupmailbox": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get groupmailbox",
+                "operationId": "FlowController.get group mailbox",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "gid",
+                        "description": "The id of group",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of mailbox",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The limit page of mailbox",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "unread",
+                        "description": "The unread of mailbox",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowgrouprole": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post GroupRole..",
+                "operationId": "FlowController.post wf GroupRole...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of GroupRole",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowgrouprolelist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get GroupRole..",
+                "operationId": "FlowController.get wf GroupRole...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of GroupRole",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowgroupuserslist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Group..",
+                "operationId": "FlowController.get wf GroupUsers...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of GroupUser",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flownext": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflow next",
+                "operationId": "FlowController.post wf next",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flownode": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Node..",
+                "operationId": "FlowController.post wf Node...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of Node",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flownodelist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Node..",
+                "operationId": "FlowController.get wf Node...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of Node",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowpermission": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Permission..",
+                "operationId": "FlowController.post wf Permission...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of Permission",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowrole": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Role..",
+                "operationId": "FlowController.post wf Role...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of Role",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowrolelist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Role..",
+                "operationId": "FlowController.get wf Role...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of Role",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowrolepermissionlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Permission..",
+                "operationId": "FlowController.get wf Permission...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of Permission",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowstate": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdocstate..",
+                "operationId": "FlowController.post wf docstate...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of docstate",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowstatelist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdocstate..",
+                "operationId": "FlowController.post wf docstate...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of docstate",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The size of page",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowtransition": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post transition..",
+                "operationId": "FlowController.post wf transition...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of transition",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowtransitionlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post transition..",
+                "operationId": "FlowController.get wf transition...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of transition",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowtype": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdoctype..",
+                "operationId": "FlowController.post wf doctype...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of doctype",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowtypedelete": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdoctype..",
+                "operationId": "FlowController.post wf doctype...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of doctype",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowtypelist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdoctype..",
+                "operationId": "FlowController.post wf doctype...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of doctype",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The size of page",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowtypeupdate": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post workflowdoctype..",
+                "operationId": "FlowController.post wf doctype...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of doctype",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowuser": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post user..",
+                "operationId": "FlowController.post wf user...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "firstname",
+                        "description": "The firstname of user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "lastname",
+                        "description": "The lastname of user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "description": "The email of user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "active",
+                        "description": "The active of user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowusergroup": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Group..",
+                "operationId": "FlowController.post wf GroupUser...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of GroupUser",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowuserlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post user..",
+                "operationId": "FlowController.get wf user...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowusermailbox": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get usermailbox",
+                "operationId": "FlowController.get user mailbox",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "uid",
+                        "description": "The id of user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of mailbox",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The limit page of mailbox",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "unread",
+                        "description": "The unread of mailbox",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowworkflow": {
+            "post": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Workflow..",
+                "operationId": "FlowController.post wf Workflow...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of Workflow",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/flowworkflowlist": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "post Workflow..",
+                "operationId": "FlowController.post wf Workflow...",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of Workflow",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/workflow": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "show workflow page",
+                "operationId": "FlowController.show wf page",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
+                    }
+                }
+            }
+        },
         "/adminlog/errlog": {
             "get": {
                 "tags": [
@@ -380,6 +1727,38 @@
                     },
                     "404": {
                         "description": "article not found"
+                    }
+                }
+            }
+        },
+        "/wx/getlistarticles": {
+            "get": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "get articles by page",
+                "operationId": "ArticleController.get wx artiles list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page for articles list",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
                     }
                 }
             }
@@ -838,7 +2217,7 @@
     "tags": [
         {
             "name": "admin",
-            "description": "CMSADMIN API\n"
+            "description": "Flowtest API\n"
         },
         {
             "name": "adminlog",

@@ -197,7 +197,7 @@ func (c *SearchController) SearchWxDrawings() {
 			if err != nil {
 				beego.Error(err.Error)
 			}
-			beego.Info(pidNum)
+			// beego.Info(pidNum)
 		}
 		Pdfslice := make([]PdfLink, 0)
 		for _, w := range products {
@@ -216,10 +216,10 @@ func (c *SearchController) SearchWxDrawings() {
 					pdfarr := make([]PdfLink, 1)
 					pdfarr[0].Id = v.Id
 					pdfarr[0].Title = v.FileName
-					if pidNum == 25002 {
+					if pidNum == 25002 { //图
 						pdfarr[0].Link = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Crect%20fill%3D%22%233F51B5%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3C%2Frect%3E%3Ctext%20fill%3D%22%23FFF%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20font-size%3D%2216%22%20font-family%3D%22Verdana%2C%20Geneva%2C%20sans-serif%22%20alignment-baseline%3D%22middle%22%3E%E5%9B%BE%3C%2Ftext%3E%3C%2Fsvg%3E" //wxsite + "/static/img/go.jpg" //当做微信里的src来用
 						pdfarr[0].ActIndex = "drawing"
-					} else {
+					} else { //纪
 						pdfarr[0].Link = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Crect%20fill%3D%22%23009688%22%20x%3D%220%22%20y%3D%220%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3C%2Frect%3E%3Ctext%20fill%3D%22%23FFF%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20font-size%3D%2216%22%20font-family%3D%22Verdana%2C%20Geneva%2C%20sans-serif%22%20alignment-baseline%3D%22middle%22%3E%E7%BA%AA%3C%2Ftext%3E%3C%2Fsvg%3E" //wxsite + "/static/img/go.jpg" //当做微信里的src来用
 						pdfarr[0].ActIndex = "other"
 					}
