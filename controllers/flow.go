@@ -2150,6 +2150,11 @@ func (c *FlowController) FlowDocumentDetail() {
 
 // @Title post wf next
 // @Description post workflow next
+// @Param dtid query string  true "The id of doctype"
+// @Param daid query string  true "The id of action"
+// @Param docid query string  true "The id of document"
+// @Param gid query string  true "The id of group"
+// @Param text query string  false "The text of apply"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
