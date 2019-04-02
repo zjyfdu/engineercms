@@ -138,6 +138,7 @@ Linux系统下请替换掉执行文件engineercms(linux)
 6. [go-sqlite](https://github.com/mattn/go-sqlite3)
 7. [mahonia](https://github.com/axgle/mahonia)
 8. [flow文档流程](https://github.com/js-ojus/flow)
+9. [xorm](https://github.com/go-xorm/xorm)
 
 ## 前端
 1. [onlyoffice document server文档协作](https://github.com/ONLYOFFICE/DocumentServer)
