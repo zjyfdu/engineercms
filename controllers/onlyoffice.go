@@ -283,6 +283,175 @@ func (c *OnlyController) Get() {
 	// };
 }
 
+// @Title get only documents list
+// @Description get documents by page & limit
+// @Param page query string  true "The page for document list"
+// @Param limit query string  true "The limit for document list"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 articls not found
+// @router /getonlydocs [get]
+//文档列表数据
+// func (c *ArticleController) GetOnlyDocs() {
+// 	var offset, limit1, page1 int
+// 	var err error
+// 	limit := c.Input().Get("limit")
+// 	if limit == "" {
+// 		limit1 = 0
+// 	} else {
+// 		limit1, err = strconv.Atoi(limit)
+// 		if err != nil {
+// 			beego.Error(err)
+// 		}
+// 	}
+// 	page := c.Input().Get("page")
+// 	if page == "" {
+// 		limit1 = 0
+// 		page1 = 1
+// 	} else {
+// 		page1, err = strconv.Atoi(page)
+// 		if err != nil {
+// 			beego.Error(err)
+// 		}
+// 	}
+
+// 	if page1 <= 1 {
+// 		offset = 0
+// 	} else {
+// 		offset = (page1 - 1) * limit1
+// 	}
+
+// 	username, role, uid := Authorizer(c.Ctx)
+
+// 	//这里用jion，取得uname和attachment和permission
+// 	docs, err := models.GetDocList(offset, limit1)
+// 	if err != nil {
+// 		beego.Error(err)
+// 	}
+
+// 	//1.anonymous，首先查permission表，
+// 	//所有均为4
+// 	//permission表中针对anonymous的权限，以它为准
+// 	//设置了权限的文档，anonymous则为4（下面这条包含了）
+// 	//permission表中没有设置权限的文档，开放
+
+// 	//2.isme
+// 	//如果设置了isme权限，以它为准
+// 	//如果没有，则为1
+
+// 	//3.everyone
+// 	//如果设置了，则以它为准
+// 	//如果没有设置，则没有
+
+// 	//4.全部文档AllDocs
+// 	for _, v := range Attachments {
+// 		// beego.Info(v.FileName)
+// 		// fileext := path.Ext(v.FileName)
+// 		docxarr := make([]DocxLink, 1)
+// 		docxarr[0].Permission = "1"
+// 		//查询v.Id是否和myres的V1路径后面的id一致，如果一致，则取得V2（权限）
+// 		//查询用户具有的权限
+// 		// beego.Info(useridstring)
+// 		if useridstring != "0" { //如果是登录用户，则设置了权限的文档不能看
+// 			// beego.Info(myRes)
+// 			// myRes1 := e.GetPermissionsForUser("") //取出所有设置了权限的数据
+// 			if w.Uid != uid { //如果不是作者本人
+// 				for _, k := range myResall { //所有设置了权限的都不能看
+// 					// beego.Info(k)
+// 					if strconv.FormatInt(v.Id, 10) == path.Base(k[1]) {
+// 						docxarr[0].Permission = "4"
+// 					}
+// 				}
+
+// 				for _, k := range myRes { //如果与登录用户对应上，则赋予权限
+// 					// beego.Info(k)
+// 					if strconv.FormatInt(v.Id, 10) == path.Base(k[1]) {
+// 						docxarr[0].Permission = k[2]
+// 					}
+// 				}
+// 				roles := e.GetRolesForUser(useridstring) //取出用户的所有角色
+// 				for _, w1 := range roles {               //2018.4.30修改这个bug，这里原先w改为w1
+// 					roleRes = e.GetPermissionsForUser(w1) //取出角色的所有权限，改为w1
+// 					for _, k := range roleRes {
+// 						// beego.Info(k)
+// 						if strconv.FormatInt(v.Id, 10) == path.Base(k[1]) {
+// 							// docxarr[0].Permission = k[2]
+// 							int1, err := strconv.Atoi(k[2])
+// 							if err != nil {
+// 								beego.Error(err)
+// 							}
+// 							int2, err := strconv.Atoi(docxarr[0].Permission)
+// 							if err != nil {
+// 								beego.Error(err)
+// 							}
+// 							if int1 < int2 {
+// 								docxarr[0].Permission = k[2] //按最小值权限
+// 							}
+// 							//补充everyone
+// 						}
+// 					}
+// 				}
+// 			} //如果是用户自己的文档，则permission为1，默认
+// 		} else { //如果用户没登录，则设置了权限的文档不能看
+// 			for _, k := range myResall { //所有设置了权限的不能看
+// 				// beego.Info(k)
+// 				if strconv.FormatInt(v.Id, 10) == path.Base(k[1]) {
+// 					// beego.Info(i)
+// 					// beego.Info(strconv.FormatInt(v.Id, 10))
+// 					// beego.Info(path.Base(k[1]))
+// 					docxarr[0].Permission = "4"
+// 					// beego.Info(strconv.FormatInt(v.Id, 10))
+// 					// beego.Info(path.Base(k[1]))
+// 				}
+// 				//如果有everyone权限，则按everyone的
+// 			}
+// 		}
+
+// 		docxarr[0].Id = v.Id
+// 		docxarr[0].Title = v.FileName
+// 		if path.Ext(v.FileName) == ".docx" || path.Ext(v.FileName) == ".DOCX" || path.Ext(v.FileName) == ".doc" || path.Ext(v.FileName) == ".DOC" {
+// 			docxarr[0].Suffix = "docx"
+// 		} else if path.Ext(v.FileName) == ".wps" || path.Ext(v.FileName) == ".WPS" {
+// 			docxarr[0].Suffix = "docx"
+// 		} else if path.Ext(v.FileName) == ".XLSX" || path.Ext(v.FileName) == ".xlsx" || path.Ext(v.FileName) == ".XLS" || path.Ext(v.FileName) == ".xls" {
+// 			docxarr[0].Suffix = "xlsx"
+// 			// xlsxarr := make([]XlsxLink, 1)
+// 			// xlsxarr[0].Id = v.Id
+// 			// xlsxarr[0].Title = v.FileName
+// 			// Xlsxslice = append(Xlsxslice, xlsxarr...)
+// 		} else if path.Ext(v.FileName) == ".ET" || path.Ext(v.FileName) == ".et" {
+// 			docxarr[0].Suffix = "xlsx"
+// 		} else if path.Ext(v.FileName) == ".pptx" || path.Ext(v.FileName) == ".PPTX" || path.Ext(v.FileName) == ".ppt" || path.Ext(v.FileName) == ".PPT" {
+// 			docxarr[0].Suffix = "pptx"
+// 			// pptxarr := make([]PptxLink, 1)
+// 			// pptxarr[0].Id = v.Id
+// 			// pptxarr[0].Title = v.FileName
+// 			// Pptxslice = append(Pptxslice, pptxarr...)
+// 		} else if path.Ext(v.FileName) == ".DPS" || path.Ext(v.FileName) == ".dps" {
+// 			docxarr[0].Suffix = "pptx"
+// 		} else if path.Ext(v.FileName) == ".pdf" || path.Ext(v.FileName) == ".PDF" {
+// 			docxarr[0].Suffix = "pdf"
+// 		} else if path.Ext(v.FileName) == ".txt" || path.Ext(v.FileName) == ".TXT" {
+// 			docxarr[0].Suffix = "txt"
+// 		}
+// 		Docxslice = append(Docxslice, docxarr...)
+// 	}
+// 	linkarr[0].Docxlink = Docxslice
+// 	// linkarr[0].Xlsxlink = Xlsxslice
+// 	// linkarr[0].Pptxlink = Pptxslice
+// 	Docxslice = make([]DocxLink, 0) //再把slice置0
+// 	// Xlsxslice = make([]XlsxLink, 0) //再把slice置0
+// 	// Pptxslice = make([]PptxLink, 0)
+// 	//无权限的不显示
+// 	//如果permission=4，则不赋值给link
+// 	if linkarr[0].Docxlink[0].Permission != "4" {
+// 		link = append(link, linkarr...)
+// 	}
+
+// 	c.Data["json"] = link //products
+// 	c.ServeJSON()
+// }
+
 //提供给列表页的table中json数据
 func (c *OnlyController) GetData() {
 	//1.取得客户端用户名
@@ -327,11 +496,6 @@ func (c *OnlyController) GetData() {
 	link := make([]OnlyLink, 0)
 	Docxslice := make([]DocxLink, 0)
 	for _, w := range docs {
-
-		Attachments, err := models.GetOnlyAttachments(w.Id)
-		if err != nil {
-			beego.Error(err)
-		}
 		linkarr := make([]OnlyLink, 1)
 		linkarr[0].Id = w.Id
 		linkarr[0].Code = w.Code
@@ -344,6 +508,11 @@ func (c *OnlyController) GetData() {
 		linkarr[0].Uname = user.Nickname
 		linkarr[0].Created = w.Created
 		linkarr[0].Updated = w.Updated
+
+		Attachments, err := models.GetOnlyAttachments(w.Id)
+		if err != nil {
+			beego.Error(err)
+		}
 		//docid——me——1
 		for _, v := range Attachments {
 			// beego.Info(v.FileName)
@@ -443,7 +612,11 @@ func (c *OnlyController) GetData() {
 		Docxslice = make([]DocxLink, 0) //再把slice置0
 		// Xlsxslice = make([]XlsxLink, 0) //再把slice置0
 		// Pptxslice = make([]PptxLink, 0)
-		link = append(link, linkarr...)
+		//无权限的不显示
+		//如果permission=4，则不赋值给link
+		if linkarr[0].Docxlink[0].Permission != "4" {
+			link = append(link, linkarr...)
+		}
 	}
 	c.Data["json"] = link //products
 	c.ServeJSON()

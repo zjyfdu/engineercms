@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	// "strconv"
@@ -14,6 +15,8 @@ import (
 	"os"
 	"time"
 )
+
+var engine *xorm.Engine
 
 type AdminCategory struct {
 	Id       int64     `form:"-"`
@@ -111,6 +114,12 @@ func init() {
 			db_path = "./"
 		}
 		dns = fmt.Sprintf("%s%s.db", db_path, db_name)
+
+		var err error
+		engine, err = xorm.NewEngine(db_type, dns)
+		if err != nil {
+			log.Println(err)
+		}
 		break
 	default:
 		beego.Critical("Database driver is not allowed:", db_type)

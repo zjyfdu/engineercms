@@ -495,6 +495,31 @@ paths:
       - admin
       description: post workflow next
       operationId: FlowController.post wf next
+      parameters:
+      - in: query
+        name: dtid
+        description: The id of doctype
+        required: true
+        type: string
+      - in: query
+        name: daid
+        description: The id of action
+        required: true
+        type: string
+      - in: query
+        name: docid
+        description: The id of document
+        required: true
+        type: string
+      - in: query
+        name: gid
+        description: The id of group
+        required: true
+        type: string
+      - in: query
+        name: text
+        description: The text of apply
+        type: string
       responses:
         "200":
           description: ""
@@ -763,8 +788,8 @@ paths:
     get:
       tags:
       - admin
-      description: post workflowdoctype..
-      operationId: FlowController.post wf doctype...
+      description: get workflowdoctype..
+      operationId: FlowController.get wf doctypelist...
       parameters:
       - in: query
         name: page
@@ -1002,6 +1027,30 @@ paths:
           description: Invalid page
         "404":
           description: page not found
+  /project/getprojects:
+    get:
+      tags:
+      - project
+      description: get projectlist..
+      operationId: ProjController.get cms projectlist...
+      parameters:
+      - in: query
+        name: page
+        description: The page of projectlist
+        type: string
+      - in: query
+        name: limit
+        description: The size of page
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
   /wx/addwxarticle:
     post:
       tags:
@@ -1232,6 +1281,47 @@ paths:
           description: Invalid page supplied
         "404":
           description: articls not found
+  /wx/islogin:
+    get:
+      tags:
+      - wx
+      description: get login..
+      operationId: LoginController.get user login...
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /wx/loginpost:
+    post:
+      tags:
+      - wx
+      description: post login..
+      operationId: LoginController.post user login...
+      parameters:
+      - in: query
+        name: uname
+        description: The name of user
+        required: true
+        type: string
+      - in: query
+        name: pwd
+        description: The password of user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
   /wx/searchwxdrawings:
     get:
       tags:

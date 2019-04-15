@@ -7,13 +7,100 @@ package routers
 import (
 	"github.com/3xxx/engineercms/controllers"
 	"github.com/astaxie/beego"
+	// "github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
 )
+
+// var FilterFunc = func(ctx *context.Context) {
+// 	userName := ctx.Input.Session("userName")
+// 	if userName == nil {
+// 		ctx.Redirect()
+// 	}
+// 	v := ctx.Input.CruSession.Get("uname") //用来获取存储在服务器端中的数据??。
+// 	// beego.Info(v)                          //qin.xc
+// 	var user models.User
+// 	var err error
+// 	if v != nil { //如果登录了
+// 		uname = v.(string)
+// 		user, err = models.GetUserByUsername(uname)
+// 		if err != nil {
+// 			beego.Error(err)
+// 		} else {
+// 			uid = user.Id
+// 			role = user.Role
+// 		}
+// 	} else { //如果没登录
+// 		role = "anonymous"
+// 	}
+// }
+
+// var filterFunc = func(ctx *context.Context) {
+// 	username := ctx.Input.Session("username")
+// 	if username == nil {
+// 		ctx.Redirect(302, "/login")
+// 	}
+// }
+
+// func (this *UserController) HandleLogin() {
+// 	//1.获取数据
+// 	userName := this.GetString("username")
+// 	pwd := this.GetString("pwd")
+// 	check := this.GetString("check")
+// 	if userName == "" || pwd == "" {
+// 		this.Data["errmsg"] = "用户名或密码不能为空,请重新登陆！"
+// 		this.TplName = "login.html"
+// 		return
+// 	}
+// 	//2.查询数据
+// 	o := orm.NewOrm()
+// 	user := models.User{Name: userName}
+// 	err := o.Read(&user, "Name")
+// 	if err != nil {
+// 		this.Data["errmsg"] = "用户名或密码错误,请重新登陆！"
+// 		this.TplName = "login.html"
+// 		return
+// 	}
+// 	if user.PassWord != pwd {
+// 		this.Data["errmsg"] = "用户名或密码错误,请重新登陆！"
+// 		this.TplName = "login.html"
+// 		return
+// 	}
+// 	if user.Active != true {
+// 		this.Data["errmsg"] = "该用户没有激活，请先激活！"
+// 		this.TplName = "login.html"
+// 		return
+// 	}
+// 	if check == "on" {
+// 		this.Ctx.SetCookie("username", userName, time.Second*3600)
+// 	} else {
+// 		this.Ctx.SetCookie("username", userName, -1)
+// 	}
+// 	this.SetSession("userName", userName)
+// 	this.Redirect("/", 302)
+// }
+
+// var FilterUser = func(ctx *context.Context) {
+//     _, ok := ctx.Input.Session("uid").(int)
+//     if !ok && ctx.Request.RequestURI != "/login" {
+//         ctx.Redirect(302, "/login")
+//     }
+// }
+
+// beego.InsertFilter("/*",beego.BeforeRouter,FilterUser)
+
+// var FilterUser = func(ctx *context.Context) {
+//     _, ok := ctx.Input.Session("uid").(int)
+//     if !ok {
+//         ctx.Redirect(302, "/login")
+//     }
+// }
+// beego.InsertFilter("/user/:id([0-9]+)",beego.BeforeRouter,FilterUser)
 
 func init() {
 	//运行跨域请求
 	//在http请求的响应流头部加上如下信息
 	//rw.Header().Set("Access-Control-Allow-Origin", "*")
+	// beego.InsertFilter("?=/article/*", beego.BeforeRouter, FilterFunc)
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins:  true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -24,10 +111,13 @@ func init() {
 	//自动化文档
 	ns :=
 		beego.NewNamespace("/v1",
+			// beego.NSBefore(FilterFunc),
+			// beego.NSBefore(auth),
 			beego.NSNamespace("/admin",
 				beego.NSInclude(
 					&controllers.AdminController{},
 					&controllers.FlowController{},
+					// &controllers.LoginController{},
 					// &controllers.CustomerCookieCheckerController{},
 				),
 			),
@@ -48,7 +138,11 @@ func init() {
 					&controllers.AdminLogController{},
 				),
 			),
-
+			beego.NSNamespace("/project",
+				beego.NSInclude(
+					&controllers.ProjController{},
+				),
+			),
 			// beego.NSNamespace("/cms",
 			// 	beego.NSInclude(
 			// 		&controllers.CMSController{},
@@ -115,6 +209,7 @@ func init() {
 	beego.Router("/api/meritms", &controllers.MainController{}, "get:Getmeritmsapi")
 	//根据app.conf里的设置，显示首页
 	beego.Router("/", &controllers.MainController{}, "get:Get")
+	beego.Router("/cms", &controllers.IndexController{}, "get:Cms")
 	//显示首页
 	beego.Router("/index", &controllers.IndexController{}, "*:GetIndex")
 	//首页放到onlyoffice

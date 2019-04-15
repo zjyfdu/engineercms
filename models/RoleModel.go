@@ -5,8 +5,8 @@ import (
 	// "encoding/hex"
 	// "errors"
 	// "strconv"
-	// "fmt"
-	// "log"
+	"fmt"
+	"log"
 	"time"
 	// "github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -141,11 +141,21 @@ func AddUserRole(uid, rid int64) error {
 		UserId: uid,
 		RoleId: rid,
 	}
-	_, err := o.Insert(userrole)
-	if err != nil {
-		return err
+
+	// 三个返回参数依次为：是否新创建的，对象 Id 值，错误
+	created, id, err := o.ReadOrCreate(&userrole, "UserId", "RoleId")
+
+	if created {
+		fmt.Println("New Insert an object. Id:", id)
+	} else {
+		fmt.Println("Get an object. Id:", id)
 	}
-	return nil
+
+	// _, err := o.Insert(userrole)
+	// if err != nil {
+	// 	return err
+	// }
+	return err
 }
 
 func DeleteUserRole(uid, rid int64) error {
@@ -158,11 +168,83 @@ func DeleteUserRole(uid, rid int64) error {
 	}
 	// if o.Read(&merit) == nil {
 	_, err = o.Delete(&role) //删除用户角色
-	if err != nil {
-		return err
-	}
+	// if err != nil {
+	// 	return err
+	// }
 	// }
 	return err
+}
+
+func InsertRole() error {
+	fmt.Println("insert role ...")
+	// r := new(Role)
+	var r Role
+	r.Rolename = "admin"
+	r.Rolenumber = "1"
+	r.Status = "1"
+	// r.Remark = "I'm a admin role"
+	// r.Status = 2
+	// r.Title = "Admin role"
+	// o.Insert(r)
+	id, err := SaveRole(r)
+	if err == nil && id > 0 {
+		fmt.Println("insert role end")
+	} else {
+		log.Println(err)
+	}
+	user, err := GetUserByUsername("admin")
+	if err != nil {
+		log.Println(err)
+	}
+	//将用户admin加入到角色admin里
+	err = AddUserRole(user.Id, id)
+	if err != nil {
+		log.Println(err)
+	}
+	//匿名用户角色
+	r.Rolename = "anonymous"
+	r.Rolenumber = "5"
+	r.Status = "1"
+	// r.Remark = "I'm a admin role"
+	// r.Status = 2
+	// r.Title = "Admin role"
+	// o.Insert(r)
+	id, err = SaveRole(r)
+	if err == nil && id > 0 {
+		fmt.Println("insert role end")
+	} else {
+		log.Println(err)
+	}
+
+	r.Rolename = "everyone"
+	r.Rolenumber = "5"
+	r.Status = "1"
+	// r.Remark = "I'm a admin role"
+	// r.Status = 2
+	// r.Title = "Admin role"
+	// o.Insert(r)
+	id, err = SaveRole(r)
+	if err == nil && id > 0 {
+		fmt.Println("insert role end")
+	} else {
+		log.Println(err)
+	}
+
+	r.Rolename = "isme"
+	r.Rolenumber = "4"
+	r.Status = "1"
+	// r.Remark = "I'm a admin role"
+	// r.Status = 2
+	// r.Title = "Admin role"
+	// o.Insert(r)
+	id, err = SaveRole(r)
+	if err == nil && id > 0 {
+		fmt.Println("insert role end")
+	} else {
+		log.Println(err)
+	}
+	return err
+	// fmt.Println("insert role end")
 }
 
 //由角色id、action和项目id，取得所有的路径

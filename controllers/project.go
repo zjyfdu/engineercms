@@ -91,29 +91,66 @@ func (c *ProjController) Get() {
 	c.Data["Select2"] = slice1
 }
 
+// @Title get cms projectlist...
+// @Description get projectlist..
+// @Param page query string false "The page of projectlist"
+// @Param limit query string false "The size of page"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /getprojects [get]
 //分页提供给项目列表页的table中json数据
 //http://127.0.0.1/project/getprojects?limit=15&pageNo=1
 func (c *ProjController) GetProjects() {
 	id := c.Ctx.Input.Param(":id")
+
+	var offset, limit1, page1 int64
+	var err error
 	limit := c.Input().Get("limit")
-	limit1, err := strconv.ParseInt(limit, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
 	page := c.Input().Get("pageNo")
-	page1, err := strconv.ParseInt(page, 10, 64)
-	if err != nil {
-		beego.Error(err)
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
 	}
+
+	if page1 <= 1 {
+		offset = 0
+	} else {
+		offset = (page1 - 1) * limit1
+	}
+
+	// limit := c.Input().Get("limit")
+	// limit1, err := strconv.ParseInt(limit, 10, 64)
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+	// page := c.Input().Get("pageNo")
+	// page1, err := strconv.ParseInt(page, 10, 64)
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
 	searchText := c.Input().Get("searchText")
 	if id == "" {
 		//显示全部
-		var offset int64
-		if page1 <= 1 {
-			offset = 0
-		} else {
-			offset = (page1 - 1) * limit1
-		}
+		// var offset int64
+		// if page1 <= 1 {
+		// 	offset = 0
+		// } else {
+		// 	offset = (page1 - 1) * limit1
+		// }
 		projects, err := models.GetProjectsPage(limit1, offset, searchText)
 		if err != nil {
 			beego.Error(err)

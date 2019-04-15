@@ -69,6 +69,10 @@ type Employee struct { //职员的分院和科室属性
 	Marks      int    //记录个数
 }
 
+func (c *IndexController) Cms() {
+	c.TplName = "index.html"
+}
+
 //显示侧栏结构，科室里员工
 func (c *IndexController) GetIndex() {
 	c.Data["IsIndex"] = true

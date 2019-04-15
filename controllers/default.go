@@ -74,7 +74,8 @@ func (c *MainController) Get() {
 	case "IsDesignGant", "IsConstructGant":
 		c.Redirect("/projectgant", 301)
 	default:
-		c.Redirect("/index", 301)
+		beego.Info("cmsdefault")
+		c.Redirect("/cms", 301)
 	}
 	// c.TplName = "index.tpl"
 	// c.TplName = "engineercms.tpl"

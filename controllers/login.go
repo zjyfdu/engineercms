@@ -12,6 +12,8 @@ import (
 	"strconv"
 	// "github.com/astaxie/beego/session"
 	"encoding/json"
+	// "github.com/casbin/beego-orm-adapter"
+	// "github.com/casbin/casbin"
 	"net/http"
 )
 
@@ -138,12 +140,23 @@ func (c *LoginController) Post() {
 	return
 }
 
+// @Title post user login...
+// @Description post login..
+// @Param uname query string  true "The name of user"
+// @Param pwd query string  true "The password of user"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /loginpost [post]
 //login弹框输入用户名和密码后登陆提交
 func (c *LoginController) LoginPost() {
 	var user models.User
 	user.Username = c.Input().Get("uname")
+	// beego.Info(user.Username)
 	// uname := c.GetString("uname")
-	Pwd1 := c.GetString("pwd")
+	// Pwd1 := c.GetString("pwd")
+	Pwd1 := c.Input().Get("pwd")
+	// beego.Info(Pwd1)
 	// autoLogin := c.Input().Get("autoLogin") == "on"
 	islogin := 0
 	// maxAge := 0
@@ -156,7 +169,8 @@ func (c *LoginController) LoginPost() {
 	md5Ctx.Write([]byte(Pwd1))
 	cipherStr := md5Ctx.Sum(nil)
 	user.Password = hex.EncodeToString(cipherStr)
-	beego.Info(user.Password)
+	// beego.Info(user.Password)
+	beego.Info(islogin)
 	err := models.ValidateUser(user)
 	if err == nil {
 		c.SetSession("uname", user.Username)
@@ -181,9 +195,11 @@ func (c *LoginController) LoginPost() {
 				utils.FileLogs.Error(user.Username + " 更新用户登录时间 " + err.Error())
 			}
 		}
+		beego.Info(islogin)
 	} else {
 		islogin = 1
 	}
+	beego.Info(islogin)
 	// if name == "admin" && pwd == "123456" {
 	// 	c.SetSession("loginuser", "adminuser")
 	// 	fmt.Println("当前的session:")
@@ -347,6 +363,26 @@ func checkRole(ctx *context.Context) (role string, err error) { //这里返回�
 // 	Password string
 // }
 
+func Authorizer(ctx *context.Context) (uname, role string, uid int64) {
+	v := ctx.Input.CruSession.Get("uname") //用来获取存储在服务器端中的数据??。
+	// beego.Info(v)                          //qin.xc
+	var user models.User
+	var err error
+	if v != nil { //如果登录了
+		uname = v.(string)
+		user, err = models.GetUserByUsername(uname)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			uid = user.Id
+			role = user.Role
+		}
+	} else { //如果没登录
+		role = "anonymous"
+	}
+	return uname, role, uid
+}
+
 //用户登录，则role是1则是admin，其余没有意义
 //ip区段，casbin中表示，比如9楼ip区段作为用户，赋予了角色，这个角色具有访问项目目录权限
 func checkprodRole(ctx *context.Context) (uname, role string, uid int64, isadmin, islogin bool) {
@@ -398,6 +434,104 @@ func checkprodRole(ctx *context.Context) (uname, role string, uid int64, isadmin
 	}
 	return uname, userrole, uid, isadmin, islogin
 }
+
+// @Title get user login...
+// @Description get login..
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /islogin [get]
+//login弹框输入用户名和密码后登陆提交
+func (c *LoginController) Islogin() {
+	var islogin, isadmin bool
+	var uname string
+	var uid int64
+	v := c.GetSession("uname")
+	// v := c.Ctx.CruSession.Get("uname") //用来获取存储在服务器端中的数据??。
+	var userrole string
+	var user models.User
+	var err error
+	var iprole int
+	if v != nil { //如果登录了
+		islogin = true
+		uname = v.(string)
+		user, err = models.GetUserByUsername(uname)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			uid = user.Id
+			if user.Role == "0" {
+				isadmin = false
+				userrole = "4"
+			} else if user.Role == "1" {
+				isadmin = true
+				userrole = user.Role
+			} else {
+				isadmin = false
+				userrole = user.Role
+			}
+		}
+	} else { //如果没登录,查询ip对应的用户
+		islogin = false
+		isadmin = false
+		uid = 0
+		uname = c.Ctx.Input.IP()
+		// beego.Info(uname)
+		user, err = models.GetUserByIp(uname)
+		if err != nil { //如果查不到，则用户名就是ip，role再根据ip地址段权限查询
+			// beego.Error(err)
+			iprole = Getiprole(c.Ctx.Input.IP()) //查不到，则是5——这个应该取消，采用casbin里的ip区段
+			userrole = strconv.Itoa(iprole)
+		} else { //如果查到，则role和用户名
+			if user.Role == "1" {
+				isadmin = true
+			}
+			uid = user.Id
+			userrole = user.Role
+			uname = user.Username
+			islogin = true
+		}
+	}
+
+	c.Data["json"] = map[string]interface{}{"uname": uname, "role": userrole, "uid": uid, "islogin": islogin, "isadmin": isadmin}
+	c.ServeJSON()
+}
+
+// func Authorizer1(e *casbin.Enforcer, users models.User) func(next http.Handler) http.Handler {
+// 	role, err := session.GetString(r, "role")
+// 	if err != nil {
+// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
+// 		return
+// 	}
+// 	if role == "" {
+// 		role = "anonymous"
+// 	}
+// 	// if it's a member, check if the user still exists
+// 	if role == "member" {
+// 		uid, err := session.GetInt(r, "userID")
+// 		if err != nil {
+// 			writeError(http.StatusInternalServerError, "ERROR", w, err)
+// 			return
+// 		}
+// 		exists := users.Exists(uid)
+// 		if !exists {
+// 			writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
+// 			return
+// 		}
+// 	}
+// 	// casbin rule enforcing
+// 	res, err := e.EnforceSafe(role, r.URL.Path, r.Method)
+// 	if err != nil {
+// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
+// 		return
+// 	}
+// 	if res {
+// 		next.ServeHTTP(w, r)
+// 	} else {
+// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
+// 		return
+// 	}
+// }
 
 // func checkRole(ctx *context.Context) (roles []*models.Role, err error) {
 // 	ck, err := ctx.Request.Cookie("uname")

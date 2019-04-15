@@ -50,7 +50,7 @@ func (c *FlowController) Get() {
 // @router /workflow [get]
 // 页面
 func (c *FlowController) WorkFlow() {
-	c.TplName = "index.tpl"
+	c.TplName = "index.html"
 }
 
 // @Title post wf doctype...
@@ -102,8 +102,8 @@ type doctypelist struct {
 	Total   int             `json:"total"` //string或int64都行！
 }
 
-// @Title post wf doctype...
-// @Description post workflowdoctype..
+// @Title get wf doctypelist...
+// @Description get workflowdoctype..
 // @Param page query string false "The page of doctype"
 // @Param limit query string false "The size of page"
 // @Success 200 {object} models.GetProductsPage

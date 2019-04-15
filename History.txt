@@ -1,4 +1,7 @@
                        EngineerCMS revision history
+		       
+14, engineercms 1.08 (April 15, 2019)
+	+) Add vue.js index.html 
 
 13, EngineerCMS 1.07 (July 11, 2018)
 	+) Add the DWG view inline 
