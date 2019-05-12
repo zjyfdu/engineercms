@@ -224,6 +224,7 @@ func (c *ProjController) GetProjects() {
 	}
 }
 
+//分页提供给项目列表页的table中json数据
 //根据id查看项目，查出项目当前级和下一级目录
 //点击第二级后，用下面的懒加载目录
 func (c *ProjController) GetProject() {
@@ -379,6 +380,139 @@ func (c *ProjController) GetProject() {
 		// beego.Info("电脑端！")
 		c.TplName = "project.tpl"
 	}
+}
+
+// @Title get cms projecttree...
+// @Description get projecttree..
+// @Param id path string  true "The id of projecttree"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /getprojecttree/:id [get]
+//根据id查看项目，查出项目当前级和下一级目录
+//点击第二级后，用下面的懒加载目录
+func (c *ProjController) GetProjectTree() {
+	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
+	c.Data["Username"] = username
+	c.Data["Ip"] = c.Ctx.Input.IP()
+	c.Data["role"] = role
+	c.Data["IsAdmin"] = isadmin
+	c.Data["IsLogin"] = islogin
+	c.Data["Uid"] = uid
+	id := c.Ctx.Input.Param(":id")
+
+	navid1 := beego.AppConfig.String("navigationid1")
+	navid2 := beego.AppConfig.String("navigationid2")
+	navid3 := beego.AppConfig.String("navigationid3")
+	navid4 := beego.AppConfig.String("navigationid4")
+	navid5 := beego.AppConfig.String("navigationid5")
+	navid6 := beego.AppConfig.String("navigationid6")
+	navid7 := beego.AppConfig.String("navigationid7")
+	navid8 := beego.AppConfig.String("navigationid8")
+	navid9 := beego.AppConfig.String("navigationid9")
+
+	switch id {
+	case navid1:
+		c.Data["IsNav1"] = true
+	case navid2:
+		c.Data["IsNav2"] = true
+	case navid3:
+		c.Data["IsNav3"] = true
+	case navid4:
+		c.Data["IsNav4"] = true
+	case navid5:
+		c.Data["IsNav5"] = true
+	case navid6:
+		c.Data["IsNav6"] = true
+	case navid7:
+		c.Data["IsNav7"] = true
+	case navid8:
+		c.Data["IsNav8"] = true
+	case navid9:
+		c.Data["IsNav9"] = true
+	default:
+		c.Data["IsProject"] = true
+	}
+	c.Data["Id"] = id
+	// var categories []*models.ProjCategory
+	// var err error
+	//id转成64为
+	idNum, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//取项目本身
+	category, err := models.GetProj(idNum)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	//记录开始时间
+	// start := time.Now()
+	//取项目所有子孙
+	categories, err := models.GetProjectsbyPid(idNum)
+	if err != nil {
+		beego.Error(err)
+	}
+	//记录结束时间差
+	// elapsed := time.Since(start)
+	// beego.Info(elapsed)
+	//根据项目顶级id取得项目下所有成果
+	var topprojectid int64
+	if category.ParentId != 0 { //如果不是根目录
+		parentidpath := strings.Replace(strings.Replace(category.ParentIdPath, "#$", "-", -1), "$", "", -1)
+		parentidpath1 := strings.Replace(parentidpath, "#", "", -1)
+		patharray := strings.Split(parentidpath1, "-")
+		topprojectid, err = strconv.ParseInt(patharray[0], 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	} else {
+		topprojectid = category.Id
+	}
+	_, products, err := models.GetProjProducts(topprojectid, 2)
+	if err != nil {
+		beego.Error(err)
+	}
+	//记录结束时间差
+	//根据id取出下级
+	cates := getsons(idNum, categories)
+	//算出最大级数
+	// grade := make([]int, 0)
+	// for _, v := range categories {
+	// 	grade = append(grade, v.Grade)
+	// }
+	// height := intmax(grade[0], grade[1:]...)
+	var count int
+	//取得这个项目目录下的成果数量
+	productcount, err := models.GetProducts(idNum)
+	if err != nil {
+		beego.Error(err)
+	}
+	count = len(productcount)
+	for _, proj := range cates {
+		id := proj.Id
+		for _, m := range products {
+			if id == m.ProjectId {
+				count = count + 1
+			}
+		}
+		slice := getsons(id, categories)
+		// 如果遍历的当前节点下还有节点，则进入该节点进行递归
+		if len(slice) > 0 {
+			getprodcount(slice, categories, products, &count)
+		}
+	}
+	var tags [1]string
+	tags[0] = strconv.Itoa(count)
+	//递归生成目录json
+	root := EleProjTree{category.Id, category.Title, "", tags, false, []*EleProjTree{}}
+	makeeletreejson(cates, categories, products, &root)
+	root1 := make([]EleProjTree, 1)
+	root1[0] = root
+	//记录结束时间差
+	c.Data["json"] = root1
+	c.ServeJSON()
 }
 
 //根据id懒加载项目下级目录——上面那个是显示第一级和第二级目录
@@ -1872,6 +2006,16 @@ type FileNode1 struct {
 	FileNodes []*FileNode1 `json:"nodes"`
 }
 
+//vue.js-project树状目录数据——带成果数量
+type EleProjTree struct {
+	Id       int64          `json:"id"`
+	Label    string         `json:"label"`
+	Code     string         `json:"code"` //分级目录代码
+	Tags     [1]string      `json:"tags"` //显示员工数量，如果定义为数值[1]int，则无论如何都显示0，所以要做成字符
+	Lazy     bool           `json:"lazy"`
+	Children []*EleProjTree `json:"children"`
+}
+
 //树状目录数据
 type FileNode struct {
 	Id        int64       `json:"id"`
@@ -1957,6 +2101,40 @@ func maketreejson2(cates, categories []*models.Project, products []*models.Produ
 		// 将当前名和id作为子节点添加到目录下
 		child := FileNode1{id, title, code, tags, true, []*FileNode1{}}
 		node.FileNodes = append(node.FileNodes, &child)
+
+		// 如果遍历的当前节点下还有节点，则进入该节点进行递归
+		// if len(slice) > 0 {
+		// 	maketreejson2(slice, categories, products, &child)
+		// }
+	}
+	return
+}
+
+//递归构造项目树状目录_带成果数量_只显示项目层和下面第一层
+func makeeletreejson(cates, categories []*models.Project, products []*models.Product, node *EleProjTree) {
+	// 遍历目录
+	for _, proj := range cates {
+		id := proj.Id
+		title := proj.Title
+		code := proj.Code
+		var count int
+		for _, m := range products {
+			if id == m.ProjectId {
+				count = count + 1
+			}
+		}
+		// beego.Info(count)
+		slice := getsons(id, categories)
+		// 如果遍历的当前节点下还有节点，则进入该节点进行递归
+		if len(slice) > 0 {
+			getprodcount(slice, categories, products, &count)
+		}
+		// beego.Info(&count)
+		var tags [1]string
+		tags[0] = strconv.Itoa(count)
+		// 将当前名和id作为子节点添加到目录下
+		child := EleProjTree{id, title, code, tags, true, []*EleProjTree{}}
+		node.Children = append(node.Children, &child)
 
 		// 如果遍历的当前节点下还有节点，则进入该节点进行递归
 		// if len(slice) > 0 {

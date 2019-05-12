@@ -1027,6 +1027,371 @@ paths:
           description: Invalid page
         "404":
           description: page not found
+  /checkin/activity/actInfo:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/activity/apply:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/activity/create:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin activity
+      parameters:
+      - in: query
+        name: CreaterId
+        description: The CreaterId for activity
+        required: true
+        type: string
+      - in: query
+        name: Caption
+        description: The Caption for activity
+        required: true
+        type: string
+      - in: query
+        name: Desc
+        description: The Desc for activity
+        required: true
+        type: string
+      - in: query
+        name: Location
+        description: The Location for activity
+        required: true
+        type: string
+      - in: query
+        name: Lat
+        description: The Lat for activity
+        required: true
+        type: string
+      - in: query
+        name: Lng
+        description: The Lng for activity
+        required: true
+        type: string
+      - in: query
+        name: SatrtDate
+        description: The SatrtDate for activity
+        required: true
+        type: string
+      - in: query
+        name: EndDate
+        description: The EndDate for activity
+        required: true
+        type: string
+      - in: query
+        name: IfFace
+        description: The IfFace for activity
+        required: true
+        type: string
+      - in: query
+        name: IfPhoto
+        description: The IfPhoto for activity
+        required: true
+        type: string
+      - in: query
+        name: IfLocation
+        description: The IfLocation for activity
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/activity/getall:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/activity/haveApply:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/activity/like:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/check:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/check/compare:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/check/details:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/checkgetcheck:
+    get:
+      tags:
+      - checkin
+      description: get check
+      operationId: CheckController.get checkin check
+      parameters:
+      - in: query
+        name: userId
+        description: The userId for check
+        required: true
+        type: string
+      - in: query
+        name: activityId
+        description: The activityid for check
+        required: true
+        type: string
+      - in: query
+        name: year
+        description: The year for check
+        required: true
+        type: string
+      - in: query
+        name: month
+        description: The month for check
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/details/date:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/monthcheck:
+    get:
+      tags:
+      - checkin
+      description: get monthcheck
+      operationId: CheckController.get mothcheckin
+      parameters:
+      - in: query
+        name: page
+        description: The page of check
+        type: string
+      - in: query
+        name: limit
+        description: The size of check
+        type: string
+      - in: query
+        name: activityId
+        description: The activityid for check
+        required: true
+        type: string
+      - in: query
+        name: year
+        description: The year for check
+        required: true
+        type: string
+      - in: query
+        name: month
+        description: The month for check
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/monthchecksum:
+    get:
+      tags:
+      - checkin
+      description: get monthcheck
+      operationId: CheckController.get mothcheckin
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /checkin/person:
+    post:
+      tags:
+      - checkin
+      description: post person
+      operationId: CheckController.post checkin person
+      parameters:
+      - in: query
+        name: username
+        description: The userId for person
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
   /project/getprojects:
     get:
       tags:
@@ -1037,6 +1402,60 @@ paths:
       - in: query
         name: page
         description: The page of projectlist
+        type: string
+      - in: query
+        name: limit
+        description: The size of page
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /project/getprojecttree/{id}:
+    get:
+      tags:
+      - project
+      description: get projecttree..
+      operationId: ProjController.get cms projecttree...
+      parameters:
+      - in: path
+        name: id
+        description: The id of projecttree
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /project/project/products/{id}:
+    get:
+      tags:
+      - project
+      description: get projproducts..
+      operationId: ProdController.get projproducts...
+      parameters:
+      - in: path
+        name: id
+        description: The id of projproducts
+        required: true
+        type: string
+      - in: query
+        name: searchText
+        description: The searchText of projproducts
+        type: string
+      - in: query
+        name: page
+        description: The page of projproducts
         type: string
       - in: query
         name: limit
@@ -1066,6 +1485,11 @@ paths:
       - in: query
         name: content
         description: The content of article
+        required: true
+        type: string
+      - in: query
+        name: skey
+        description: The skey of user
         required: true
         type: string
       responses:
@@ -1171,6 +1595,27 @@ paths:
           description: Invalid page supplied
         "404":
           description: article not found
+  /wx/deletewxarticle:
+    post:
+      tags:
+      - wx
+      description: post article by catalogid
+      operationId: ArticleController.post wx artile by articleId
+      parameters:
+      - in: query
+        name: id
+        description: The id of article
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.AddArticle'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articl not found
   /wx/deletewxrelease/{id}:
     post:
       tags:
@@ -1225,6 +1670,11 @@ paths:
         description: The id of article
         required: true
         type: string
+      - in: path
+        name: skey
+        description: The skey of user
+        required: true
+        type: string
       responses:
         "200":
           description: ""
@@ -1244,6 +1694,11 @@ paths:
       - in: query
         name: page
         description: The page for articles list
+        required: true
+        type: string
+      - in: query
+        name: skey
+        description: The skey for user
         required: true
         type: string
       responses:
@@ -1378,6 +1833,21 @@ paths:
           description: Invalid page supplied
         "404":
           description: standards not found
+  /wx/uploadwxavatar:
+    post:
+      tags:
+      - wx
+      description: post user avatar
+      operationId: FroalaController.post wx user avatar
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.SUCCESS'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articl not found
   /wx/uploadwximg:
     post:
       tags:
@@ -1410,6 +1880,21 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/.SUCCESS'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articl not found
+  /wx/wxhassession:
+    get:
+      tags:
+      - wx
+      description: get wx usersession
+      operationId: LoginController.get wx login
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.success'
         "400":
           description: Invalid page supplied
         "404":
@@ -1450,16 +1935,6 @@ paths:
       - in: path
         name: id
         description: The id of pdf
-        required: true
-        type: string
-      - in: query
-        name: code
-        description: The code of wx
-        required: true
-        type: string
-      - in: query
-        name: app_version
-        description: The app_version of wx
         required: true
         type: string
       responses:
@@ -1560,3 +2035,6 @@ tags:
 - name: adminlog
   description: |
     CMSADMIN API
+- name: checkin
+  description: |
+    CMSCHECKIN API

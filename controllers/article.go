@@ -9,7 +9,7 @@ import (
 	// "os"
 	"github.com/PuerkitoBio/goquery"
 	"io"
-	"net/http"
+	// "net/http"
 	"path"
 	"regexp"
 	"strconv"
@@ -337,12 +337,14 @@ type prodWxTableserver struct {
 // @Title get wx artiles list
 // @Description get articles by page
 // @Param page query string  true "The page for articles list"
+// @Param skey query string  true "The skey for user"
 // @Success 200 {object} models.GetProductsPage
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /getwxarticles [get]
 //小程序取得所有文章列表，分页_珠三角设代用
 func (c *ArticleController) GetWxArticles() {
+
 	// id := c.Ctx.Input.Param(":id")
 	id := beego.AppConfig.String("wxcatalogid") //"26159" //25002珠三角设代日记id26159
 	wxsite := beego.AppConfig.String("wxreqeustsite")
@@ -369,66 +371,56 @@ func (c *ArticleController) GetWxArticles() {
 	} else {
 		offset = (page1 - 1) * limit1
 	}
-	// articleslice := make([]*WxArticle, 0)
-	// getwxarticles(idNum, limit1, offset, articleslice, wxsite)
-	var user models.User
-	//取出用户openid
-	JSCODE := c.Input().Get("code")
-	// beego.Info(JSCODE)
-	if JSCODE != "" {
-		APPID := beego.AppConfig.String("wxAPPID")
-		SECRET := beego.AppConfig.String("wxSECRET")
-		app_version := c.Input().Get("app_version")
-		if app_version == "3" {
-			APPID = beego.AppConfig.String("wxAPPID3")
-			SECRET = beego.AppConfig.String("wxSECRET3")
-		}
-		// APPID := "wx7f77b90a1a891d93"
-		// SECRET := "f58ca4f28cbb52ccd805d66118060449"
-		requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-		resp, err := http.Get(requestUrl)
-		if err != nil {
-			beego.Error(err)
-			return
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			beego.Error(err)
-			// return
-		}
-		var data map[string]interface{}
-		err = json.NewDecoder(resp.Body).Decode(&data)
-		if err != nil {
-			beego.Error(err)
-			// return
-		}
-		// beego.Info(data)
-		var openID string
-		// var sessionKey string
-		if _, ok := data["session_key"]; !ok {
-			errcode := data["errcode"]
-			errmsg := data["errmsg"].(string)
-			// return
-			c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-			// c.ServeJSON()
-		} else {
-			// var unionId string
-			openID = data["openid"].(string)
-			user, err = models.GetUserByOpenID(openID)
-			if err != nil {
-				beego.Error(err)
-			}
-		}
-	}
-	var userid int64
-	if user.Nickname != "" {
-		userid = user.Id
-	} else {
-		userid = 0
-	}
+
+	// var user models.User
+	// JSCODE := c.Input().Get("code")
+	// if JSCODE != "" {
+	// 	APPID := beego.AppConfig.String("wxAPPID")
+	// 	SECRET := beego.AppConfig.String("wxSECRET")
+	// 	app_version := c.Input().Get("app_version")
+	// 	if app_version == "3" {
+	// 		APPID = beego.AppConfig.String("wxAPPID3")
+	// 		SECRET = beego.AppConfig.String("wxSECRET3")
+	// 	}
+	// 	// APPID := "wx7f77b90a1a891d93"
+	// 	// SECRET := "f58ca4f28cbb52ccd805d66118060449"
+	// 	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
+	// 	resp, err := http.Get(requestUrl)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 		return
+	// 	}
+	// 	defer resp.Body.Close()
+	// 	if resp.StatusCode != 200 {
+	// 		beego.Error(err)
+	// 	}
+	// 	var data map[string]interface{}
+	// 	err = json.NewDecoder(resp.Body).Decode(&data)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 	}
+	// 	var openID string
+	// 	if _, ok := data["session_key"]; !ok {
+	// 		errcode := data["errcode"]
+	// 		errmsg := data["errmsg"].(string)
+	// 		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
+	// 	} else {
+	// 		openID = data["openid"].(string)
+	// 		user, err = models.GetUserByOpenID(openID)
+	// 		if err != nil {
+	// 			beego.Error(err)
+	// 		}
+	// 	}
+	// }
+	// var userid int64
+	// if user.Nickname != "" {
+	// 	userid = user.Id
+	// } else {
+	// 	userid = 0
+	// }
 	//根据项目id取得所有成果
 	//bug_如果5个成果里都没有文章，则显示文章失败；如果多个文章，会超过5个
-	products, err := models.GetProductsPage(idNum, limit1, offset, userid, "")
+	products, err := models.GetProductsPage(idNum, limit1, offset, 0, "")
 	if err != nil {
 		beego.Error(err)
 	}
@@ -481,7 +473,7 @@ func (c *ArticleController) GetWxArticles() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /getwxarticless/:id [get]
-//小程序取得所有文章列表，分页_plus
+//小程序取得我的文章列表，分页_plus
 func (c *ArticleController) GetWxArticless() {
 	id := c.Ctx.Input.Param(":id")
 	// id := beego.AppConfig.String("wxcatalogid") //"26159" //25002珠三角设代日记id26159
@@ -511,61 +503,71 @@ func (c *ArticleController) GetWxArticless() {
 	}
 	// articleslice := make([]*WxArticle, 0)
 	// getwxarticles(idNum, limit1, offset, articleslice, wxsite)
-	var user models.User
-	//取出用户openid
-	JSCODE := c.Input().Get("code")
-	if JSCODE != "" {
-		// beego.Info(JSCODE)
-		APPID := beego.AppConfig.String("wxAPPID2")
-		SECRET := beego.AppConfig.String("wxSECRET2")
-		app_version := c.Input().Get("app_version")
-		if app_version == "3" {
-			APPID = beego.AppConfig.String("wxAPPID3")
-			SECRET = beego.AppConfig.String("wxSECRET3")
-		}
-		// APPID := "wx7f77b90a1a891d93"
-		// SECRET := "f58ca4f28cbb52ccd805d66118060449"
-		requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-		resp, err := http.Get(requestUrl)
-		if err != nil {
-			beego.Error(err)
-			return
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			beego.Error(err)
-			// return
-		}
-		var data map[string]interface{}
-		err = json.NewDecoder(resp.Body).Decode(&data)
-		if err != nil {
-			beego.Error(err)
-			// return
-		}
-		// beego.Info(data)
-		var openID string
-		// var sessionKey string
-		if _, ok := data["session_key"]; !ok {
-			errcode := data["errcode"]
-			errmsg := data["errmsg"].(string)
-			// return
-			c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-			// c.ServeJSON()
-		} else {
-			// var unionId string
-			openID = data["openid"].(string)
-			user, err = models.GetUserByOpenID(openID)
-			if err != nil {
-				beego.Error(err)
-			}
-		}
-	}
+	// var user models.User
+	// //取出用户openid
+	// JSCODE := c.Input().Get("code")
+	// if JSCODE != "" {
+	// 	// beego.Info(JSCODE)
+	// 	APPID := beego.AppConfig.String("wxAPPID2")
+	// 	SECRET := beego.AppConfig.String("wxSECRET2")
+	// 	app_version := c.Input().Get("app_version")
+	// 	if app_version == "3" {
+	// 		APPID = beego.AppConfig.String("wxAPPID3")
+	// 		SECRET = beego.AppConfig.String("wxSECRET3")
+	// 	}
+	// 	// APPID := "wx7f77b90a1a891d93"
+	// 	// SECRET := "f58ca4f28cbb52ccd805d66118060449"
+	// 	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
+	// 	resp, err := http.Get(requestUrl)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 		return
+	// 	}
+	// 	defer resp.Body.Close()
+	// 	if resp.StatusCode != 200 {
+	// 		beego.Error(err)
+	// 		// return
+	// 	}
+	// 	var data map[string]interface{}
+	// 	err = json.NewDecoder(resp.Body).Decode(&data)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 		// return
+	// 	}
+	// 	// beego.Info(data)
+	// 	var openID string
+	// 	// var sessionKey string
+	// 	if _, ok := data["session_key"]; !ok {
+	// 		errcode := data["errcode"]
+	// 		errmsg := data["errmsg"].(string)
+	// 		// return
+	// 		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
+	// 		// c.ServeJSON()
+	// 	} else {
+	// 		// var unionId string
+	// 		openID = data["openid"].(string)
 	var userid int64
-	if user.Nickname != "" {
-		userid = user.Id
-	} else {
+	openID := c.GetSession("openID")
+	if openID == nil {
+		// return false
 		userid = 0
+		//     this.SetSession("asta", int(1))
+		//     this.Data["num"] = 0
+	} else {
+		user, err := models.GetUserByOpenID(openID.(string))
+		if err != nil {
+			beego.Error(err)
+		}
+		userid = user.Id
 	}
+	// 	}
+	// }
+	//
+	// if user.Nickname != "" {
+	// 	userid = user.Id
+	// } else {
+	// 	userid = 0
+	// }
 	//根据项目id取得所有成果
 	//bug_如果5个成果里都没有文章，则显示文章失败；如果多个文章，会超过5个
 	products, err := models.GetProductsPage(idNum, limit1, offset, userid, "")
@@ -692,12 +694,36 @@ func getwxarticles(id, limit, offset int64, articleslice []*WxArticle, wxsite st
 // @Title get wx artile by articleId
 // @Description get article by articleid
 // @Param id path string  true "The id of article"
+// @Param skey path string  true "The skey of user"
 // @Success 200 {object} models.GetArticle
 // @Failure 400 Invalid page supplied
 // @Failure 404 articl not found
 // @router /getwxarticle/:id [get]
 //根据id查看一篇微信文章
 func (c *ArticleController) GetWxArticle() {
+	// usersessionid := c.Ctx.Input.Cookie("hotqinsessionid")
+	// skey := c.Input().Get("skey")
+	// v := c.Ctx.Input.CruSession.Get(skey) //用来获取存储在服务器端中的数据??。
+	// beego.Info(usersessionid)
+
+	// openID := c.Ctx.Input.CruSession.Get("openID")
+	// beego.Info(openID)
+	// v = c.Ctx.Input.CruSession.Get("sessionKey")
+	// beego.Info(v)
+	// v := c.GetSession("openID")
+	// beego.Info(v)
+	var openID string
+	openid := c.GetSession("openID")
+	beego.Info(openid)
+	if openid == nil {
+
+	} else {
+		openID = openid.(string)
+	}
+
+	// beego.Info(openID)
+	// v = c.GetSession("sessionKey")
+	// beego.Info(v)
 	// username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	// c.Data["Username"] = username
 	// c.Data["Ip"] = c.Ctx.Input.IP()
@@ -782,51 +808,51 @@ func (c *ArticleController) GetWxArticle() {
 	// beego.Info(slice2)
 
 	//根据用户openid，获取用户名，如果没有openid，则用用户昵称
-	JSCODE := c.Input().Get("code")
-	// beego.Info(JSCODE)
-	APPID := beego.AppConfig.String("wxAPPID2")
-	SECRET := beego.AppConfig.String("wxSECRET2")
-	app_version := c.Input().Get("app_version")
-	if app_version == "3" {
-		APPID = beego.AppConfig.String("wxAPPID3")
-		SECRET = beego.AppConfig.String("wxSECRET3")
-	}
-	// APPID := "wx05b480781ac8f4c8"                //这里一定要修改啊
-	// SECRET := "0ddfd84afc74f3bc5b5db373a4090dc5" //这里一定要修改啊
-	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-	resp, err := http.Get(requestUrl)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		beego.Error(err)
-		// return
-	}
-	var data map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		beego.Error(err)
-		// return
-	}
-	// beego.Info(data)
-	var openID string
-	// var sessionKey string
-	if _, ok := data["session_key"]; !ok {
-		errcode := data["errcode"]
-		errmsg := data["errmsg"].(string)
-		// return
-		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-		// c.ServeJSON()
-	} else {
-		// var unionId string
-		openID = data["openid"].(string)
-		// sessionKey = data["session_key"].(string)
-		// unionId = data["unionid"].(string)
-		// beego.Info(openID)
-		// beego.Info(sessionKey)
-	}
+	// JSCODE := c.Input().Get("code")
+	// // beego.Info(JSCODE)
+	// APPID := beego.AppConfig.String("wxAPPID2")
+	// SECRET := beego.AppConfig.String("wxSECRET2")
+	// app_version := c.Input().Get("app_version")
+	// if app_version == "3" {
+	// 	APPID = beego.AppConfig.String("wxAPPID3")
+	// 	SECRET = beego.AppConfig.String("wxSECRET3")
+	// }
+	// // APPID := "wx05b480781ac8f4c8"                //这里一定要修改啊
+	// // SECRET := "0ddfd84afc74f3bc5b5db373a4090dc5" //这里一定要修改啊
+	// requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
+	// resp, err := http.Get(requestUrl)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	return
+	// }
+	// defer resp.Body.Close()
+	// if resp.StatusCode != 200 {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// var data map[string]interface{}
+	// err = json.NewDecoder(resp.Body).Decode(&data)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// // beego.Info(data)
+	// var openID string
+	// // var sessionKey string
+	// if _, ok := data["session_key"]; !ok {
+	// 	errcode := data["errcode"]
+	// 	errmsg := data["errmsg"].(string)
+	// 	// return
+	// 	c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
+	// 	// c.ServeJSON()
+	// } else {
+	// 	// var unionId string
+	// 	openID = data["openid"].(string)
+	// 	// sessionKey = data["session_key"].(string)
+	// 	// unionId = data["unionid"].(string)
+	// 	// beego.Info(openID)
+	// 	// beego.Info(sessionKey)
+	// }
 
 	//取得文章所有点赞，检查有无自己的点赞
 	likes, err := models.GetAllTopicLikes(idNum)
@@ -965,38 +991,8 @@ func (c *ArticleController) GetWxArticle() {
 			break
 		}
 	}
-	// if e.Enforce(useridstring, projurls+"/", "POST", ".1") {
-	// 	c.Data["RoleAdd"] = "true"
-	// } else {
-	// 	c.Data["RoleAdd"] = "false"
-	// }
-	// if e.Enforce(useridstring, projurls+"/", "PUT", ".1") {
-	// 	c.Data["RoleUpdate"] = "true"
-	// } else {
-	// 	c.Data["RoleUpdate"] = "false"
-	// }
-	// if e.Enforce(useridstring, projurls+"/", "DELETE", ".1") {
-	// 	c.Data["RoleDelete"] = "true"
-	// } else {
-	// 	c.Data["RoleDelete"] = "false"
-	// }
-	// // c.Data["productid"] = prod.Uid//文章作者id
-	// u := c.Ctx.Input.UserAgent()
-	// matched, err := regexp.MatchString("AppleWebKit.*Mobile.*", u)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if matched == true {
-	// 	// beego.Info("移动端~")
-	// 	c.TplName = "marticle.tpl"
-	// } else {
-	// 	// beego.Info("电脑端！")
-	// 	c.TplName = "article.tpl"
-	// }
-	// c.Data["article"] = Article
 	c.Data["json"] = wxArticle
 	c.ServeJSON()
-	// c.Data["product"] = prod
 }
 
 // @Title get wx artiles list
@@ -1138,9 +1134,12 @@ func (c *ArticleController) AddArticle() {
 
 	//*****添加成果关联信息
 	if relevancy != "" {
-		_, err = models.AddRelevancy(Id, relevancy)
-		if err != nil {
-			beego.Error(err)
+		array := strings.Split(relevancy, ",")
+		for _, v := range array {
+			_, err = models.AddRelevancy(Id, v)
+			if err != nil {
+				beego.Error(err)
+			}
 		}
 	}
 	//*****添加成果关联信息结束
@@ -1215,71 +1214,65 @@ func (c *ArticleController) AddArticle() {
 // @Description post article by catalogid
 // @Param title query string  true "The title of article"
 // @Param content query string  true "The content of article"
+// @Param skey query string  true "The skey of user"
 // @Success 200 {object} models.AddArticle
 // @Failure 400 Invalid page supplied
 // @Failure 404 articl not found
 // @router /addwxarticle [post]
-//向设代日记id下添加微信小程序文章_珠三角设代用
+//向设代日记id下添加微信小程序文章_珠三角设代plus用
 func (c *ArticleController) AddWxArticle() {
-	JSCODE := c.Input().Get("code")
-	// beego.Info(JSCODE)
-	APPID := beego.AppConfig.String("wxAPPID")
-	SECRET := beego.AppConfig.String("wxSECRET")
-	// APPID := "wx7f77b90a1a891d93"
-	// SECRET := "f58ca4f28cbb52ccd805d66118060449"
-	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-	resp, err := http.Get(requestUrl)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		beego.Error(err)
-		// return
-	}
-	var data map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		beego.Error(err)
-		// return
-	}
-	// beego.Info(data)
-	var openID string
+	// var userrole string
+	// var user models.User
+	// var err error
+	// var iprole int
+	// if v != nil { //如果登录了
+	// 	islogin = true
+	// 	uname = v.(string)
+	// JSCODE := c.Input().Get("code")
+	// // beego.Info(JSCODE)
+	// APPID := beego.AppConfig.String("wxAPPID")
+	// SECRET := beego.AppConfig.String("wxSECRET")
+	// // APPID := "wx7f77b90a1a891d93"
+	// // SECRET := "f58ca4f28cbb52ccd805d66118060449"
+	// requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
+	// resp, err := http.Get(requestUrl)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// defer resp.Body.Close()
+	// if resp.StatusCode != 200 {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// var data map[string]interface{}
+	// err = json.NewDecoder(resp.Body).Decode(&data)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// // beego.Info(data)
+	// var openID string
 	var user models.User
-	// var sessionKey string
-	if _, ok := data["session_key"]; !ok {
-		errcode := data["errcode"]
-		errmsg := data["errmsg"].(string)
-		// return
-		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-		// c.ServeJSON()
-	} else {
-		// var unionId string
-		openID = data["openid"].(string)
-		user, err = models.GetUserByOpenID(openID)
+	var err error
+	openID := c.GetSession("openID")
+	if openID != nil {
+		user, err = models.GetUserByOpenID(openID.(string))
 		if err != nil {
 			beego.Error(err)
 		}
-		// sessionKey = data["session_key"].(string)
-		// unionId = data["unionid"].(string)
-		// beego.Info(openID)
-		// beego.Info(sessionKey)
 	}
-	// _, _, _, _, islogin := checkprodRole(c.Ctx)
-	// if !islogin {
-	// 	return
-	// }
-	//设代日记26159
-	//项目id25002
-	// code := c.Input().Get("code")
+	// // var sessionKey string
+	// if _, ok := data["session_key"]; !ok {
+	// 	errcode := data["errcode"]
+	// 	errmsg := data["errmsg"].(string)
+	// 	// return
+	// 	c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
+	// 	c.ServeJSON()
+	// } else {
+	// 	// var unionId string
+	// 	openID = data["openid"].(string)
 	pid := beego.AppConfig.String("wxcatalogid") //"26159"
-	// title := c.Input().Get("title")
-	// subtext := c.Input().Get("subtext")
-	// label := c.Input().Get("label")
-	// principal := c.Input().Get("principal")
-	// relevancy := c.Input().Get("relevancy")
-	// content := c.Input().Get("content")
 	title := c.Input().Get("title")
 	content := c.Input().Get("content")
 	content = "<p style='font-size: 18px;'>" + content + "</p>" //<span style="font-size: 18px;">这个字体到底是多大才好看</span>
@@ -1288,17 +1281,6 @@ func (c *ArticleController) AddWxArticle() {
 	for _, v := range array {
 		content = content + "<p><img src='" + v + "'></p>"
 	}
-	// id, err := models.AddWikiOne(title, content, "test")
-	// if err != nil {
-	// 	beego.Error(err)
-	// 	c.Data["json"] = map[string]interface{}{"info": "ERR", "id": id}
-	// 	c.ServeJSON()
-	// } else {
-	// 	// c.Data["json"] = id
-	// 	c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "id": id}
-	// 	c.ServeJSON()
-	// }
-
 	//id转成64为
 	pidNum, err := strconv.ParseInt(pid, 10, 64)
 	if err != nil {
@@ -1316,7 +1298,6 @@ func (c *ArticleController) AddWxArticle() {
 	if err != nil {
 		beego.Error(err)
 	}
-
 	code := time.Now().Format("2006-01-02 15:04")
 	code = strings.Replace(code, "-", "", -1)
 	code = strings.Replace(code, " ", "", -1)
@@ -1326,7 +1307,6 @@ func (c *ArticleController) AddWxArticle() {
 	if err != nil {
 		beego.Error(err)
 	}
-
 	//将文章添加到成果id下
 	aid, err := models.AddArticle(title, content, Id)
 	if err != nil {
@@ -1351,71 +1331,61 @@ func (c *ArticleController) AddWxArticle() {
 // @router /addwxarticles/:id [post]
 //向设代日记id下添加微信小程序文章——青少儿书画用
 func (c *ArticleController) AddWxArticles() {
-	JSCODE := c.Input().Get("code")
-	// beego.Info(JSCODE)
-	APPID := beego.AppConfig.String("wxAPPID2")
-	SECRET := beego.AppConfig.String("wxSECRET2")
-	app_version := c.Input().Get("app_version")
-	if app_version == "3" {
-		APPID = beego.AppConfig.String("wxAPPID3")
-		SECRET = beego.AppConfig.String("wxSECRET3")
-	}
-	// APPID := "wx05b480781ac8f4c8"                //这里一定要修改啊
-	// SECRET := "0ddfd84afc74f3bc5b5db373a4090dc5" //这里一定要修改啊
-	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-	resp, err := http.Get(requestUrl)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		beego.Error(err)
-		// return
-	}
-	var data map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		beego.Error(err)
-		// return
-	}
-	// beego.Info(data)
-	var openID string
+	// JSCODE := c.Input().Get("code")
+	// // beego.Info(JSCODE)
+	// APPID := beego.AppConfig.String("wxAPPID2")
+	// SECRET := beego.AppConfig.String("wxSECRET2")
+	// app_version := c.Input().Get("app_version")
+	// if app_version == "3" {
+	// 	APPID = beego.AppConfig.String("wxAPPID3")
+	// 	SECRET = beego.AppConfig.String("wxSECRET3")
+	// }
+	// // APPID := "wx05b480781ac8f4c8"                //这里一定要修改啊
+	// // SECRET := "0ddfd84afc74f3bc5b5db373a4090dc5" //这里一定要修改啊
+	// requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
+	// resp, err := http.Get(requestUrl)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	return
+	// }
+	// defer resp.Body.Close()
+	// if resp.StatusCode != 200 {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// var data map[string]interface{}
+	// err = json.NewDecoder(resp.Body).Decode(&data)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// // beego.Info(data)
+	// var openID string
 	var user models.User
-	// var sessionKey string
-	if _, ok := data["session_key"]; !ok {
-		errcode := data["errcode"]
-		errmsg := data["errmsg"].(string)
-		// return
-		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-		// c.ServeJSON()
+	var err error
+	// // var sessionKey string
+	// if _, ok := data["session_key"]; !ok {
+	// 	errcode := data["errcode"]
+	// 	errmsg := data["errmsg"].(string)
+	// 	// return
+	// 	c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
+	// 	c.ServeJSON()
+	// } else {
+	// var unionId string
+
+	var openID string
+	openid := c.GetSession("openID")
+	if openid == nil {
+
 	} else {
-		// var unionId string
-		openID = data["openid"].(string)
+		openID = openid.(string)
 		user, err = models.GetUserByOpenID(openID)
 		if err != nil {
 			beego.Error(err)
 		}
-		// sessionKey = data["session_key"].(string)
-		// unionId = data["unionid"].(string)
-		// beego.Info(openID)
-		// beego.Info(sessionKey)
 	}
-	// _, _, _, _, islogin := checkprodRole(c.Ctx)
-	// if !islogin {
-	// 	return
-	// }
-	//设代日记26159
-	//项目id25002
-	// code := c.Input().Get("code")
+
 	pid := c.Ctx.Input.Param(":id")
-	// pid := beego.AppConfig.String("wxcatalogid") //"26159"
-	// title := c.Input().Get("title")
-	// subtext := c.Input().Get("subtext")
-	// label := c.Input().Get("label")
-	// principal := c.Input().Get("principal")
-	// relevancy := c.Input().Get("relevancy")
-	// content := c.Input().Get("content")
 	title := c.Input().Get("title")
 	content := c.Input().Get("content")
 	if user.Nickname != "" {
@@ -1428,17 +1398,6 @@ func (c *ArticleController) AddWxArticles() {
 	for _, v := range array {
 		content = content + "<p><img src='" + v + "'></p>"
 	}
-	// id, err := models.AddWikiOne(title, content, "test")
-	// if err != nil {
-	// 	beego.Error(err)
-	// 	c.Data["json"] = map[string]interface{}{"info": "ERR", "id": id}
-	// 	c.ServeJSON()
-	// } else {
-	// 	// c.Data["json"] = id
-	// 	c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "id": id}
-	// 	c.ServeJSON()
-	// }
-
 	//id转成64为
 	pidNum, err := strconv.ParseInt(pid, 10, 64)
 	if err != nil {
@@ -1456,7 +1415,6 @@ func (c *ArticleController) AddWxArticles() {
 	if err != nil {
 		beego.Error(err)
 	}
-
 	code := time.Now().Format("2006-01-02 15:04")
 	code = strings.Replace(code, "-", "", -1)
 	code = strings.Replace(code, " ", "", -1)
@@ -1466,7 +1424,6 @@ func (c *ArticleController) AddWxArticles() {
 	if err != nil {
 		beego.Error(err)
 	}
-
 	//将文章添加到成果id下
 	aid, err := models.AddArticle(title, content, Id)
 	if err != nil {
@@ -1478,6 +1435,7 @@ func (c *ArticleController) AddWxArticles() {
 		c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "id": aid}
 		c.ServeJSON()
 	}
+
 }
 
 //向成果id下添加文章——这个没用，上面那个已经包含了
@@ -1490,9 +1448,6 @@ func (c *ArticleController) AddProdArticle() {
 		// c.Redirect("/roleerr", 302)
 		return
 	}
-	// _, role := checkprodRole(c.Ctx)
-	// if role == 1 {
-	// id := c.Ctx.Input.Param(":id")
 	pid := c.Input().Get("pid")
 	subtext := c.Input().Get("subtext")
 	content := c.Input().Get("content")
@@ -1611,5 +1566,58 @@ func (c *ArticleController) DeleteArticle() {
 		c.Redirect("/roleerr?url="+route, 302)
 		// c.Redirect("/roleerr", 302)
 		return
+	}
+}
+
+// @Title post wx artile by articleId
+// @Description post article by catalogid
+// @Param id query string  true "The id of article"
+// @Success 200 {object} models.AddArticle
+// @Failure 400 Invalid page supplied
+// @Failure 404 articl not found
+// @router /deletewxarticle [post]
+//根据文章id删除文章_没删除文章中的图片
+func (c *ArticleController) DeleteWxArticle() {
+	var openID string
+	openid := c.GetSession("openID")
+	if openid == nil {
+		c.Data["json"] = "没有注册，未查到openid"
+		c.ServeJSON()
+	} else {
+		openID = openid.(string)
+		user, err := models.GetUserByOpenID(openID)
+		if err != nil {
+			beego.Error(err)
+			c.Data["json"] = "未查到openid对应的用户"
+			c.ServeJSON()
+		} else {
+			//判断是否具备admin角色
+			role, err := models.GetRoleByRolename("admin")
+			if err != nil {
+				beego.Error(err)
+			}
+			uid := strconv.FormatInt(user.Id, 10)
+			roleid := strconv.FormatInt(role.Id, 10)
+			if e.HasRoleForUser(uid, "role_"+roleid) {
+				id := c.Input().Get("id")
+				//id转成64为
+				idNum, err := strconv.ParseInt(id, 10, 64)
+				if err != nil {
+					beego.Error(err)
+				}
+				err = models.DeleteArticle(idNum)
+				if err != nil {
+					beego.Error(err)
+					c.Data["json"] = "delete wrong"
+					c.ServeJSON()
+				} else {
+					c.Data["json"] = "ok"
+					c.ServeJSON()
+				}
+			} else {
+				c.Data["json"] = "不是管理员"
+				c.ServeJSON()
+			}
+		}
 	}
 }

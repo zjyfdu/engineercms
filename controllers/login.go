@@ -264,13 +264,16 @@ func (c *LoginController) WxLogin() {
 	} else if id == "3" {
 		APPID = beego.AppConfig.String("wxAPPID3")
 		SECRET = beego.AppConfig.String("wxSECRET3")
+	} else if id == "4" {
+		APPID = beego.AppConfig.String("wxAPPID4")
+		SECRET = beego.AppConfig.String("wxSECRET4")
 	}
-
+	//这里用security.go里的方法
 	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
 	resp, err := http.Get(requestUrl)
 	if err != nil {
 		beego.Error(err)
-		return
+		// return
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
@@ -289,22 +292,90 @@ func (c *LoginController) WxLogin() {
 		errmsg := data["errmsg"].(string)
 		// return
 		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-		// c.ServeJSON()
+		c.ServeJSON()
 	} else {
 		var openID string
 		var sessionKey string
 		// var unionId string
 		openID = data["openid"].(string)
 		sessionKey = data["session_key"].(string)
+
+		md5Ctx := md5.New()
+		md5Ctx.Write([]byte(sessionKey))
+		skey := md5Ctx.Sum(nil)
+
+		user, err := models.GetUserByOpenID(openID)
+		if err != nil {
+			beego.Error(err)
+			c.Data["json"] = map[string]interface{}{"errNo": 0, "msg": "未查到用户", "data": "这个openID的用户不存在"}
+			c.ServeJSON()
+		} else {
+			//根据userid取出user和avatorUrl
+			useravatar, err := models.GetUserAvatorUrl(user.Id)
+			if err != nil {
+				beego.Error(err)
+			}
+			var photo string
+			if len(useravatar) != 0 {
+				wxsite := beego.AppConfig.String("wxreqeustsite")
+				photo = wxsite + useravatar[0].UserAvatar.AvatarUrl
+			}
+			// roles, err := models.GetRolenameByUserId(user.Id)
+			// if err != nil {
+			// 	beego.Error(err)
+			// }
+			var isAdmin bool
+			// // beego.Info(roles)
+			// for _, v := range roles {
+			// 	// beego.Info(v.Rolename)
+			// 	if v.Rolename == "admin" {
+			// 		isAdmin = true
+			// 	}
+			// }
+			//判断是否具备admin角色
+			role, err := models.GetRoleByRolename("admin")
+			if err != nil {
+				beego.Error(err)
+			}
+			uid := strconv.FormatInt(user.Id, 10)
+			roleid := strconv.FormatInt(role.Id, 10)
+			isAdmin = e.HasRoleForUser(uid, "role_"+roleid)
+			// useridstring := strconv.FormatInt(user.Id, 10)
+			c.SetSession("openID", openID)
+			c.SetSession("sessionKey", sessionKey)
+			// https://blog.csdn.net/yelin042/article/details/71773636
+			c.SetSession("skey", skey)
+			sessionId := c.Ctx.Input.Cookie("hotqinsessionid")
+			c.Data["json"] = map[string]interface{}{"errNo": 1, "msg": "success", "userId": uid, "isAdmin": isAdmin, "sessionId": sessionId, "photo": photo}
+			c.ServeJSON()
+		}
+		// beego.Info(useridstring)
 		// unionId = data["unionid"].(string)
 		// beego.Info(openID)
 		// beego.Info(sessionKey)
 		// beego.Info(unionId)
 		//如果数据库存在记录，则存入session？
 		//上传文档的时候，检查session？
-		c.SetSession("uname", openID)
-		c.SetSession("pwd", sessionKey)
-		c.Data["json"] = map[string]interface{}{"errNo": 0, "msg": "success", "data": "3rd_session"}
+	}
+}
+
+// @Title get wx login
+// @Description get wx usersession
+// @Success 200 {object} success
+// @Failure 400 Invalid page supplied
+// @Failure 404 articl not found
+// @router /wxhassession [get]
+//微信小程序根据小程序自身存储的session，检查ecms里的openid session是否有效
+func (c *LoginController) WxHasSession() {
+	// var openID string
+	openid := c.GetSession("openID")
+	// beego.Info(openid)
+	if openid == nil {
+		c.Data["json"] = map[string]interface{}{"errNo": 0, "msg": "ecms中session失效"}
+		c.ServeJSON()
+	} else {
+		// openID = openid.(string)
+		c.Data["json"] = map[string]interface{}{"errNo": 1, "msg": "ecms中session有效"}
 		c.ServeJSON()
 	}
 }
@@ -492,7 +563,6 @@ func (c *LoginController) Islogin() {
 			islogin = true
 		}
 	}
-
 	c.Data["json"] = map[string]interface{}{"uname": uname, "role": userrole, "uid": uid, "islogin": islogin, "isadmin": isadmin}
 	c.ServeJSON()
 }

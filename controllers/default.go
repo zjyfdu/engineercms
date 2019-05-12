@@ -6,8 +6,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/utils/pagination"
 	// "io"
-	"encoding/json"
-	"net/http"
+	// "encoding/json"
+	// "net/http"
 	// "github.com/astaxie/beego/httplib"
 	// "bytes"
 	// "io/ioutil"
@@ -697,98 +697,70 @@ func (c *MainController) Pdf() {
 // @Title dowload wx pdf
 // @Description get wx pdf by id
 // @Param id path string  true "The id of pdf"
-// @Param code query string  true "The code of wx"
-// @Param app_version query string  true "The app_version of wx"
 // @Success 200 {object} models.GetAttachbyId
 // @Failure 400 Invalid page supplied
 // @Failure 404 pdf not found
 // @router /wxpdf/:id [get]
 func (c *MainController) WxPdf() {
-	JSCODE := c.Input().Get("code")
-	// beego.Info(JSCODE)
-	app_version := c.Input().Get("app_version")
-	var APPID, SECRET string
-	if app_version == "1" {
-		APPID = beego.AppConfig.String("wxAPPID")
-		SECRET = beego.AppConfig.String("wxSECRET")
-	} else if app_version == "4" {
-		APPID = beego.AppConfig.String("wxAPPID4")
-		SECRET = beego.AppConfig.String("wxSECRET4")
-		// beego.Info(APPID)
-	}
+	// var openID string
+	// openid := c.GetSession("openID")
+	// beego.Info(openid)
+	// if openid == nil {
 
-	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-	resp, err := http.Get(requestUrl)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		beego.Error(err)
-	}
-	var data map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		beego.Error(err)
-	}
-	// beego.Info(data)
-	var openID, useridstring, projurl string
-	var user models.User
-	// var sessionKey string
-	if _, ok := data["session_key"]; !ok {
-		errcode := data["errcode"]
-		beego.Info(errcode)
-		errmsg := data["errmsg"].(string)
-		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-	} else {
-		openID = data["openid"].(string)
-		beego.Info(openID)
-		user, err = models.GetUserByOpenID(openID)
+	// } else {
+	// 	openID = openid.(string)
+	// }
+	openID := c.GetSession("openID")
+	beego.Info(openID)
+	if openID != nil {
+		user, err := models.GetUserByOpenID(openID.(string))
 		if err != nil {
 			beego.Error(err)
+		} else {
+			useridstring := strconv.FormatInt(user.Id, 10)
+			// 判断用户是否具有权限。
+			id := c.Ctx.Input.Param(":id")
+			//pid转成64为
+			idNum, err := strconv.ParseInt(id, 10, 64)
+			if err != nil {
+				beego.Error(err)
+			}
+
+			//根据附件id取得附件的prodid，路径
+			attachment, err := models.GetAttachbyId(idNum)
+			if err != nil {
+				beego.Error(err)
+			}
+
+			product, err := models.GetProd(attachment.ProductId)
+			if err != nil {
+				beego.Error(err)
+			}
+			//根据projid取出路径
+			proj, err := models.GetProj(product.ProjectId)
+			if err != nil {
+				beego.Error(err)
+				utils.FileLogs.Error(err.Error())
+			}
+			var projurl string
+			if proj.ParentIdPath == "" || proj.ParentIdPath == "$#" {
+				projurl = "/" + strconv.FormatInt(proj.Id, 10) + "/"
+			} else {
+				projurl = "/" + strings.Replace(strings.Replace(proj.ParentIdPath, "#", "/", -1), "$", "", -1) + strconv.FormatInt(proj.Id, 10) + "/"
+			}
+			//由proj id取得url
+			fileurl, _, err := GetUrlPath(product.ProjectId)
+			if err != nil {
+				beego.Error(err)
+			}
+			fileext := path.Ext(attachment.FileName)
+			if e.Enforce(useridstring, projurl, c.Ctx.Request.Method, fileext) {
+				c.Ctx.Output.Download(fileurl + "/" + attachment.FileName)
+			}
 		}
-		useridstring = strconv.FormatInt(user.Id, 10)
-		beego.Info(useridstring)
-	}
-
-	// id := c.Input().Get("id")
-	id := c.Ctx.Input.Param(":id")
-	//pid转成64为
-	idNum, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		beego.Error(err)
-	}
-
-	//根据附件id取得附件的prodid，路径
-	attachment, err := models.GetAttachbyId(idNum)
-	if err != nil {
-		beego.Error(err)
-	}
-
-	product, err := models.GetProd(attachment.ProductId)
-	if err != nil {
-		beego.Error(err)
-	}
-	//根据projid取出路径
-	proj, err := models.GetProj(product.ProjectId)
-	if err != nil {
-		beego.Error(err)
-		utils.FileLogs.Error(err.Error())
-	}
-	if proj.ParentIdPath == "" || proj.ParentIdPath == "$#" {
-		projurl = "/" + strconv.FormatInt(proj.Id, 10) + "/"
 	} else {
-		projurl = "/" + strings.Replace(strings.Replace(proj.ParentIdPath, "#", "/", -1), "$", "", -1) + strconv.FormatInt(proj.Id, 10) + "/"
-	}
-	//由proj id取得url
-	fileurl, _, err := GetUrlPath(product.ProjectId)
-	if err != nil {
-		beego.Error(err)
-	}
-	fileext := path.Ext(attachment.FileName)
-	if e.Enforce(useridstring, projurl, c.Ctx.Request.Method, fileext) {
-		c.Ctx.Output.Download(fileurl + "/" + attachment.FileName)
+		c.Data["json"] = "未查到openID"
+		c.ServeJSON()
 	}
 }
 

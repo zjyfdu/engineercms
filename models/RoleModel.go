@@ -18,7 +18,7 @@ import (
 
 //角色表
 type Role struct {
-	Id         int64  `PK`
+	Id         int64
 	Rolename   string `json:"name",orm:"unique"` //这个拼音的简写
 	Rolenumber string
 	Status     string    `json:"role",orm:"default('0');size(2)"` //,form:"Status",valid:"Range('0','1','2','3','4')"`
@@ -27,9 +27,9 @@ type Role struct {
 }
 
 type UserRole struct {
-	Id     int64 `PK`
+	Id     int64
 	UserId int64
-	RoleId int64
+	RoleId int64 `xorm:"extends"`
 }
 
 func init() {
@@ -91,6 +91,17 @@ func GetRoles() (roles []*Role, err error) {
 	return roles, err
 }
 
+//由rolename取得角色
+func GetRoleByRolename(name string) (role Role, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable("Role")
+	err = qs.Filter("Rolename", name).One(&role)
+	if err != nil {
+		return role, err
+	}
+	return role, err
+}
+
 //取到一个角色数据，不是数组，所以table无法显示
 func GetRoleByRoleId(roleid int64) (role Role) {
 	role = Role{Id: roleid}
@@ -99,7 +110,7 @@ func GetRoleByRoleId(roleid int64) (role Role) {
 	return role
 }
 
-//由用户id取得所拥有的角色
+//由用户id取得所拥有的角色id
 func GetRoleByUserId(id int64) (roles []*UserRole, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable("UserRole")
@@ -107,6 +118,12 @@ func GetRoleByUserId(id int64) (roles []*UserRole, err error) {
 	if err != nil {
 		return nil, err
 	}
+	return roles, err
+}
+
+//由用户id取得所拥有的角色rolename
+func GetRolenameByUserId(id int64) (roles []*Role, err error) {
+	engine.Table("user_role").Join("INNER", "role", "role.id = user_role.role_id").Where("user_role.user_id = ?", id).Find(&roles)
 	return roles, err
 }
 

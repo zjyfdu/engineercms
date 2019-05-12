@@ -34,55 +34,62 @@ func (c *ReplyController) AddWxRelease() {
 		beego.Error(err)
 	}
 	content := c.Input().Get("content")
-	app_version := c.Input().Get("app_version")
+	// app_version := c.Input().Get("app_version")
 	// beego.Info(content)
 	avatar := c.Input().Get("avatar")
 	username := c.Input().Get("username")
 	created := c.Input().Get("publish_time")
 	//根据用户openid，获取用户名，如果没有openid，则用用户昵称
-	JSCODE := c.Input().Get("code")
-	// beego.Info(JSCODE)
-	APPID := beego.AppConfig.String("wxAPPID2")
-	SECRET := beego.AppConfig.String("wxSECRET2")
-	if app_version == "3" {
-		APPID = beego.AppConfig.String("wxAPPID3")
-		SECRET = beego.AppConfig.String("wxSECRET3")
-	}
-	// APPID := "wx05b480781ac8f4c8"                //这里一定要修改啊
-	// SECRET := "0ddfd84afc74f3bc5b5db373a4090dc5" //这里一定要修改啊
-	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-	resp, err := http.Get(requestUrl)
-	if err != nil {
-		beego.Error(err)
-		return
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		beego.Error(err)
-		// return
-	}
-	var data map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err != nil {
-		beego.Error(err)
-		// return
-	}
-	// beego.Info(data)
+	// JSCODE := c.Input().Get("code")
+	// // beego.Info(JSCODE)
+	// APPID := beego.AppConfig.String("wxAPPID2")
+	// SECRET := beego.AppConfig.String("wxSECRET2")
+	// if app_version == "3" {
+	// 	APPID = beego.AppConfig.String("wxAPPID3")
+	// 	SECRET = beego.AppConfig.String("wxSECRET3")
+	// }
+	// // APPID := "wx05b480781ac8f4c8"                //这里一定要修改啊
+	// // SECRET := "0ddfd84afc74f3bc5b5db373a4090dc5" //这里一定要修改啊
+	// requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
+	// resp, err := http.Get(requestUrl)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	return
+	// }
+	// defer resp.Body.Close()
+	// if resp.StatusCode != 200 {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// var data map[string]interface{}
+	// err = json.NewDecoder(resp.Body).Decode(&data)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	// return
+	// }
+	// // beego.Info(data)
+	// var openID string
+	// // var sessionKey string
+	// if _, ok := data["session_key"]; !ok {
+	// 	errcode := data["errcode"]
+	// 	errmsg := data["errmsg"].(string)
+	// 	// return
+	// 	c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
+	// 	// c.ServeJSON()
+	// } else {
+	// 	// var unionId string
+	// 	openID = data["openid"].(string)
+	// 	// sessionKey = data["session_key"].(string)
+	// 	// unionId = data["unionid"].(string)
+	// 	// beego.Info(openID)
+	// 	// beego.Info(sessionKey)
+	// }
 	var openID string
-	// var sessionKey string
-	if _, ok := data["session_key"]; !ok {
-		errcode := data["errcode"]
-		errmsg := data["errmsg"].(string)
-		// return
-		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-		// c.ServeJSON()
+	openid := c.GetSession("openID")
+	if openid == nil {
+
 	} else {
-		// var unionId string
-		openID = data["openid"].(string)
-		// sessionKey = data["session_key"].(string)
-		// unionId = data["unionid"].(string)
-		// beego.Info(openID)
-		// beego.Info(sessionKey)
+		openID = openid.(string)
 	}
 
 	releaseid, err := models.AddTopicReply(idNum, openID, content, avatar, username, created)

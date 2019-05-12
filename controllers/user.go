@@ -243,23 +243,46 @@ func (c *UserController) AddUser() {
 // 		beego.Error(err.Error)
 // 		return
 // 	}
-
 // }
+
+// @Title post wx userpassword by uid
+// @Description post user password by uid
+// @Param uid query string  true "The id of user"
+// @Param oldpass query string  true "The oldPassword of user"
+// @Param newpass query string  true "The newpassword of user"
+// @Param id path string  true "The id of wx"
+// @Success 200 {object} models.AddArticle
+// @Failure 400 Invalid page supplied
+// @Failure 404 articl not found
+// @router /updatewxuser [post]
 //在线修改保存某个字段
 func (c *UserController) UpdateUser() {
-	name := c.Input().Get("name")
-	value := c.Input().Get("value")
-	pk := c.Input().Get("pk")
-	id, err := strconv.ParseInt(pk, 10, 64)
+	oldpass := c.Input().Get("oldpass")
+	uid := c.Input().Get("uid")
+	id, err := strconv.ParseInt(uid, 10, 64)
 	if err != nil {
 		beego.Error(err)
 	}
-	err = m.UpdateUser(id, name, value)
-	if err != nil {
-		beego.Error(err)
+	//取出用户旧密码
+	user := m.GetUserByUserId(id)
+	md5Ctx := md5.New()
+	md5Ctx.Write([]byte(oldpass))
+	cipherStr := md5Ctx.Sum(nil)
+	Password := hex.EncodeToString(cipherStr)
+	if user.Password == Password {
+		newpass := c.Input().Get("newpass")
+		err = m.UpdateUser(id, "Password", newpass)
+		if err != nil {
+			beego.Error(err)
+			c.Data["json"] = "wrong"
+			c.ServeJSON()
+		} else {
+			c.Data["json"] = "ok"
+			c.ServeJSON()
+		}
 	} else {
-		data := "ok!"
-		c.Ctx.WriteString(data)
+		c.Data["json"] = "旧密码不正确"
+		c.ServeJSON()
 	}
 }
 

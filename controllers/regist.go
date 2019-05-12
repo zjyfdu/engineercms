@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"github.com/3xxx/engineercms/models"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -88,6 +89,8 @@ func (this *RegistController) Post() {
 //添加微信小程序珠三角设代阅览版注册
 func (c *RegistController) WxRegist() {
 	var user models.User
+	var uid string
+	var isAdmin bool
 	user.Username = c.Input().Get("uname")
 	Pwd1 := c.Input().Get("password") //注意这里用的是全称password，不是pwd
 	// autoLogin := c.Input().Get("autoLogin") == "on"
@@ -95,13 +98,12 @@ func (c *RegistController) WxRegist() {
 	md5Ctx.Write([]byte(Pwd1))
 	cipherStr := md5Ctx.Sum(nil)
 	user.Password = hex.EncodeToString(cipherStr)
-
 	// beego.Info(user.Password)
 	// beego.Info(user.Username)
 	err := models.ValidateUser(user)
 	if err == nil {
 		JSCODE := c.Input().Get("code")
-		// beego.Info(JSCODE)
+		beego.Info(JSCODE)
 		var APPID, SECRET string
 		app_version := c.Input().Get("app_version")
 		if app_version == "1" {
@@ -112,12 +114,11 @@ func (c *RegistController) WxRegist() {
 			SECRET = beego.AppConfig.String("wxSECRET4")
 			// beego.Info(APPID)
 		}
-
 		requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
 		resp, err := http.Get(requestUrl)
 		if err != nil {
 			beego.Error(err)
-			return
+			// return
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode != 200 {
@@ -133,24 +134,48 @@ func (c *RegistController) WxRegist() {
 		// var sessionKey string
 		if _, ok := data["session_key"]; !ok {
 			errcode := data["errcode"]
-			beego.Info(errcode)
+			// beego.Info(errcode)
 			errmsg := data["errmsg"].(string)
 			c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
 		} else {
 			openID = data["openid"].(string)
-			beego.Info(openID)
+			// beego.Info(openID)
 			//将openid写入数据库
 			user, err = models.GetUserByUsername(user.Username)
 			if err != nil {
 				beego.Error(err)
+			} else {
+				uid = strconv.FormatInt(user.Id, 10)
 			}
 			_, err = models.AddUserOpenID(user.Id, openID)
+			if err != nil {
+				beego.Error(err)
+			}
+			// roles, err := models.GetRolenameByUserId(user.Id)
+			// if err != nil {
+			// 	beego.Error(err)
+			// }
+			// var isAdmin bool
+			// for _, v := range roles {
+			// 	if v.Rolename == "admin" {
+			// 		isAdmin = true
+			// 	}
+			// }
+			role, err := models.GetRoleByRolename("admin")
+			if err != nil {
+				beego.Error(err)
+			} else {
+				roleid := strconv.FormatInt(role.Id, 10)
+				isAdmin = e.HasRoleForUser(uid, "role_"+roleid)
+			}
+			// beego.Info(isAdmin)
+			// beego.Info(user.Id)
 			if err != nil {
 				beego.Error(err)
 				c.Data["json"] = map[string]interface{}{"info": "已经注册", "data": ""}
 				c.ServeJSON()
 			} else {
-				c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "data": openID}
+				c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "userId": uid, "isAdmin": isAdmin}
 				c.ServeJSON()
 			}
 		}
@@ -158,7 +183,6 @@ func (c *RegistController) WxRegist() {
 		c.Data["json"] = map[string]interface{}{"info": "用户名或密码错误", "data": ""}
 		c.ServeJSON()
 	}
-
 }
 
 //post方法

@@ -6,6 +6,7 @@ package routers
 
 import (
 	"github.com/3xxx/engineercms/controllers"
+	// "githsub.com/3xxx/engineercms/controllers/checkin"
 	"github.com/astaxie/beego"
 	// "github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
@@ -141,6 +142,12 @@ func init() {
 			beego.NSNamespace("/project",
 				beego.NSInclude(
 					&controllers.ProjController{},
+					&controllers.ProdController{},
+				),
+			),
+			beego.NSNamespace("/checkin",
+				beego.NSInclude(
+					&controllers.CheckController{},
 				),
 			),
 			// beego.NSNamespace("/cms",

@@ -43,17 +43,23 @@ func AddRelevancy(prodid int64, relevancy string) (id int64, err error) {
 	return id, nil
 }
 
-//根据成果id取得关联文件
-//根据成果编号，取得关联文件编号
-func GetRelevancy(prodid int64) (relevancies []*Relevancy, err error) {
-	o := orm.NewOrm()
-	qs := o.QueryTable("Relevancy")
-	// relevancies1 := make([]*Relevancy, 0)
-	_, err = qs.Filter("ProductId", prodid).All(&relevancies)
-	if err != nil {
-		return nil, err
-	}
-	return relevancies, err
+type RelevancyProduct struct {
+	Relevancy `xorm:"extends"`
+	Product   `xorm:"extends"`
+}
+
+//根据成果id取得关联文件名称product code
+//根据关联文件名称product code，取得prod和proj
+func GetRelevancy(prodid int64) ([]*RelevancyProduct, error) {
+	// o := orm.NewOrm()
+	// qs := o.QueryTable("Relevancy")
+	// _, err = qs.Filter("ProductId", prodid).All(&relevancies)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	relevancies := make([]*RelevancyProduct, 0)
+	return relevancies, engine.Table("relevancy").Join("INNER", "product", "relevancy.relevancy = product.code").Where("relevancy.product_id=?", prodid).Find(&relevancies)
+	// return relevancies, err
 }
 
 func GetAllRelevancies() (relevancies []*Relevancy, err error) {
@@ -65,4 +71,20 @@ func GetAllRelevancies() (relevancies []*Relevancy, err error) {
 		return nil, err
 	}
 	return relevancies, err
+}
+
+//删除
+func DeleteRelevancy(prodid int64) error {
+	o := orm.NewOrm()
+	_, err := o.QueryTable("relevancy").Filter("Product_id", prodid).Delete()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//根据关联名称取得关联的成果id及成果code
+func GetRelevancybyName(relevancy string) ([]*RelevancyProduct, error) {
+	relevancies := make([]*RelevancyProduct, 0)
+	return relevancies, engine.Table("relevancy").Join("INNER", "product", "relevancy.product_id = product.id").Where("relevancy.relevancy=?", relevancy).Find(&relevancies)
 }

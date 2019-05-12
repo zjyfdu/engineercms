@@ -797,6 +797,7 @@ func (c *AttachController) AddAttachment2() {
 	prodname := c.Input().Get("prodname")
 	prodlabel := c.Input().Get("prodlabel")
 	prodprincipal := c.Input().Get("prodprincipal")
+	relevancy := c.Input().Get("relevancy")
 	size := c.Input().Get("size")
 	filesize, err := strconv.ParseInt(size, 10, 64)
 	if err != nil {
@@ -840,6 +841,18 @@ func (c *AttachController) AddAttachment2() {
 		if err != nil {
 			beego.Error(err)
 		}
+
+		//*****添加成果关联信息
+		if relevancy != "" {
+			array := strings.Split(relevancy, ",")
+			for _, v := range array {
+				_, err = models.AddRelevancy(prodId, v)
+				if err != nil {
+					beego.Error(err)
+				}
+			}
+		}
+		//*****添加成果关联信息结束
 
 		//成果写入postmerit表，准备提交merit*********
 		catalog.Tnumber = prodcode

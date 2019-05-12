@@ -291,7 +291,7 @@ func (c *OnlyController) Get() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /getonlydocs [get]
-//文档列表数据
+//vue文档列表数据
 // func (c *ArticleController) GetOnlyDocs() {
 // 	var offset, limit1, page1 int
 // 	var err error

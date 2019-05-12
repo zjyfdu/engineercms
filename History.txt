@@ -1,5 +1,11 @@
                        EngineerCMS revision history
 		       
+16, engineercms 1.09 (May 12, 2019)
+	+) Add relevancy
+
+15, engineercms 1.08 (May 6, 2019)
+	+) Add wechat checkin 		       
+		       
 14, engineercms 1.08 (April 15, 2019)
 	+) Add vue.js index.html 
 

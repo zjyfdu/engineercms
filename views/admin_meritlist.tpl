@@ -1448,16 +1448,16 @@
         // if (uname.value.length==0)
          if (event.keyCode != 38 && event.keyCode != 40 && uname1.value.length==2){
           $.ajax({
-                      type:"post",//这里是否一定要用post？？？
-                      url:"/regist/getuname",
-                      data: { uname: $("#uname").val()},
-                      dataType:'json',//dataType:JSON,这种是jquerylatest版本的表达方法。不支持新版jquery。
-                success:function(data,status){
-                  $(".option").remove();
-                  $.each(data,function(i,d){
-                      $("#cars1").append('<option class="option" value="' + data[i].Username + '">' + data[i].Nickname + '</option>');
-                  });
-                }
+            type:"post",//这里是否一定要用post？？？
+            url:"/regist/getuname",
+            data: { uname: $("#uname").val()},
+            dataType:'json',//dataType:JSON,这种是jquerylatest版本的表达方法。不支持新版jquery。
+            success:function(data,status){
+              $(".option").remove();
+              $.each(data,function(i,d){
+                $("#cars1").append('<option class="option" value="' + data[i].Username + '">' + data[i].Nickname + '</option>');
+              });
+            }
           });
         }
       });

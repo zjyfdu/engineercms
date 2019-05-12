@@ -16,7 +16,7 @@ import (
 
 //用户表
 type User struct {
-	Id            int64  `PK`
+	Id            int64
 	Username      string `json:"name",orm:"unique"` //这个拼音的简写
 	Nickname      string //中文名，注意这里，很多都要查询中文名才行`orm:"unique;size(32)" form:"Nickname" valid:"Required;MaxSize(20);MinSize(2)"`
 	Password      string
@@ -42,12 +42,20 @@ type UserOpenID struct {
 	OpenID string
 }
 
+//用户和AvatorUrl对应表,一个用户对应多个AvatorUrl
+type UserAvatar struct {
+	Id         int64
+	Uid        int64
+	AvatarUrl  string
+	Createtime time.Time `orm:"type(datetime);auto_now_add" `
+}
+
 // Id            int64
 // Username      string    `orm:"unique;size(32)" form:"Username"  valid:"Required;MaxSize(20);MinSize(6)"`
 // Password      string    `orm:"size(32)" form:"Password" valid:"Required;MaxSize(20);MinSize(6)"`
 
 func init() {
-	orm.RegisterModel(new(User), new(UserOpenID))
+	orm.RegisterModel(new(User), new(UserOpenID), new(UserAvatar))
 }
 
 //这个是使用的，下面那个adduser不知干啥的
@@ -104,6 +112,20 @@ func AddUserOpenID(userid int64, openid string) (id int64, err error) {
 	return id, err //这里需要改改，否则，即使已经存在，则err为空。
 }
 
+//后台手工操作添加微信小程序openid和用户名
+func AddUserAvator(userid int64, avatarurl string) (id int64, err error) {
+	o := orm.NewOrm()
+	var useravatar UserAvatar
+	// 没有找到记录
+	useravatar.Uid = userid
+	useravatar.AvatarUrl = avatarurl
+	id, err = o.Insert(&useravatar)
+	if err != nil {
+		return id, err
+	}
+	return id, err //这里需要改改，否则，即使已经存在，则err为空。
+}
+
 //根据openid查user
 func GetUserByOpenID(openid string) (user User, err error) {
 	o := orm.NewOrm()
@@ -120,6 +142,16 @@ func GetUserByOpenID(openid string) (user User, err error) {
 	return user, err
 }
 
+type UserAvatarUrl struct {
+	User       `xorm:"extends"`
+	UserAvatar `xorm:"extends"`
+}
+
+func GetUserAvatorUrl(uid int64) ([]*UserAvatarUrl, error) {
+	useravatarurl := make([]*UserAvatarUrl, 0)
+	return useravatarurl, engine.Table("user").Join("INNER", "user_avatar", "user.id = user_avatar.id").Where("user.id=?", uid).Desc("user_avatar.createtime").Find(&useravatarurl)
+}
+
 func ValidateUser(user User) error {
 	cond := orm.NewCondition()
 	cond1 := cond.Or("status", 1).Or("status", 2)
@@ -133,12 +165,13 @@ func ValidateUser(user User) error {
 	err := qs.One(&u)
 	if err != nil {
 		return err
-	}
-	// orm.Where("username=? and pwd=?", user.Username, user.Pwd).Find(&u)
-	if u.Username == "" {
+
+		// orm.Where("username=? and pwd=?", user.Username, user.Pwd).Find(&u)
+	} else if u.Username == "" {
 		return errors.New("用户名或密码错误！或用户被禁止！")
+	} else {
+		return nil
 	}
-	return nil
 }
 
 func CheckUname(user User) error {
