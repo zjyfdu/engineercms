@@ -2221,6 +2221,137 @@
                 }
             }
         },
+        "/todo/create": {
+            "post": {
+                "tags": [
+                    "todo"
+                ],
+                "description": "post todo",
+                "operationId": "TodoController.post todo",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name for todo",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
+                    }
+                }
+            }
+        },
+        "/todo/deletetodo": {
+            "post": {
+                "tags": [
+                    "todo"
+                ],
+                "description": "delete tolist",
+                "operationId": "TodoController.delete todolist",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "todoid",
+                        "description": "The id of todo",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
+                    }
+                }
+            }
+        },
+        "/todo/gettodo": {
+            "get": {
+                "tags": [
+                    "todo"
+                ],
+                "description": "get tolist",
+                "operationId": "TodoController.get todolist",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of todo",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The size of todo",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
+                    }
+                }
+            }
+        },
+        "/todo/updatetodo": {
+            "post": {
+                "tags": [
+                    "todo"
+                ],
+                "description": "update tolist",
+                "operationId": "TodoController.update todolist",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "todoid",
+                        "description": "The id of todo",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
+                    }
+                }
+            }
+        },
         "/wx/addwxarticle": {
             "post": {
                 "tags": [
@@ -2294,6 +2425,51 @@
                         "name": "content",
                         "description": "The content of article",
                         "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.AddArticle"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
+                    }
+                }
+            }
+        },
+        "/wx/addwxeditorarticle": {
+            "post": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "post article by catalogid",
+                "operationId": "ArticleController.post wx artile by catalogId",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "title",
+                        "description": "The title of article",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "content",
+                        "description": "The content of article",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "skey",
+                        "description": "The skey of user",
                         "type": "string"
                     }
                 ],
@@ -2790,6 +2966,29 @@
                 }
             }
         },
+        "/wx/uploadwxeditorimg": {
+            "post": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "post article img by catalogid",
+                "operationId": "FroalaController.post wx artile img by catalogId",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.SUCCESS"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
+                    }
+                }
+            }
+        },
         "/wx/uploadwximg": {
             "post": {
                 "tags": [
@@ -3075,6 +3274,10 @@
         {
             "name": "checkin",
             "description": "CMSCHECKIN API\n"
+        },
+        {
+            "name": "todo",
+            "description": "CMSTODO API\n"
         }
     ]
 }

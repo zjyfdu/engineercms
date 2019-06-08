@@ -897,22 +897,25 @@ func (c *AttachController) AddAttachment2() {
 		_, err = models.AddAttachment(h.Filename, filesize, 0, prodId)
 		if err != nil {
 			beego.Error(err)
+			c.Data["json"] = map[string]interface{}{"state": "WRONG存入数据库出错", "title": err, "original": "", "url": ""}
+			c.ServeJSON()
 		} else {
-			err = c.SaveToFile("file", filepath) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
+			//建立目录，并返回作为父级目录
+			err = os.MkdirAll(DiskDirectory+"/", 0777) //..代表本当前exe文件目录的上级，.表示当前目录，没有.表示盘的根目录
 			if err != nil {
 				beego.Error(err)
 			}
-			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": h.Filename, "original": h.Filename, "url": Url + "/" + h.Filename}
-			c.ServeJSON()
+			err = c.SaveToFile("file", filepath) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
+			if err != nil {
+				beego.Error(err)
+				c.Data["json"] = map[string]interface{}{"state": "WRONG保存文件出错", "title": err, "original": "", "url": ""}
+				c.ServeJSON()
+			} else {
+				c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": h.Filename, "original": h.Filename, "url": Url + "/" + h.Filename}
+				c.ServeJSON()
+			}
 		}
 	}
-	// } else {
-	// 	route := c.Ctx.Request.URL.String()
-	// 	c.Data["Url"] = route
-	// 	c.Redirect("/roleerr?url="+route, 302)
-	// 	// c.Redirect("/roleerr", 302)
-	// 	return
-	// }
 }
 
 //向一个成果id下追加附件

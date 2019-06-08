@@ -1219,7 +1219,7 @@ func (c *ArticleController) AddArticle() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articl not found
 // @router /addwxarticle [post]
-//向设代日记id下添加微信小程序文章_珠三角设代plus用
+//向设代日记id下添加微信小程序文章_珠三角设代plus用_这个是文字图片分开方式，用下面这个
 func (c *ArticleController) AddWxArticle() {
 	// var userrole string
 	// var user models.User
@@ -1281,6 +1281,75 @@ func (c *ArticleController) AddWxArticle() {
 	for _, v := range array {
 		content = content + "<p><img src='" + v + "'></p>"
 	}
+	//id转成64为
+	pidNum, err := strconv.ParseInt(pid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//根据pid查出项目id
+	proj, err := models.GetProj(pidNum)
+	if err != nil {
+		beego.Error(err)
+	}
+	parentidpath := strings.Replace(strings.Replace(proj.ParentIdPath, "#$", "-", -1), "$", "", -1)
+	parentidpath1 := strings.Replace(parentidpath, "#", "", -1)
+	patharray := strings.Split(parentidpath1, "-")
+	topprojectid, err := strconv.ParseInt(patharray[0], 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	code := time.Now().Format("2006-01-02 15:04")
+	code = strings.Replace(code, "-", "", -1)
+	code = strings.Replace(code, " ", "", -1)
+	code = strings.Replace(code, ":", "", -1)
+	//根据项目id添加成果code, title, label, principal, content string, projectid int64
+	Id, err := models.AddProduct(code, title, "wx", user.Nickname, user.Id, pidNum, topprojectid)
+	if err != nil {
+		beego.Error(err)
+	}
+	//将文章添加到成果id下
+	aid, err := models.AddArticle(title, content, Id)
+	if err != nil {
+		beego.Error(err)
+		c.Data["json"] = map[string]interface{}{"info": "ERR", "id": aid}
+		c.ServeJSON()
+	} else {
+		// c.Data["json"] = id
+		c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "id": aid}
+		c.ServeJSON()
+	}
+}
+
+// @Title post wx artile by catalogId
+// @Description post article by catalogid
+// @Param title query string true "The title of article"
+// @Param content query string true "The content of article"
+// @Param skey query string false "The skey of user"
+// @Success 200 {object} models.AddArticle
+// @Failure 400 Invalid page supplied
+// @Failure 404 articl not found
+// @router /addwxeditorarticle [post]
+//向设代日记id下添加微信小程序文章_珠三角设代plus用_editor方式
+func (c *ArticleController) AddWxEditorArticle() {
+	var user models.User
+	var err error
+	openID := c.GetSession("openID")
+	if openID != nil {
+		user, err = models.GetUserByOpenID(openID.(string))
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+
+	pid := beego.AppConfig.String("wxcatalogid") //"26159"
+	title := c.Input().Get("title")
+	content := c.Input().Get("content")
+	// content = "<p style='font-size: 18px;'>" + content + "</p>" //<span style="font-size: 18px;">这个字体到底是多大才好看</span>
+	// imagesurl := c.Input().Get("images")
+	// array := strings.Split(imagesurl, ",")
+	// for _, v := range array {
+	// 	content = content + "<p><img src='" + v + "'></p>"
+	// }
 	//id转成64为
 	pidNum, err := strconv.ParseInt(pid, 10, 64)
 	if err != nil {

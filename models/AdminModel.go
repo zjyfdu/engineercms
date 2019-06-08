@@ -104,6 +104,12 @@ func init() {
 	case "mysql":
 		orm.RegisterDriver("mysql", orm.DRMySQL)
 		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", db_user, db_pass, db_host, db_port, db_name)
+		// 注册xorm
+		var err error
+		engine, err = xorm.NewEngine(db_type, dns)
+		if err != nil {
+			log.Println(err)
+		}
 		break
 	case "postgres":
 		orm.RegisterDriver("postgres", orm.DRPostgres)
@@ -114,7 +120,7 @@ func init() {
 			db_path = "./"
 		}
 		dns = fmt.Sprintf("%s%s.db", db_path, db_name)
-
+		// 注册xorm
 		var err error
 		engine, err = xorm.NewEngine(db_type, dns)
 		if err != nil {
@@ -125,12 +131,11 @@ func init() {
 		beego.Critical("Database driver is not allowed:", db_type)
 	}
 	orm.RegisterDataBase("default", db_type, dns, 10)
-
 	// orm.RegisterDriver("sqlite", orm.DRSqlite)
 	// orm.RegisterDataBase("default", "sqlite3", "database/engineer.db", 10)
 }
 
-//创建数据库_来自github.com/beego/admin
+//创建数据库_来自github.com/beego/admin——这个仅作为参考用，没有使用
 func createdb() {
 	db_type := beego.AppConfig.String("db_type")
 	db_host := beego.AppConfig.String("db_host")
@@ -177,7 +182,7 @@ func createdb() {
 	defer db.Close()
 }
 
-//数据库连接
+//数据库连接_这个仅作为参考，和上面重复
 func Connect() {
 	var dns string
 	db_type := beego.AppConfig.String("db_type")

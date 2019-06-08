@@ -149,7 +149,7 @@ type UserAvatarUrl struct {
 
 func GetUserAvatorUrl(uid int64) ([]*UserAvatarUrl, error) {
 	useravatarurl := make([]*UserAvatarUrl, 0)
-	return useravatarurl, engine.Table("user").Join("INNER", "user_avatar", "user.id = user_avatar.id").Where("user.id=?", uid).Desc("user_avatar.createtime").Find(&useravatarurl)
+	return useravatarurl, engine.Table("user").Join("INNER", "user_avatar", "user.id = user_avatar.uid").Where("user.id=?", uid).Desc("user_avatar.createtime").Find(&useravatarurl)
 }
 
 func ValidateUser(user User) error {

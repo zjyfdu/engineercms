@@ -319,6 +319,7 @@ func (c *LoginController) WxLogin() {
 			if len(useravatar) != 0 {
 				wxsite := beego.AppConfig.String("wxreqeustsite")
 				photo = wxsite + useravatar[0].UserAvatar.AvatarUrl
+				beego.Info(photo)
 			}
 			// roles, err := models.GetRolenameByUserId(user.Id)
 			// if err != nil {

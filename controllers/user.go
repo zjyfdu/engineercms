@@ -255,8 +255,8 @@ func (c *UserController) AddUser() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articl not found
 // @router /updatewxuser [post]
-//在线修改保存某个字段
-func (c *UserController) UpdateUser() {
+//小程序修改用户密码
+func (c *UserController) UpdateWxUser() {
 	oldpass := c.Input().Get("oldpass")
 	uid := c.Input().Get("uid")
 	id, err := strconv.ParseInt(uid, 10, 64)
@@ -283,6 +283,33 @@ func (c *UserController) UpdateUser() {
 	} else {
 		c.Data["json"] = "旧密码不正确"
 		c.ServeJSON()
+	}
+}
+
+//在线修改保存某个字段
+func (c *UserController) UpdateUser() {
+	//进行权限判断isme or isadmin
+	_, _, uid, isadmin, _ := checkprodRole(c.Ctx)
+	pk := c.Input().Get("pk") //这个其实就是userid
+	id, err := strconv.ParseInt(pk, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	if isadmin || uid == id {
+		name := c.Input().Get("name")
+		value := c.Input().Get("value")
+		err = m.UpdateUser(id, name, value)
+		if err != nil {
+			beego.Error(err)
+			data := "写入数据错误!"
+			c.Ctx.WriteString(data)
+		} else {
+			data := "ok!"
+			c.Ctx.WriteString(data)
+		}
+	} else {
+		data := "权限不足！"
+		c.Ctx.WriteString(data)
 	}
 }
 

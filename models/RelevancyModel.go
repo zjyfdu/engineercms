@@ -76,7 +76,7 @@ func GetAllRelevancies() (relevancies []*Relevancy, err error) {
 //删除
 func DeleteRelevancy(prodid int64) error {
 	o := orm.NewOrm()
-	_, err := o.QueryTable("relevancy").Filter("Product_id", prodid).Delete()
+	_, err := o.QueryTable("relevancy").Filter("product_id", prodid).Delete()
 	if err != nil {
 		return err
 	}

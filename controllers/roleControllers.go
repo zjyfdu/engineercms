@@ -2,6 +2,7 @@ package controllers
 
 import (
 	// "encoding/json"
+	"fmt"
 	m "github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -60,15 +61,48 @@ type Tree struct {
 // var RoleCtl = &RoleController{
 // 	models.RoleModel{},
 // }
+
+// 2019/5/27
 var e *casbin.Enforcer
 var a *beegoormadapter.Adapter
 
 func init() {
+	var dns string
+	db_type := beego.AppConfig.String("db_type")
+	db_host := beego.AppConfig.String("db_host")
+	db_port := beego.AppConfig.String("db_port")
+	db_user := beego.AppConfig.String("db_user")
+	db_pass := beego.AppConfig.String("db_pass")
+	db_name := beego.AppConfig.String("db_name")
+	db_path := beego.AppConfig.String("db_path")
+	db_sslmode := beego.AppConfig.String("db_sslmode")
+	switch db_type {
+	case "mysql":
+		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/", db_user, db_pass, db_host, db_port, db_name)
+		a = beegoormadapter.NewAdapter("mysql", dns)
+		break
+	case "postgres":
+		// orm.RegisterDriver("postgres", orm.DRPostgres)
+		dns = fmt.Sprintf("dbname=%s host=%s  user=%s  password=%s  port=%s  sslmode=%s", db_name, db_host, db_user, db_pass, db_port, db_sslmode)
+		a = beegoormadapter.NewAdapter("postgres", dns)
+		break
+	case "sqlite3":
+		if db_path == "" {
+			db_path = "./"
+		}
+		dns = fmt.Sprintf("%s%s.db", db_path, db_name)
+		// 注册casbin
+		a = beegoormadapter.NewAdapter("sqlite3", dns, true)
+		break
+	default:
+		beego.Critical("Database driver is not allowed:", db_type)
+	}
+
 	// Initialize a Beego ORM adapter and use it in a Casbin enforcer:
 	// The adapter will use the MySQL database named "casbin".
 	// If it doesn't exist, the adapter will create it automatically.
 	// a := beegoormadapter.NewAdapter("mysql", "mysql_username:mysql_password@tcp(127.0.0.1:3306)/") // Your driver and data source.
-	a = beegoormadapter.NewAdapter("sqlite3", "database/engineer.db", true) // Your driver and data source.
+	// a = beegoormadapter.NewAdapter("sqlite3", "database/engineer.db", true) // Your driver and data source.
 	// Or you can use an existing DB "abc" like this:
 	// The adapter will use the table named "casbin_rule".
 	// If it doesn't exist, the adapter will create it automatically.

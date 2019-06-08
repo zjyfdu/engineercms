@@ -823,6 +823,7 @@ func (c *CheckController) Apply() {
 // @router /monthchecksum [get]
 func (c *CheckController) MonthCheckSum() {
 	c.TplName = "check/check.tpl"
+	c.Data["IsMonthCheck"] = true
 }
 
 //后端分页的数据结构

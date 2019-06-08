@@ -413,8 +413,61 @@ func (c *FroalaController) UploadImg() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articl not found
 // @router /uploadwximg [post]
-//微信wx添加文章里的图片上传_使用这个
+//微信wx添加文章里的图片上传_独立上传图片模式
 func (c *FroalaController) UploadWxImg() {
+	//解析表单
+	pid := beego.AppConfig.String("wxcatalogid") //"26159" //c.Input().Get("pid")
+	//pid转成64为
+	pidNum, err := strconv.ParseInt(pid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//根据proj的parentIdpath
+	Url, DiskDirectory, err := GetUrlPath(pidNum)
+	if err != nil {
+		beego.Error(err)
+	}
+	//获取上传的文件
+	_, h, err := c.GetFile("file")
+	if err != nil {
+		beego.Error(err)
+	}
+	fileSuffix := path.Ext(h.Filename)
+	// random_name
+	newname := strconv.FormatInt(time.Now().UnixNano(), 10) + fileSuffix // + "_" + filename
+	year, month, _ := time.Now().Date()
+	err = os.MkdirAll(DiskDirectory+"/"+strconv.Itoa(year)+month.String()+"/", 0777) //..代表本当前exe文件目录的上级，.表示当前目录，没有.表示盘的根目录
+	if err != nil {
+		beego.Error(err)
+	}
+	var path string
+	var filesize int64
+	if h != nil {
+		//保存附件
+		path = DiskDirectory + "/" + strconv.Itoa(year) + month.String() + "/" + newname
+		Url = "/" + Url + "/" + strconv.Itoa(year) + month.String() + "/"
+		err = c.SaveToFile("file", path) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
+		if err != nil {
+			beego.Error(err)
+		}
+		filesize, _ = FileSize(path)
+		filesize = filesize / 1000.0
+		c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "link": Url + newname, "title": "111", "original": "demo.jpg"}
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = map[string]interface{}{"state": "ERROR", "link": "", "title": "", "original": ""}
+		c.ServeJSON()
+	}
+}
+
+// @Title post wx artile img by catalogId
+// @Description post article img by catalogid
+// @Success 200 {object} SUCCESS
+// @Failure 400 Invalid page supplied
+// @Failure 404 articl not found
+// @router /uploadwxeditorimg [post]
+//微信wx添加文章里的图片上传_小程序富文本里的上传图片
+func (c *FroalaController) UploadWxEditorImg() {
 	//解析表单
 	pid := beego.AppConfig.String("wxcatalogid") //"26159" //c.Input().Get("pid")
 	//pid转成64为
