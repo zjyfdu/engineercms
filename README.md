@@ -189,9 +189,11 @@ ONLYOFFICE实时文档协作效果——除了支持office的docx，xlsx及pptx�
 
 手机端访问文章效果
 
-微信小程序访问文章和添加文章：
+![Snap4](https://user-images.githubusercontent.com/10678867/59145056-6d0a9d00-8a11-11e9-88b0-f057100f4e3a.png)
 
-![wx05](https://user-images.githubusercontent.com/10678867/47291331-cc0fd300-d635-11e8-908d-bb2dd8a26438.png)
+微信小程序富文本编辑器添加文章：
+
+![wx05](https://user-images.githubusercontent.com/10678867/59144747-c1ac1900-8a0d-11e9-9735-cab114eca5e8.png)
 
 IPAD移动端效果
 
