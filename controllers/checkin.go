@@ -83,6 +83,7 @@ func (c *CheckController) Person() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /activity/create [post]
+// 新增打卡活动
 func (c *CheckController) Create() {
 	/**
 	 * /activity/create
@@ -478,6 +479,7 @@ func (c *CheckController) Compare() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /check [post]
+// 打卡记录写入数据库
 func (c *CheckController) Check() {
 	/**
 	 * /check
@@ -588,6 +590,7 @@ type CheckDate struct {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /checkgetcheck [get]
+// 取得当月的打卡记录
 func (c *CheckController) CheckGetCheck() {
 	userid := c.Input().Get("userId")
 	//pid转成64为
@@ -844,6 +847,7 @@ type monthCheckTable struct {
 // @Failure 400 Invalid page supplied
 // @Failure 404 articls not found
 // @router /monthcheck [get]
+// 月度考勤统计
 func (c *CheckController) MonthCheck() {
 	var offset, limit1, page1 int
 	var err error

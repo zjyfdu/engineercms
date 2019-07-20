@@ -44,7 +44,7 @@ func (c *MainController) Get() {
 		c.Redirect("/project/"+id, 301)
 	case "IsNav2":
 		id = navid2
-		beego.Info(id)
+		// beego.Info(id)
 		c.Redirect("/project/"+id, 301)
 	case "IsNav3":
 		id = navid3
@@ -68,14 +68,20 @@ func (c *MainController) Get() {
 		id = navid9
 		c.Redirect("/project/"+id, 301)
 	case "IsProject":
-		c.Redirect("/project/", 301)
+		c.Redirect("/project", 301)
 	case "IsOnlyOffice":
-		c.Redirect("/onlyoffice"+id, 301)
+		c.Redirect("/onlyoffice", 301)
 	case "IsDesignGant", "IsConstructGant":
 		c.Redirect("/projectgant", 301)
+	case "IsLogin":
+		c.Redirect("/login", 301)
+		//登录后默认跳转……
+	case "IsIndex":
+		c.Redirect("/index", 301)
 	default:
-		beego.Info("cmsdefault")
-		c.Redirect("/cms", 301)
+		c.Redirect("/index", 301)
+		// beego.Info("cmsdefault")
+		// c.Redirect("/cms", 301)
 	}
 	// c.TplName = "index.tpl"
 	// c.TplName = "engineercms.tpl"

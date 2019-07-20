@@ -714,7 +714,7 @@ func (c *ArticleController) GetWxArticle() {
 	// beego.Info(v)
 	var openID string
 	openid := c.GetSession("openID")
-	beego.Info(openid)
+	// beego.Info(openid)
 	if openid == nil {
 
 	} else {
@@ -803,9 +803,19 @@ func (c *ArticleController) GetWxArticle() {
 	}
 
 	content := strings.Replace(Article.Content, "/attachment/", wxsite+"/attachment/", -1)
+	type Duration int64
+	const (
+		Nanosecond  Duration = 1
+		Microsecond          = 1000 * Nanosecond
+		Millisecond          = 1000 * Microsecond
+		Second               = 1000 * Millisecond
+		Minute               = 60 * Second
+		Hour                 = 60 * Minute
+	)
+	hours := 8
 	const lll = "2006-01-02 15:04"
-	articletime := Article.Updated.Format(lll)
-	// beego.Info(slice2)
+	articletime := Article.Updated.Add(time.Duration(hours) * time.Hour).Format(lll)
+	beego.Info(articletime)
 
 	//根据用户openid，获取用户名，如果没有openid，则用用户昵称
 	// JSCODE := c.Input().Get("code")

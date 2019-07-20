@@ -30,12 +30,12 @@
       </li>
       <!-- **********定制导航条菜单开始******** -->
         <!-- /project/id——此处id为app.conf里的navigationid1~navigationid9 -->
-      <li {{if .IsNav1}}class="active"{{end}}>
+<!--       <li {{if .IsNav1}}class="active"{{end}}>
         <a href="/project/25002">设计单位</a>
       </li>
       <li {{if .IsNav2}}class="active"{{end}}>
         <a href="/project/25012">施工专业</a>
-      </li>
+      </li> -->
       <!-- **********定制导航条菜单结束******** -->
       <li {{if .IsOnlyOffice}}class="active"{{end}}>
         <a href="/onlyoffice">OnlyOffice</a>
@@ -189,12 +189,12 @@
               <div class="form-group" style="width: 100%;">
                 <label class="col-sm-3 control-label">用户名 或 邮箱</label>
                 <div class="col-sm-7">
-                  <input id="uname" name="uname" type="text" value="qin.xc" class="form-control" placeholder="Enter account" list="cars" onkeypress="getKey()"></div>
+                  <input id="uname" name="uname" type="text" value="" class="form-control" placeholder="Enter account" list="cars" onkeypress="getKey()"></div>
               </div>
               <div class="form-group" style="width: 100%;">
                 <label class="col-sm-3 control-label">密码</label>
                 <div class="col-sm-7">
-                  <input id="pwd" name="pwd" type="password" value="qin.xc" class="form-control" placeholder="Password" onkeypress="getKey()"></div>
+                  <input id="pwd" name="pwd" type="password" value="" class="form-control" placeholder="Password" onkeypress="getKey()"></div>
               </div>
               <div class="form-group" style="width: 100%;">
                 <label class="col-sm-3 control-label"><input type="checkbox">自动登陆</label>
@@ -252,7 +252,7 @@
         })
     }
     //登出功能
-    function logout(){
+     function logout(){
         $.ajax({
             type:'get',
             url:'/logout',

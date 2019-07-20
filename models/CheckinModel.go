@@ -305,7 +305,7 @@ func CheckGetCheck(ActivityId, UserId int64, SelectMonth1, SelectMonth2 time.Tim
 	return check, nil
 }
 
-//按月统计**************
+//按月统计**************这个没用
 //查询check里的用户Distinct("check.user_id").Limit(limit, offset)
 func GetCheckUser(selectmonth1, selectmonth2 time.Time, activityid int64) ([]*Checkin, error) {
 	checks := make([]*Checkin, 0) //分配的空间是0，容量是8个字段
@@ -326,6 +326,7 @@ type CheckUser struct {
 	User    `xorm:"extends"`
 }
 
+//按月统计**************
 func GetCheckUser2(selectmonth1, selectmonth2 time.Time, activityid int64, limit, offset int) ([]*CheckUser, error) {
 	// var users = make([]User, 0)
 	users := make([]*CheckUser, 0)

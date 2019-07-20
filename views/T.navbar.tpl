@@ -25,21 +25,116 @@
       <li {{if .IsIndex}}class="active"{{end}}>
         <a href="/index">首页</a>
       </li>
-      <li {{if .IsProject}}class="active"{{end}}>
+      <!-- <li {{if .IsProject}}class="active"{{end}}>
         <a href="/project/">项目</a>
-      </li>
+      </li> -->
       <!-- **********定制导航条菜单开始******** -->
         <!-- /project/id——此处id为app.conf里的navigationid1~navigationid9 -->
-      <li {{if .IsNav2}}class="active"{{end}}>
+      <!-- <li {{if .IsNav1}}class="active"{{end}}>
         <a href="/project/25002">设计单位</a>
-      </li>
-      <li {{if .IsNav3}}class="active"{{end}}>
+      </li> -->
+      <!-- <li {{if .IsNav3}}class="active"{{end}}>
         <a href="/project/25003">施工专业</a>
+      </li> -->
+      <li {{if .IsNav1}}class="dropdown active"{{end}}>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          试验段 <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li {{if .IsNav1}}class="active"{{end}}>
+            <a href="/project/25002">设计</a>
+          </li>
+          <li>
+            <a href="/project/25005">建设</a>
+          </li>
+          <li>
+            <a href="/project/25004">监理</a>
+          </li>
+          <li>
+            <a href="/project/25003">施工</a>
+          </li>
+        </ul>
+      </li>
+      <li {{if .IsNav2}}class="dropdown active"{{end}}>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          顺德部<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li {{if .IsNav2}}class="active"{{end}}>
+            <a href="/project/26177">设计</a>
+          </li>
+          <li>
+            <a href="/project/26178">建设</a>
+          </li>
+          <li>
+            <a href="/project/26179">监理</a>
+          </li>
+          <li>
+            <a href="/project/26180">施工</a>
+          </li>
+        </ul>
+      </li>
+      <li {{if .IsNav3}}class="dropdown active"{{end}}>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          南沙部<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li {{if .IsNav3}}class="active"{{end}}>
+            <a href="/project/26342">设计</a>
+          </li>
+          <li>
+            <a href="/project/26343">建设</a>
+          </li>
+          <li>
+            <a href="/project/26344">监理</a>
+          </li>
+          <li>
+            <a href="/project/26345">施工</a>
+          </li>
+        </ul>
+      </li>
+      <li {{if .IsNav4}}class="dropdown active"{{end}}>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          东莞部<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li {{if .IsNav4}}class="active"{{end}}>
+            <a href="/project/26507">设计</a>
+          </li>
+          <li>
+            <a href="/project/26508">建设</a>
+          </li>
+          <li>
+            <a href="/project/26509">监理</a>
+          </li>
+          <li>
+            <a href="/project/26510">施工</a>
+          </li>
+        </ul>
+      </li>
+      <li {{if .IsNav5}}class="dropdown active"{{end}}>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          罗田部<b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li {{if .IsNav5}}class="active"{{end}}>
+            <a href="/project/26672">设计</a>
+          </li>
+          <li>
+            <a href="/project/26673">建设</a>
+          </li>
+          <li>
+            <a href="/project/26674">监理</a>
+          </li>
+          <li>
+            <a href="/project/26675">施工</a>
+          </li>
+        </ul>
       </li>
       <!-- **********定制导航条菜单结束******** -->
-      <li {{if .IsOnlyOffice}}class="active"{{end}}>
+      <!-- <li {{if .IsOnlyOffice}}class="active"{{end}}>
         <a href="/onlyoffice">OnlyOffice</a>
-      </li>
+      </li> -->
       <li {{if or .IsDesignGant .IsConstructGant}}class="dropdown active"{{end}}>
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           进度 <b class="caret"></b>
@@ -72,7 +167,10 @@
           </li>
         </ul>
       </li>
-      <li {{if or .IsMeetingroomCalendar .IsCarCalendar .IsOrderCalendar .IsAttendanceCalendar}}class="dropdown active"{{end}} >
+      <li {{if .IsMonthCheck}}class="active"{{end}}>
+        <a href="/v1/checkin/monthchecksum">考勤</a>
+      </li>
+      <!-- <li {{if or .IsMeetingroomCalendar .IsCarCalendar .IsOrderCalendar .IsAttendanceCalendar}}class="dropdown active"{{end}} >
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           预订 <b class="caret"></b>
         </a>
@@ -90,7 +188,7 @@
             <a href="/attendance">考勤</a>
           </li>
         </ul>
-      </li>
+      </li> -->
     </ul>
 
     <!-- <div class="pull-right"> -->
@@ -184,12 +282,12 @@
               <div class="form-group" style="width: 100%;">
                 <label class="col-sm-3 control-label">用户名 或 邮箱</label>
                 <div class="col-sm-7">
-                  <input id="uname" name="uname" type="text" value="qin.xc" class="form-control" placeholder="Enter account" list="cars" onkeypress="getKey()"></div>
+                  <input id="uname" name="uname" type="text" value="" class="form-control" placeholder="Enter account" list="cars" onkeypress="getKey()"></div>
               </div>
               <div class="form-group" style="width: 100%;">
                 <label class="col-sm-3 control-label">密码</label>
                 <div class="col-sm-7">
-                  <input id="pwd" name="pwd" type="password" value="qin.xc" class="form-control" placeholder="Password" onkeypress="getKey()"></div>
+                  <input id="pwd" name="pwd" type="password" value="" class="form-control" placeholder="Password" onkeypress="getKey()"></div>
               </div>
               <div class="form-group" style="width: 100%;">
                 <label class="col-sm-3 control-label"><input type="checkbox">自动登陆</label>

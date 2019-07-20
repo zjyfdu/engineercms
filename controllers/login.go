@@ -132,7 +132,58 @@ func (c *LoginController) Post() {
 		if url != "" {
 			c.Redirect(url, 301)
 		} else {
-			c.Redirect("/", 301)
+			var id string
+			index := beego.AppConfig.String("redirect")
+			navid1 := beego.AppConfig.String("navigationid1")
+			navid2 := beego.AppConfig.String("navigationid2")
+			navid3 := beego.AppConfig.String("navigationid3")
+			navid4 := beego.AppConfig.String("navigationid4")
+			navid5 := beego.AppConfig.String("navigationid5")
+			navid6 := beego.AppConfig.String("navigationid6")
+			navid7 := beego.AppConfig.String("navigationid7")
+			navid8 := beego.AppConfig.String("navigationid8")
+			navid9 := beego.AppConfig.String("navigationid9")
+			// beego.Info(index)
+			switch index {
+			case "":
+				c.Redirect("/index", 301)
+			case "IsNav1":
+				id = navid1
+				c.Redirect("/project/"+id, 301)
+			case "IsNav2":
+				id = navid2
+				// beego.Info(id)
+				c.Redirect("/project/"+id, 301)
+			case "IsNav3":
+				id = navid3
+				c.Redirect("/project/"+id, 301)
+			case "IsNav4":
+				id = navid4
+				c.Redirect("/project/"+id, 301)
+			case "IsNav5":
+				id = navid5
+				c.Redirect("/project/"+id, 301)
+			case "IsNav6":
+				id = navid6
+				c.Redirect("/project/"+id, 301)
+			case "IsNav7":
+				id = navid7
+				c.Redirect("/project/"+id, 301)
+			case "IsNav8":
+				id = navid8
+				c.Redirect("/project/"+id, 301)
+			case "IsNav9":
+				id = navid9
+				c.Redirect("/project/"+id, 301)
+			case "IsProject":
+				c.Redirect("/project", 301)
+			case "IsOnlyOffice":
+				c.Redirect("/onlyoffice", 301)
+			case "IsDesignGant", "IsConstructGant":
+				c.Redirect("/projectgant", 301)
+			default:
+				c.Redirect("/index", 301)
+			}
 		}
 	} else {
 		c.Redirect("/loginerr?url="+url, 302)

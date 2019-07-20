@@ -1027,6 +1027,104 @@ paths:
           description: Invalid page
         "404":
           description: page not found
+  /bbs/bbs:
+    post:
+      tags:
+      - bbs
+      description: post bbs
+      operationId: BbsController.post bbs
+      parameters:
+      - in: query
+        name: userId
+        description: The userId for bbs
+        required: true
+        type: string
+      - in: query
+        name: desc
+        description: The description for bbs
+        required: true
+        type: string
+      - in: query
+        name: year
+        description: The year for bbs
+        required: true
+        type: string
+      - in: query
+        name: month
+        description: The month for bbs
+        required: true
+        type: string
+      - in: query
+        name: day
+        description: The day for bbs
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: bbs not found
+  /bbs/bbsgetbbs:
+    get:
+      tags:
+      - bbs
+      description: get bbs
+      operationId: BbsController.get checkin bbs
+      parameters:
+      - in: query
+        name: year
+        description: The year for bbs
+        required: true
+        type: string
+      - in: query
+        name: month
+        description: The month for bbs
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articls not found
+  /bbs/getbbs:
+    get:
+      tags:
+      - bbs
+      description: get bbs
+      operationId: BbsController.get bbs
+      parameters:
+      - in: query
+        name: year
+        description: The year for bbs
+        required: true
+        type: string
+      - in: query
+        name: month
+        description: The month for bbs
+        required: true
+        type: string
+      - in: query
+        name: day
+        description: The day for bbs
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: bbs not found
   /checkin/activity/actInfo:
     post:
       tags:
@@ -2168,6 +2266,9 @@ tags:
 - name: checkin
   description: |
     CMSCHECKIN API
+- name: bbs
+  description: |
+    CMSBBS API
 - name: todo
   description: |
     CMSTODO API

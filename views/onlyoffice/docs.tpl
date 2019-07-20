@@ -151,11 +151,11 @@
   }
 
   function localDateFormatter(value) {
-    return moment(value, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    return moment(value, 'YYYY-MM-DD').add('hours',8).format('YYYY-MM-DD');
   }
 
   function localDateFormatter1(value) {
-    return moment(value, 'YYYY-MM-DD h:mm:ss').format('YYYY-MM-DD,h:mm:ss a');
+    return moment(value, 'YYYY-MM-DD h:mm:ss').add('hours',8).format('YYYY-MM-DD,h:mm:ss a');
   }
 
   function setCode(value,row,index){

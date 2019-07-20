@@ -75,6 +75,8 @@
   </style>
 </head>
 
+<div class="container-fill">{{template "/navbar" .}}</div>
+
 <body>
 
 <div class="col-lg-12">
