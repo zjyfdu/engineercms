@@ -8,6 +8,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/casbin/beego-orm-adapter"
 	"github.com/casbin/casbin"
+	"github.com/casbin/xorm-adapter"
 	_ "github.com/mattn/go-sqlite3"
 	"path"
 	"regexp"
@@ -64,7 +65,8 @@ type Tree struct {
 
 // 2019/5/27
 var e *casbin.Enforcer
-var a *beegoormadapter.Adapter
+
+// var a *beegoormadapter.Adapter
 
 func init() {
 	var dns string
@@ -73,18 +75,28 @@ func init() {
 	db_port := beego.AppConfig.String("db_port")
 	db_user := beego.AppConfig.String("db_user")
 	db_pass := beego.AppConfig.String("db_pass")
+	// 数据库名称
 	db_name := beego.AppConfig.String("db_name")
 	db_path := beego.AppConfig.String("db_path")
 	db_sslmode := beego.AppConfig.String("db_sslmode")
 	switch db_type {
 	case "mysql":
-		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/", db_user, db_pass, db_host, db_port, db_name)
-		a = beegoormadapter.NewAdapter("mysql", dns)
+		// dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/", db_user, db_pass, db_host, db_port, db_name)
+		dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/", db_user, db_pass, db_host, db_port)
+		// a = beegoormadapter.NewAdapter("mysql", dns)
+		//因为beegoormadapter里需要手动调整mysql和sqlite，所以，如果是mysql，就用xorm
+		// Initialize a Xorm adapter and use it in a Casbin enforcer:
+		// The adapter will use the MySQL database named "casbin".
+		// If it doesn't exist, the adapter will create it automatically.
+		// a := xormadapter.NewAdapter("mysql", "mysql_username:mysql_password@tcp(127.0.0.1:3306)/") // Your driver and data source.
+		a := xormadapter.NewAdapter("mysql", dns)
+		e = casbin.NewEnforcer("conf/rbac_model.conf", a)
 		break
 	case "postgres":
 		// orm.RegisterDriver("postgres", orm.DRPostgres)
 		dns = fmt.Sprintf("dbname=%s host=%s  user=%s  password=%s  port=%s  sslmode=%s", db_name, db_host, db_user, db_pass, db_port, db_sslmode)
-		a = beegoormadapter.NewAdapter("postgres", dns)
+		a := beegoormadapter.NewAdapter("postgres", dns)
+		e = casbin.NewEnforcer("conf/rbac_model.conf", a)
 		break
 	case "sqlite3":
 		if db_path == "" {
@@ -92,7 +104,8 @@ func init() {
 		}
 		dns = fmt.Sprintf("%s%s.db", db_path, db_name)
 		// 注册casbin
-		a = beegoormadapter.NewAdapter("sqlite3", dns, true)
+		a := beegoormadapter.NewAdapter("sqlite3", dns, true)
+		e = casbin.NewEnforcer("conf/rbac_model.conf", a)
 		break
 	default:
 		beego.Critical("Database driver is not allowed:", db_type)
@@ -108,7 +121,7 @@ func init() {
 	// If it doesn't exist, the adapter will create it automatically.
 	// a := beegoormadapter.NewAdapter("mysql", "mysql_username:mysql_password@tcp(127.0.0.1:3306)/abc", true)
 	// e := casbin.NewEnforcer("examples/rbac_model.conf", a)
-	e = casbin.NewEnforcer("conf/rbac_model.conf", a)
+	// e = casbin.NewEnforcer("conf/rbac_model.conf", a)
 	// Load the policy from DB.
 	e.LoadPolicy()
 }
