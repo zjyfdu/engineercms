@@ -261,6 +261,8 @@ func init() {
 	beego.Router("/admin/base/addcarousel", &controllers.AdminController{}, "*:AddCarousel")
 	//获取首页轮播图片填充表格
 	beego.Router("/admin/base/carousel", &controllers.AdminController{}, "*:Carousel")
+	//删除首页轮播图片
+	beego.Router("/admin/base/deletecarousel", &controllers.AdminController{}, "*:DeleteCarousel")
 
 	//根据数字id查询类别或目录分级表
 	beego.Router("/admin/category/?:id:string", &controllers.AdminController{}, "*:Category")

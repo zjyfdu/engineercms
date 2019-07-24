@@ -170,7 +170,7 @@
         return row.id;
       })
       //删除已选数据
-      $('$table0').bootstrapTable('remove',{
+      $('#table0').bootstrapTable('remove',{
         field:'id',
         values:ids
       });
@@ -466,6 +466,45 @@ $(document).ready(function() {
     $('#uploaderTable').on('hide.bs.modal',function(){
       $list.text("");
       uploader.destroy();//销毁uploader
+    })
+
+    //删除子表中的数据
+    $("#deleteButton1").click(function() {
+      var selectRow=$('#table1').bootstrapTable('getSelections');
+      // if (selectRow.length<1){
+      //   alert("请先勾选类别！");
+      //   return;
+      // }
+      if (selectRow.length<=0) {
+        alert("请先勾选！");
+        return false;
+      }
+      var ids=$.map(selectRow,function(row){
+        return row.id;
+      })
+      if(confirm("确定删除吗？一旦删除将无法恢复！")){
+          var idss="";
+          for(var i=0;i<selectRow.length;i++){
+            if(i==0){
+              idss=selectRow[i].id;
+            }else{
+              idss=idss+","+selectRow[i].id;
+            }  
+          }
+          $.ajax({
+            type:"post",
+            url:"/admin/base/deletecarousel",
+            data: {ids:idss},
+            success:function(data,status){
+              alert("删除“"+data+"”成功！(status:"+status+".)");
+              //删除已选数据
+              $('#table1').bootstrapTable('remove',{
+                field:'id',
+                values:ids
+              });
+            }
+          });
+        } 
     })
 })
 </script>

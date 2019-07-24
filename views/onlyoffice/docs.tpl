@@ -9,7 +9,6 @@
   <!-- <link type='text/css' href='/static/oo/files-3TmaoIbj3PAed78NYLoa7w2.css' rel='stylesheet' />
     <link type='text/css' href='/static/oo/common-HLDWebQ4QDcrVRYNq4-rWA2.css' rel='stylesheet' />
     <link type='text/css' href='/static/oo/files-CUBYqoHsKUGuN7k-PidXtQ2.css' rel='stylesheet' /> -->
-
   <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css"/>
   <script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
@@ -33,15 +32,12 @@
   
   <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/static/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-  <script type="text/javascript" src="/static/bootstrap-datepicker/bootstrap-datepicker.zh-CN.js"></script>
+  <script type="text/javascript" src="/static/bootstrap-datepicker/bootstrap-datepicker.zh-CN.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/bootstrap-datepicker/bootstrap-datepicker3.css"/>
   <link rel="stylesheet" type="text/css" href="/static/css/select2.css"/>
   <script type="text/javascript" src="/static/js/select2.js"></script>
 
-
 <!-- <script language="javascript" src="/static/oo/ga-teamlab.js" type="text/javascript"></script> -->
-
-
   <style type="text/css">
     #modalDialog .modal-header {cursor: move;}
     #modalDialog1 .modal-header {cursor: move;}
@@ -54,6 +50,7 @@
     #modalDialog8 .modal-header {cursor: move;}
     #modalDialog9 .modal-header {cursor: move;}
     #modalDialog10 .modal-header {cursor: move;}
+    #modalDialog11 .modal-header {cursor: move;}
       /*.form-group .datepicker{
         z-index: 9999;
       }*/
@@ -151,11 +148,11 @@
   }
 
   function localDateFormatter(value) {
-    return moment(value, 'YYYY-MM-DD').add('hours',8).format('YYYY-MM-DD');
+    return moment(value, 'YYYY-MM-DD').add(8,'hours').format('YYYY-MM-DD');
   }
 
   function localDateFormatter1(value) {
-    return moment(value, 'YYYY-MM-DD h:mm:ss').add('hours',8).format('YYYY-MM-DD,h:mm:ss a');
+    return moment(value, 'YYYY-MM-DD h:mm:ss').add(8,'hours').format('YYYY-MM-DD,h:mm:ss a');
   }
 
   function setCode(value,row,index){
@@ -360,6 +357,20 @@
       return pptxUrl;
   }
 
+  // 利用模板新建word excel或PPT
+  $("#createButton").click(function() {
+      // if ({{.RoleAdd}}!="true"){
+      //   alert("权限不够！");
+      //   return;
+      // }
+      $("input#pid").remove();
+      // $(".modal-body").append(th1);
+      $('#modalCreate').modal({
+        show:true,
+        backdrop:'static'
+      });
+  })
+
   // 批量上传
   $("#addButton").click(function() {
       // if ({{.RoleAdd}}!="true"){
@@ -368,11 +379,11 @@
       // }
       $("input#pid").remove();
       var th1="<input id='pid' type='hidden' name='pid' value='" +{{.Id}}+"'/>"
-        $(".modal-body").append(th1);
-        $('#modalTable').modal({
+      $(".modal-body").append(th1);
+      $('#modalTable').modal({
         show:true,
         backdrop:'static'
-        });
+      });
   })
 
   $(document).ready(function() {
@@ -790,6 +801,135 @@
   })
 
 </script>
+    <!-- 根据模板新建  style="width:1200px"-->
+  <div class="form-horizontal">
+    <div class="modal fade" id="modalCreate">
+      <div class="modal-dialog modal-lg" id="modalDialog11">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #8bc34a">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title">根据模板新建文档</h3>
+          </div>
+          <div class="modal-body">
+            <div class="modal-body-content">
+              <div class="container">
+                <div class="row">
+                  <div class="form-group must">
+                    <label class="col-sm-1 control-label">关键字</label>
+                    <div class="col-sm-2">
+                      <input type="tel" class="form-control" id="prodlabel11" placeholder="以英文,号分割"></div>
+                      <label class="col-sm-1 control-label">负责人</label>
+                    <div class="col-sm-2">
+                      <input type="tel" class="form-control" id="prodprincipal11" placeholder="输入姓名"></div>
+                      <label class="col-sm-1 control-label">结束时间</label>
+                    <div class="col-sm-1">
+                      <span style="position: relative;z-index: 9999;">
+                        <input type="text" class='datepicker' id='Date11'/>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-12">
+                    <label>**请点击文档模板新建**</label>
+                  </div>
+                  <div class="col-md-3">
+                    <table id="attachments"
+                      data-toggle="table"
+                      data-page-size="5"
+                      data-page-list="[5, 25, 50, All]"
+                      data-unique-id="id"
+                      data-pagination="true"
+                      data-side-pagination="client"
+                      data-click-to-select="true">
+                      <thead>     
+                        <tr>
+                          <th data-formatter="index1">#</th>
+                          <th data-field="Title">Word模板名称</th>
+                          <th data-field="Link" data-formatter="setDelete">删除</th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+
+                    <div class="col-md-3">
+                      <table id="attachments"
+                        data-toggle="table"
+                        data-page-size="5"
+                        data-page-list="[5, 25, 50, All]"
+                        data-unique-id="id"
+                        data-pagination="true"
+                        data-side-pagination="client"
+                        data-click-to-select="true">
+                        <thead>     
+                          <tr>
+                            <th data-formatter="index1">#</th>
+                            <th data-field="Title">Excel模板名称</th>
+                            <th data-field="Link" data-formatter="setDelete">删除</th>
+                          </tr>
+                        </thead>
+                      </table>
+                  </div>
+
+                    <div class="col-md-3">
+                      <table id="attachments"
+                        data-toggle="table"
+                        data-page-size="5"
+                        data-page-list="[5, 25, 50, All]"
+                        data-unique-id="id"
+                        data-pagination="true"
+                        data-side-pagination="client"
+                        data-click-to-select="true">
+                        <thead>     
+                          <tr>
+                            <th data-formatter="index1">#</th>
+                            <th data-field="Title">PPT模板名称</th>
+                            <th data-field="Link" data-formatter="setDelete">删除</th>
+                          </tr>
+                        </thead>
+                      </table>
+                  </div>                  
+                  <div class="col-md-12">
+                    <label>**请点击上传模板文件**</label>
+                  </div>
+                  <div class="col-md-9">
+                    <!--SWF在初始化的时候指定，在后面将展示-->
+                    <div id="uploader" style="position:middle;text-align: center;width: 100%;">
+                      <!--用来存放文件信息-->
+                      <!-- <div id="templist"></div> -->
+                      <div id="thelist"></div>
+                      <div class="btns">
+                        <div id="picker">选择文件</div>
+                        <button id="ctlBtn" class="btn btn-default">开始上传</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="form-group must">
+                <label class="col-sm-3 control-label">关键字</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="prodlabel11" placeholder="以英文,号分割"></div>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-3 control-label">结束时间</label>
+                  <div class="col-sm-3">
+                    <span style="position: relative;z-index: 9999;">
+                      <input type="text" class='datepicker' id='Date11'/>
+                    </span>
+                  </div>    
+              </div> -->              
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 批量上传 -->
   <div class="form-horizontal">
     <div class="modal fade" id="modalTable">
@@ -920,7 +1060,7 @@
                     data-pagination="true"
                     data-side-pagination="client"
                     data-click-to-select="true">
-                  <thead>     
+                <thead>     
                   <tr>
                     <th data-width="10" data-checkbox="true"></th>
                     <th data-formatter="index1">#</th>
@@ -1081,44 +1221,44 @@
     </div>
   </div>
 
-<!-- 角色列表模态框 -->
-<div class="form-horizontal">
-  <div class="modal fade" id="roles">
-    <div class="modal-dialog" id="modalDialog10">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #FF5722;">
-          <a class="close" data-dismiss="modal">×</a>
-          <h3>角色列表</h3>
-        </div>
-        <div class="modal-body">
-          <table id="tableusers21"
-            data-search="true"
-            data-show-refresh="true"
-            data-show-toggle="true"
-            data-show-columns="true"
-            data-striped="true"
-            data-toolbar="#toolbar"
-            data-query-params="queryParams"
-            data-sort-name="Rolename"
-            data-sort-order="desc"
-            data-page-size="5"
-            data-page-list="[5, 25, 50, All]"
-            data-unique-id="id"
-            data-pagination="true"
-            data-side-pagination="client"
-            data-click-to-select="true"
-            data-show-export="true"
-            >
-          </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="btn2Right1" data-method="append">保存</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+  <!-- 角色列表模态框 -->
+  <div class="form-horizontal">
+    <div class="modal fade" id="roles">
+      <div class="modal-dialog" id="modalDialog10">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #FF5722;">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>角色列表</h3>
+          </div>
+          <div class="modal-body">
+            <table id="tableusers21"
+              data-search="true"
+              data-show-refresh="true"
+              data-show-toggle="true"
+              data-show-columns="true"
+              data-striped="true"
+              data-toolbar="#toolbar"
+              data-query-params="queryParams"
+              data-sort-name="Rolename"
+              data-sort-order="desc"
+              data-page-size="5"
+              data-page-list="[5, 25, 50, All]"
+              data-unique-id="id"
+              data-pagination="true"
+              data-side-pagination="client"
+              data-click-to-select="true"
+              data-show-export="true"
+              >
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn2Right1" data-method="append">保存</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
 </div>
 
@@ -1321,6 +1461,7 @@
         $("#modalDialog8").draggable({ handle: ".modal-header" });
         $("#modalDialog9").draggable({ handle: ".modal-header" });
         $("#modalDialog10").draggable({ handle: ".modal-header" });
+        $("#modalDialog11").draggable({ handle: ".modal-header" });
         $("#myModal").css("overflow", "hidden");//禁止模态对话框的半透明背景滚动
     })
 

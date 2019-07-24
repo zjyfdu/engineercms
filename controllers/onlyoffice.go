@@ -529,7 +529,8 @@ func (c *OnlyController) GetData() {
 					for _, k := range myResall { //所有设置了权限的都不能看
 						// beego.Info(k)
 						if strconv.FormatInt(v.Id, 10) == path.Base(k[1]) {
-							docxarr[0].Permission = "4"
+							// docxarr[0].Permission = "4"
+							docxarr[0].Permission = "3"
 						}
 					}
 
@@ -569,7 +570,8 @@ func (c *OnlyController) GetData() {
 						// beego.Info(i)
 						// beego.Info(strconv.FormatInt(v.Id, 10))
 						// beego.Info(path.Base(k[1]))
-						docxarr[0].Permission = "4"
+						docxarr[0].Permission = "3"
+						// docxarr[0].Permission = "4"
 						// beego.Info(strconv.FormatInt(v.Id, 10))
 						// beego.Info(path.Base(k[1]))
 					}
@@ -707,7 +709,8 @@ func (c *OnlyController) OnlyOffice() {
 			Permission = "1"
 			for _, k := range myResall {
 				if strconv.FormatInt(onlyattachment.Id, 10) == path.Base(k[1]) {
-					Permission = "4"
+					// Permission = "4"
+					Permission = "3"
 				}
 			}
 			for _, k := range myRes {
@@ -745,7 +748,8 @@ func (c *OnlyController) OnlyOffice() {
 		Permission = "1"
 		for _, k := range myResall { //所有设置了权限的不能看
 			if strconv.FormatInt(onlyattachment.Id, 10) == path.Base(k[1]) {
-				Permission = "4"
+				Permission = "3"
+				// Permission = "4"
 			}
 			//如果设置了everyone用户权限，则按everyone的权限
 		}
@@ -1873,6 +1877,9 @@ func (c *OnlyController) Getpermission() {
 	c.Data["json"] = rolepermission
 	c.ServeJSON()
 }
+
+//用户新建模板
+//上传文档分类：word，excel和ppt
 
 //文档结构数据
 type DocNode struct {

@@ -74,7 +74,7 @@ type AdminDepartment struct {
 
 //首页轮播图片
 type AdminCarousel struct {
-	Id      int64     `form:"-"`
+	Id      int64     `json:"id",form:"-"`
 	Title   string    `form:"title;text;title:",valid:"MinSize(1);MaxSize(20)"` //orm:"unique",
 	Url     string    `orm:"null"`
 	Created time.Time `orm:"auto_now_add;type(datetime)"`
@@ -799,6 +799,12 @@ func GetAdminCarousel() (carousels []*AdminCarousel, err error) {
 		return nil, err
 	}
 	return carousels, err
+}
+
+func DelAdminCarouselById(Id int64) (int64, error) {
+	o := orm.NewOrm()
+	status, err := o.Delete(&AdminCarousel{Id: Id})
+	return status, err
 }
 
 //添加提交给merit的ip地址和端口号，接口名称

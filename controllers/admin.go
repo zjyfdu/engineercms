@@ -1298,6 +1298,28 @@ func (c *AdminController) Carousel() {
 	c.ServeJSON()
 }
 
+//删除选中的轮播图片
+func (c *AdminController) DeleteCarousel() {
+	ids := c.GetString("ids")
+	array := strings.Split(ids, ",")
+	for _, v := range array {
+		//id转成64位
+		idNum, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+		status, err := models.DelAdminCarouselById(idNum)
+		if err == nil && status > 0 {
+			c.Data["json"] = "ok"
+			c.ServeJSON()
+		} else if err != nil {
+			beego.Error(err)
+			c.Data["json"] = "出错"
+			c.ServeJSON()
+		}
+	}
+}
+
 //merit基本信息*************************************
 //IP，用户名，姓名，密码
 func (c *AdminController) MeritBasic() {

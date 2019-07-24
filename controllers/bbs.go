@@ -35,30 +35,15 @@ type BbsController struct {
 // 新增公告写入数据库
 func (c *BbsController) Bbs() {
 	userid := c.Input().Get("userId")
+	desc1 := c.Input().Get("desc1")
+	desc2 := c.Input().Get("desc2")
+	desc3 := c.Input().Get("desc3")
+	desc4 := c.Input().Get("desc4")
 	//pid转成64为
 	UserId, err := strconv.ParseInt(userid, 10, 64)
 	if err != nil {
 		beego.Error(err)
 	}
-	desc1 := c.Input().Get("desc1")
-	desc2 := c.Input().Get("desc2")
-	desc3 := c.Input().Get("desc3")
-	desc4 := c.Input().Get("desc4")
-	if desc1 == "" {
-		desc1 = "无"
-	}
-	if desc2 == "" {
-		desc2 = "无"
-	}
-	if desc3 == "" {
-		desc3 = "无"
-	}
-	if desc4 == "" {
-		desc4 = "无"
-	}
-	desc := desc1 + "&#" + desc2 + "&#" + desc3 + "&#" + desc4
-	const base_format = "2006-01-02"
-
 	year := c.Input().Get("year")
 	month := c.Input().Get("month")
 	if len(month) == 1 {
@@ -68,10 +53,36 @@ func (c *BbsController) Bbs() {
 	if len(day) == 1 {
 		day = "0" + day
 	}
+	const base_format = "2006-01-02"
 	SelectDate, err := time.Parse(base_format, year+"-"+month+"-"+day)
 	if err != nil {
 		beego.Error(err)
 	}
+	// var array []string
+	// data, err := models.GetBbs(SelectDate)
+	// if err != nil {
+	// 	beego.Error(err)
+	// 	// arrayold := [4]string{"", "", "", ""}
+	// } else {
+	// 	array = strings.Split(data.Desc, "&#")
+	// 	// for _, v := range array {
+	// 	// }
+	// 	if desc1 == "" && array[0] != "" {
+	// 		desc1 = array[0]
+	// 	}
+	// 	if desc2 == "" && array[1] != "" {
+	// 		desc2 = array[1]
+	// 	}
+	// 	if desc3 == "" && array[2] != "" {
+	// 		desc3 = array[2]
+	// 	}
+	// 	if desc4 == "" && array[3] != "" {
+	// 		desc4 = array[3]
+	// 	}
+	// }
+
+	desc := desc1 + "&#" + desc2 + "&#" + desc3 + "&#" + desc4
+
 	_, err = models.BbsBbs(UserId, desc, SelectDate)
 	if err != nil {
 		beego.Error(err)
