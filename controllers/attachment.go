@@ -509,23 +509,24 @@ func (c *AttachController) AddAttachment() {
 		if filename1 == "" {
 			filename1 = filename2 //如果编号为空，则用文件名代替，否则多个编号为空导致存入数据库唯一性检查错误
 		}
-		code := filename1
-		title := filename2
+		//20190728改名，替换文件名中的#和斜杠
+		filename2 = strings.Replace(filename2, "#", "号", -1)
+		filename2 = strings.Replace(filename2, "/", "-", -1)
+		FileSuffix := path.Ext(h.Filename)
+		attachmentname := filename1 + filename2 + FileSuffix
+		// code := filename1
+		// title := filename2
 		//存入成果数据库
 		//如果编号重复，则不写入，只返回Id值。
 		//根据id添加成果code, title, label, principal, content string, projectid int64
-		prodId, err := models.AddProduct(code, title, prodlabel, prodprincipal, uid, pidNum, topprojectid)
+		prodId, err := models.AddProduct(filename1, filename2, prodlabel, prodprincipal, uid, pidNum, topprojectid)
 		if err != nil {
 			beego.Error(err)
 		}
-		//改名，替换文件名中的#和斜杠
-		filename2 = strings.Replace(filename2, "#", "号", -1)
-		filename2 = strings.Replace(filename2, "/", "-", -1)
-		// FileSuffix := path.Ext(h.Filename)
 
 		//成果写入postmerit表，准备提交merit*********
-		catalog.Tnumber = code
-		catalog.Name = title
+		catalog.Tnumber = filename1
+		catalog.Name = filename2
 		catalog.Count = 1
 		catalog.Drawn = meritbasic.Nickname
 		catalog.Designd = meritbasic.Nickname
@@ -551,8 +552,8 @@ func (c *AttachController) AddAttachment() {
 		if err != nil {
 			beego.Error(err)
 		} else {
-			link1 := Url + "/" + h.Filename             // + FileSuffix //附件链接地址
-			filepath = DiskDirectory + "/" + h.Filename // + FileSuffix
+			link1 := Url + "/" + attachmentname             // + FileSuffix //附件链接地址
+			filepath = DiskDirectory + "/" + attachmentname // + FileSuffix
 			_, err = models.AddCatalogLink(cid, link1)
 			if err != nil {
 				beego.Error(err)
@@ -564,8 +565,8 @@ func (c *AttachController) AddAttachment() {
 
 		//把成果id作为附件的parentid，把附件的名称等信息存入附件数据库
 		//如果附件名称相同，则覆盖上传，但数据库不追加
-		// attachmentname := filename1 + filename2 + FileSuffix
-		_, err = models.AddAttachment(h.Filename, filesize, 0, prodId)
+
+		_, err = models.AddAttachment(attachmentname, filesize, 0, prodId)
 		if err != nil {
 			beego.Error(err)
 		} else {
@@ -574,7 +575,7 @@ func (c *AttachController) AddAttachment() {
 			if err != nil {
 				beego.Error(err)
 			}
-			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": h.Filename, "original": h.Filename, "url": Url + "/" + h.Filename}
+			c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": attachmentname, "original": attachmentname, "url": Url + "/" + attachmentname}
 			c.ServeJSON()
 		}
 	}
@@ -832,7 +833,6 @@ func (c *AttachController) AddAttachment2() {
 	if h != nil {
 		//保存附件
 		// attachment = h.Filename
-		filepath = DiskDirectory + "/" + h.Filename
 		// f.Close()// 关闭上传的文件，不然的话会出现临时文件不能清除的情况
 		//存入成果数据库
 		//如果编号重复，则不写入，值返回Id值。
@@ -841,7 +841,12 @@ func (c *AttachController) AddAttachment2() {
 		if err != nil {
 			beego.Error(err)
 		}
-
+		//20190728改名，替换文件名中的#和斜杠
+		filename2 := strings.Replace(h.Filename, "#", "号", -1)
+		filename2 = strings.Replace(filename2, "/", "-", -1)
+		// FileSuffix := path.Ext(h.Filename)
+		// attachmentname := filename2 + FileSuffix
+		filepath = DiskDirectory + "/" + filename2
 		//*****添加成果关联信息
 		if relevancy != "" {
 			array := strings.Split(relevancy, ",")
@@ -882,7 +887,7 @@ func (c *AttachController) AddAttachment2() {
 		if err != nil {
 			beego.Error(err)
 		} else {
-			link1 := Url + "/" + h.Filename //附件链接地址
+			link1 := Url + "/" + filename2 //附件链接地址
 			_, err = models.AddCatalogLink(cid, link1)
 			if err != nil {
 				beego.Error(err)
@@ -894,7 +899,7 @@ func (c *AttachController) AddAttachment2() {
 
 		//把成果id作为附件的parentid，把附件的名称等信息存入附件数据库
 		//如果附件名称相同，则覆盖上传，但数据库不追加
-		_, err = models.AddAttachment(h.Filename, filesize, 0, prodId)
+		_, err = models.AddAttachment(filename2, filesize, 0, prodId)
 		if err != nil {
 			beego.Error(err)
 			c.Data["json"] = map[string]interface{}{"state": "WRONG存入数据库出错", "title": err, "original": "", "url": ""}
@@ -911,7 +916,7 @@ func (c *AttachController) AddAttachment2() {
 				c.Data["json"] = map[string]interface{}{"state": "WRONG保存文件出错", "title": err, "original": "", "url": ""}
 				c.ServeJSON()
 			} else {
-				c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": h.Filename, "original": h.Filename, "url": Url + "/" + h.Filename}
+				c.Data["json"] = map[string]interface{}{"state": "SUCCESS", "title": filename2, "original": filename2, "url": Url + "/" + filename2}
 				c.ServeJSON()
 			}
 		}

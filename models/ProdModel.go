@@ -52,6 +52,21 @@ func UpdateProduct(cid int64, code, title, label, principal string) error {
 	return nil
 }
 
+//修改成果名称
+func UpdateProductTtile(pid int64, title string) error {
+	o := orm.NewOrm()
+	product := &Product{Id: pid}
+	if o.Read(product) == nil {
+		product.Title = title
+		product.Updated = time.Now()
+		_, err := o.Update(product, "Title")
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 //修改成果时间信息
 func UpdateProductTime(cid int64) error {
 	o := orm.NewOrm()

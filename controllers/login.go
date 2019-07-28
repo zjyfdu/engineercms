@@ -199,7 +199,7 @@ func (c *LoginController) Post() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
 // @router /loginpost [post]
-//login弹框输入用户名和密码后登陆提交
+//login弹框输入用户名和密码后登陆提交//微信用户注册登录用register
 func (c *LoginController) LoginPost() {
 	var user models.User
 	user.Username = c.Input().Get("uname")
@@ -370,7 +370,7 @@ func (c *LoginController) WxLogin() {
 			if len(useravatar) != 0 {
 				wxsite := beego.AppConfig.String("wxreqeustsite")
 				photo = wxsite + useravatar[0].UserAvatar.AvatarUrl
-				beego.Info(photo)
+				// beego.Info(photo)
 			}
 			// roles, err := models.GetRolenameByUserId(user.Id)
 			// if err != nil {
@@ -393,11 +393,16 @@ func (c *LoginController) WxLogin() {
 			roleid := strconv.FormatInt(role.Id, 10)
 			isAdmin = e.HasRoleForUser(uid, "role_"+roleid)
 			// useridstring := strconv.FormatInt(user.Id, 10)
+			//用户登录后，存储openid在服务端的session里，下次用户通过hotqinsessionid来取得openid
 			c.SetSession("openID", openID)
-			c.SetSession("sessionKey", sessionKey)
+			c.SetSession("sessionKey", sessionKey) //这个没用
 			// https://blog.csdn.net/yelin042/article/details/71773636
-			c.SetSession("skey", skey)
-			sessionId := c.Ctx.Input.Cookie("hotqinsessionid")
+			c.SetSession("skey", skey) //这个没用
+			//为何有这个hotqinsessionid?
+			//用户小程序register后，只是存入服务器数据库中的openid和用户名对应
+			//用户小程序login的时候，即这里，将openid存入session
+			//下次用户请求携带hotqinsessionid即可取到session-openid了。
+			sessionId := c.Ctx.Input.Cookie("hotqinsessionid") //这一步什么意思
 			c.Data["json"] = map[string]interface{}{"errNo": 1, "msg": "success", "userId": uid, "isAdmin": isAdmin, "sessionId": sessionId, "photo": photo}
 			c.ServeJSON()
 		}
@@ -411,7 +416,7 @@ func (c *LoginController) WxLogin() {
 	}
 }
 
-// @Title get wx login
+// @Title get wx haslogin
 // @Description get wx usersession
 // @Success 200 {object} success
 // @Failure 400 Invalid page supplied

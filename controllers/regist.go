@@ -151,6 +151,17 @@ func (c *RegistController) WxRegist() {
 			if err != nil {
 				beego.Error(err)
 			}
+			//根据userid取出user和avatorUrl
+			useravatar, err := models.GetUserAvatorUrl(user.Id)
+			if err != nil {
+				beego.Error(err)
+			}
+			var photo string
+			if len(useravatar) != 0 {
+				wxsite := beego.AppConfig.String("wxreqeustsite")
+				photo = wxsite + useravatar[0].UserAvatar.AvatarUrl
+				// beego.Info(photo)
+			}
 			// roles, err := models.GetRolenameByUserId(user.Id)
 			// if err != nil {
 			// 	beego.Error(err)
@@ -168,14 +179,24 @@ func (c *RegistController) WxRegist() {
 				roleid := strconv.FormatInt(role.Id, 10)
 				isAdmin = e.HasRoleForUser(uid, "role_"+roleid)
 			}
-			// beego.Info(isAdmin)
-			// beego.Info(user.Id)
+
+			//用户登录后，存储openid在服务端的session里，下次用户通过hotqinsessionid来取得openid
+			c.SetSession("openID", openID)
+			// c.SetSession("sessionKey", sessionKey) //这个没用
+			// https://blog.csdn.net/yelin042/article/details/71773636
+			// c.SetSession("skey", skey) //这个没用
+			//为何有这个hotqinsessionid?
+			//用户小程序register后，只是存入服务器数据库中的openid和用户名对应
+			//用户小程序login的时候，即这里，将openid存入session
+			//下次用户请求携带hotqinsessionid即可取到session-openid了。
+			sessionId := c.Ctx.Input.Cookie("hotqinsessionid") //这一步什么意思
+
 			if err != nil {
 				beego.Error(err)
 				c.Data["json"] = map[string]interface{}{"info": "已经注册", "data": ""}
 				c.ServeJSON()
 			} else {
-				c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "userId": uid, "isAdmin": isAdmin}
+				c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "userId": uid, "isAdmin": isAdmin, "sessionId": sessionId, "photo": photo}
 				c.ServeJSON()
 			}
 		}

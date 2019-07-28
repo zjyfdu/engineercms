@@ -119,7 +119,7 @@ func AddProject(code, title, label, principal string, parentid int64, parentidpa
 	return id, nil
 }
 
-//修改——还没改
+//修改——还没改，有问题，不能用
 func UpdateProject(cid int64, code, title, label, principal string) error {
 	o := orm.NewOrm()
 	project := &Project{Id: cid}
@@ -130,6 +130,21 @@ func UpdateProject(cid int64, code, title, label, principal string) error {
 		project.Principal = principal
 		project.Updated = time.Now()
 		_, err := o.Update(project)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+//修改项目名称——有问题，不能用
+func UpdateProjectTtile(pid int64, title string) error {
+	o := orm.NewOrm()
+	project := &Project{Id: pid}
+	if o.Read(project) == nil {
+		project.Title = title
+		project.Updated = time.Now()
+		_, err := o.Update(project, "Title")
 		if err != nil {
 			return err
 		}
