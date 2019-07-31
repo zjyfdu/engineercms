@@ -158,7 +158,7 @@
   </div>
 
   <div class="col-lg-6">
-    <h4>Copyright © 2016~2018 EngineerCMS</h4>
+    <h4>Copyright © 2016~2019 EngineerCMS</h4>
     <p>
       网站由 <i class="user icon"></i>
       <a target="_blank" href="https://github.com/3xxx">@3xxx</a>
@@ -295,7 +295,7 @@
                   <label>
                     <input type="file" name="excel" id="excel" class="btn btn-default"/>
                   </label>
-                  <button type="submit" class="btn btn-default" onclick="import()">导入规范数据</button>
+                  <button type="submit" class="btn btn-default">导入规范数据</button>
                 </form>
               <!-- </div> -->
           </div>
@@ -361,11 +361,11 @@
             <h3 class="modal-title">导入有效版本数据</h3>
           </div>
           <div class="modal-body">
-            <form method="post" action="/importlibrary" enctype="multipart/form-data">
+            <form method="post" action="/standard/importlibrary" enctype="multipart/form-data">
               <label>
                 <input type="file" name="excel2" id="excel2" class="btn btn-default"/>
               </label>
-              <button type="submit" class="btn btn-default" onclick="import()">导入有效库</button>
+              <button type="submit" class="btn btn-default">导入有效库</button>
             </form>
           </div>
           <div class="modal-footer">
@@ -604,7 +604,7 @@ $(document).ready(function(){
           url:"/standard/updatestandard",
           data: {cid:cid,number:number1,title:title1,route:route1,uname:uname1},
           success:function(data,status){
-            alert("添加“"+data+"”成功！(status:"+status+".)");
+            alert("修改“"+data+"”成功！(status:"+status+".)");
           }
         });  
       } 

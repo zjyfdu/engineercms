@@ -2046,6 +2046,41 @@ paths:
           description: Invalid page supplied
         "404":
           description: standards not found
+  /wx/updatewxeditorarticle:
+    post:
+      tags:
+      - wx
+      description: post article by articleid
+      operationId: ArticleController.post wx artile by articleid
+      parameters:
+      - in: query
+        name: id
+        description: The id of article
+        required: true
+        type: string
+      - in: query
+        name: title
+        description: The title of article
+        required: true
+        type: string
+      - in: query
+        name: content
+        description: The content of article
+        required: true
+        type: string
+      - in: query
+        name: skey
+        description: The skey of user
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.AddArticle'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: articl not found
   /wx/uploadwxavatar:
     post:
       tags:
@@ -2117,7 +2152,7 @@ paths:
       tags:
       - wx
       description: get wx usersession
-      operationId: LoginController.get wx login
+      operationId: LoginController.get wx haslogin
       responses:
         "200":
           description: ""

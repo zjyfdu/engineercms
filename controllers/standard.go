@@ -353,7 +353,6 @@ func (c *StandardController) DeleteValid() { //search用的是post方法
 }
 
 //上传excel文件，导入到规范数据库，用于批量导入规范文件
-//引用来自category的查看成果类型里的成果
 func (c *StandardController) ImportExcel() {
 	//获取上传的文件
 	_, h, err := c.GetFile("excel")
@@ -420,10 +419,10 @@ func (c *StandardController) ImportExcel() {
 }
 
 //上传excel文件，导入到有效版本数据库
-//引用来自category的查看成果类型里的成果
 func (c *StandardController) ImportLibrary() {
+	beego.Info("hah")
 	//获取上传的文件
-	_, h, err := c.GetFile("excel")
+	_, h, err := c.GetFile("excel2")
 	if err != nil {
 		beego.Error(err)
 	}
@@ -439,64 +438,68 @@ func (c *StandardController) ImportLibrary() {
 		// path = path[3:]
 		// path = "./attachment" + "/" + h.Filename
 		// f.Close()                                             // 关闭上传的文件，不然的话会出现临时文件不能清除的情况
-		err = c.SaveToFile("excel", path) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
+		err = c.SaveToFile("excel2", path) //.Join("attachment", attachment)) //存文件    WaterMark(path)    //给文件加水印
 		if err != nil {
 			beego.Error(err)
 		}
 	}
-	if err != nil {
-		beego.Error(err)
-	}
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
 	var library models.Library
 	//读出excel内容写入数据库
 	// excelFileName := path                    //"/home/tealeg/foo.xlsx"
 	xlFile, err := xlsx.OpenFile(path) //excelFileName
 	if err != nil {
 		beego.Error(err)
-	}
-	for _, sheet := range xlFile.Sheets {
-		for i, row := range sheet.Rows {
-			if i != 0 {
-				// 这里要判断单元格列数，如果超过单元格使用范围的列数，则出错for j := 2; j < 7; j += 5 {
-				j := 0
-				library.Number = row.Cells[j].String()
-				if err != nil {
-					beego.Error(err)
+	} else {
+		for _, sheet := range xlFile.Sheets {
+			for i, row := range sheet.Rows {
+				if i != 0 {
+					// 这里要判断单元格列数，如果超过单元格使用范围的列数，则出错for j := 2; j < 7; j += 5 {
+					j := 0
+					library.Number = row.Cells[j].String()
+					if err != nil {
+						beego.Error(err)
+					}
+					library.Title = row.Cells[j+1].String()
+					if err != nil {
+						beego.Error(err)
+					}
+					library.Category = row.Cells[j+2].String()
+					if err != nil {
+						beego.Error(err)
+					}
+					library.LiNumber = row.Cells[j+3].String()
+					if err != nil {
+						beego.Error(err)
+					}
+					library.Year = row.Cells[j+4].String()
+					if err != nil {
+						beego.Error(err)
+					}
+					library.Execute = row.Cells[j+5].String()
+					if err != nil {
+						beego.Error(err)
+					}
+					library.Created = time.Now()
+					library.Updated = time.Now()
+					_, err = models.SaveLibrary(library)
+					if err != nil {
+						beego.Error(err)
+					}
 				}
-				library.Title = row.Cells[j+1].String()
-				if err != nil {
-					beego.Error(err)
-				}
-				library.Category = row.Cells[j+2].String()
-				if err != nil {
-					beego.Error(err)
-				}
-				library.LiNumber = row.Cells[j+3].String()
-				if err != nil {
-					beego.Error(err)
-				}
-				library.Year = row.Cells[j+4].String()
-				if err != nil {
-					beego.Error(err)
-				}
-				library.Execute = row.Cells[j+5].String()
-				if err != nil {
-					beego.Error(err)
-				}
-				library.Created = time.Now()
-				library.Updated = time.Now()
-				_, err = models.SaveLibrary(library)
-				if err != nil {
-					beego.Error(err)
-				}
+				// for _, cell := range row.Cells {这里要继续循环cells，不能为空，即超出单元格使用范围
+				// 	fmt.Printf("%s\n", cell.String())
+				// }
 			}
-			// for _, cell := range row.Cells {这里要继续循环cells，不能为空，即超出单元格使用范围
-			// 	fmt.Printf("%s\n", cell.String())
-			// }
 		}
+		c.Data["json"] = map[string]interface{}{"state": "SUCCESS"}
+		c.ServeJSON()
 	}
-	c.TplName = "standard.tpl"
-	c.Redirect("/standard", 302)
+
+	// c.TplName = "standard.tpl"
+	// c.Redirect("/standard", 302)
 }
 
 func (c *StandardController) Standard_one_addbaidu() { //一对一模式
