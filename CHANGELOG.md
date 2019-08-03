@@ -1,3 +1,15 @@
+# API v1.0.2
+
+## Aug, 2019
+
+* 修复mysql中数据表casbin_rule；
+* 修复standards规范标准库的导入错误；
+* 修复批量上传文档修改命名中的#和/；
++ 增加小程序公告——车辆安排信息；
++ 增加onlyoffice历史版本；
++ 增加onlyoffice文档转换API；
+
+
 # API v1.0.1
 
 ## may, 2019

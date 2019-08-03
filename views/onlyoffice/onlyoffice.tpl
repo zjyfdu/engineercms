@@ -128,18 +128,22 @@
             break;
 					}
     		}
-				var changeUrl2=changeUrl.replace(/\u0026/,"&");
+				var changeUrl2="http://192.168.99.1"+changeUrl.replace(/\u0026/,"&");
 				// alert(changeUrl2);
+        var previousurl="http://192.168.99.1"+previousUrl
+        // alert(previousurl);
+        var fileurl="http://192.168.99.1"+fileUrl
+        // alert(fileurl);
     		docEditor.setHistoryData({
     			//下面这里存变化的位置
-      		// "changesUrl":"http://192.168.99.100:9000/cache/files/1522475922103673500_7157/changes.zip/changes.zip?md5=syFUueSXdnCWe60Iym001g==&expires=1525068326&disposition=attachment&ooname=output.zip",//string1, //the changesUrl from the JSON object returned after saving the document
+      		// "changesUrl":"http://192.168.100.3700:9000/cache/files/1522475922103673500_7157/changes.zip/changes.zip?md5=syFUueSXdnCWe60Iym001g==&expires=1525068326&disposition=attachment&ooname=output.zip",//string1, //the changesUrl from the JSON object returned after saving the document
       		"changesUrl":changeUrl2,
       		"key": key,
       		"previous": {
       		  "key": previousKey,//这里不影响版本切换。与上个版本对比
-      		  "url": previousUrl//http://192.168.99.100:9000/cache/files/1521953170330601700_4540/output.docx/output.docx?md5=eSwnrSSumTeMuh59IoXhCQ==&expires=1524547423&disposition=attachment&ooname=output.docx这里影响版本
+      		  "url": previousurl//previousUrl//http://192.168.100.3700:9000/cache/files/1521953170330601700_4540/output.docx/output.docx?md5=eSwnrSSumTeMuh59IoXhCQ==&expires=1524547423&disposition=attachment&ooname=output.docx这里影响版本
       		},
-      		"url": fileUrl,
+      		"url": fileurl,//fileUrl,
       		"version": version
     		})
 			};

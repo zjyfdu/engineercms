@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
 	// "github.com/astaxie/beego/orm"
@@ -17,7 +18,7 @@ import (
 	"strings"
 	"time"
 	// "mime/multipart"
-	// "github.com/astaxie/beego/httplib"
+	"github.com/astaxie/beego/httplib"
 	// "bytes"
 	// "github.com/astaxie/beego/utils/pagination"
 	// "crypto/aes"
@@ -1088,6 +1089,7 @@ func (c *OnlyController) UrltoCallback() {
 	if err != nil {
 		beego.Error(err)
 	}
+
 	//根据附件id取得附件的prodid，路径
 	onlyattachment, err := models.GetOnlyAttachbyId(idNum)
 	if err != nil {
@@ -1105,7 +1107,7 @@ func (c *OnlyController) UrltoCallback() {
 		c.ServeJSON()
 	} else if callback.Status == 2 && callback.Notmodified == false {
 		//•	2 - document is ready for saving
-		resp, err := http.Get(callback.Url)
+		resp, err := http.Get(callback.Url) //Changesurl
 		if err != nil {
 			beego.Error(err)
 		}
@@ -1117,8 +1119,35 @@ func (c *OnlyController) UrltoCallback() {
 		if err != nil {
 			beego.Error(err)
 		}
+		//1.
+		//2.将document server中的文件下载下来存入，名称就是编号v1
+		//3.再将变化文件changesurl文件存下来，名称为changesv1.zip
+		//1.改名保存
+		FileSuffix := path.Ext(onlyattachment.FileName) //只留下后缀名
+		filenameOnly := strings.TrimSuffix(onlyattachment.FileName, FileSuffix)
+
+		var first int
+		//写入历史版本
+		historyversion, err := models.GetOnlyHistoryVersion(onlyattachment.Id)
+		if err != nil {
+			beego.Error(err)
+		}
+		for _, v := range historyversion {
+			if first < v.Version {
+				first = v.Version
+			}
+		}
+		//去掉版本号：要么用正则，要么用history中的版本号进行替换？风险有点大
+		filenameOnly = strings.Replace(filenameOnly, "v"+strconv.Itoa(first), "", -1)
+		vnumber := strconv.Itoa(first + 1)
+		// file := "./attachment/onlyoffice/" + onlyattachment.FileName                          //源文件路径
+		// err = os.Rename(file, "./attachment/onlyoffice/"+filenameOnly+"v"+vnumber+FileSuffix) //重命名 C:\\log\\2013.log 文件为install.txt
+		// if err != nil {
+		// 	beego.Error(err)
+		// }
+
 		// f, err := os.OpenFile("./attachment/onlyoffice/"+onlyattachment.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
-		f, err := os.Create("./attachment/onlyoffice/" + onlyattachment.FileName)
+		f, err := os.Create("./attachment/onlyoffice/" + filenameOnly + "v" + vnumber + FileSuffix)
 		if err != nil {
 			beego.Error(err)
 		}
@@ -1129,73 +1158,97 @@ func (c *OnlyController) UrltoCallback() {
 		if err != nil {
 			beego.Error(err)
 		} else {
-			//更新附件的时间和changesurl
-			err = models.UpdateOnlyAttachment(idNum)
-			if err != nil {
-				beego.Error(err)
-			}
-			//写入历史版本数据
-			array := strings.Split(callback.Changesurl, "&")
-			Expires1 := strings.Split(array[1], "=")
-			Expires := Expires1[1]
-			Expirestime, err := strconv.ParseInt(Expires, 10, 64)
-			if err != nil {
-				beego.Error(err)
-			}
-			//获取本地location
-			// toBeCharge := "2015-01-01 00:00:00"
-			//待转化为时间戳的字符串 注意 这里的小时和分钟还要秒必须写 因为是跟着模板走的 修改模板的话也可以不写
-			// timeLayout := "2006-01-02T15:04:05.999Z"
-			//转化所需模板
-			// loc, _ := time.LoadLocation("Local") //重要：获取时区
-			// theTime, _ := time.ParseInLocation(timeLayout, toBeCharge, loc) //使用模板在对应时区转化为time.time类型
-			// sr := theTime.Unix()
-			//转化为时间戳 类型是int64
-			//打印输出时间戳 1420041600
-			//时间戳转日期
-			dataTimeStr := time.Unix(Expirestime, 0) //.Format(timeLayout) //设置时间戳 使用模板格式化为日期字符串
-			// t, _ := time.Parse(timeLayout, callback.Lastsave)
-			// beego.Info(callback.Lastsave)
-			//写入历史版本
-			historyversion, err := models.GetOnlyHistoryVersion(onlyattachment.Id)
-			if err != nil {
-				beego.Error(err)
-			}
-			var first int
-			for _, v := range historyversion {
-				if first < v.Version {
-					first = v.Version
-				}
-			}
-			// beego.Info(callback.Users[0])
-			if len(callback.Actions) == 0 {
-				actionuserid = 0
-			} else {
-				actionuserid = callback.Actions[0].Userid
-			}
-			_, err1, err2 := models.AddOnlyHistory(onlyattachment.Id, actionuserid, callback.History.ServerVersion, first+1, callback.Key, callback.Url, callback.Changesurl, dataTimeStr, callback.Lastsave)
-			if err1 != nil {
-				beego.Error(err1)
-			}
-			if err2 != nil {
-				beego.Error(err2)
-			}
-			//写入changes
-			for _, v := range callback.History.Changes {
-				_, err1, err2 = models.AddOnlyChanges(callback.Key, v.User.Id, v.User.Name, v.Created)
-				if err1 != nil {
-					beego.Error(err1)
-				}
-				if err2 != nil {
-					beego.Error(err2)
-				}
-			}
 			//更新文档更新时间
 			err = models.UpdateDocTime(onlyattachment.DocId)
 			if err != nil {
 				beego.Error(err)
 			}
 		}
+
+		//更新附件的时间和changesurl
+		err = models.UpdateOnlyAttachment(idNum, filenameOnly+"v"+vnumber+FileSuffix)
+		if err != nil {
+			beego.Error(err)
+		}
+
+		//写入历史版本数据
+		array := strings.Split(callback.Changesurl, "&")
+		Expires1 := strings.Split(array[1], "=")
+		Expires := Expires1[1]
+		Expirestime, err := strconv.ParseInt(Expires, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+		//获取本地location
+		// toBeCharge := "2015-01-01 00:00:00"
+		//待转化为时间戳的字符串 注意 这里的小时和分钟还有秒必须写 因为是跟着模板走的 修改模板的话也可以不写
+		// timeLayout := "2006-01-02T15:04:05.999Z"
+		//转化所需模板
+		// loc, _ := time.LoadLocation("Local") //重要：获取时区
+		// theTime, _ := time.ParseInLocation(timeLayout, toBeCharge, loc) //使用模板在对应时区转化为time.time类型
+		// sr := theTime.Unix()
+		//转化为时间戳 类型是int64
+		//打印输出时间戳 1420041600
+
+		//changes文档保存存下来
+		respchanges, err := http.Get(callback.Changesurl) //Changesurl
+		if err != nil {
+			beego.Error(err)
+		}
+		bodychanges, err := ioutil.ReadAll(respchanges.Body)
+		if err != nil {
+			beego.Error(err)
+		}
+		defer respchanges.Body.Close()
+		if err != nil {
+			beego.Error(err)
+		}
+		//建立目录，并返回作为父级目录
+		err = os.MkdirAll("./attachment/onlyoffice/changes/", 0777) //..代表本当前exe文件目录的上级，.表示当前目录，没有.表示盘的根目录
+		if err != nil {
+			beego.Error(err)
+		}
+		fchanges, err := os.Create("./attachment/onlyoffice/changes/" + filenameOnly + "v" + vnumber + "changes.zip")
+		if err != nil {
+			beego.Error(err)
+		}
+		defer fchanges.Close()
+		_, err = fchanges.Write(bodychanges)
+		if err != nil {
+			beego.Error(err)
+		}
+		//写入历史数据库
+		nowdocurl := "/attachment/onlyoffice/" + filenameOnly + "v" + vnumber + FileSuffix
+		changeszipurl := "/attachment/onlyoffice/changes/" + filenameOnly + "v" + vnumber + "changes.zip"
+		//时间戳转日期
+		dataTimeStr := time.Unix(Expirestime, 0) //.Format(timeLayout) //设置时间戳 使用模板格式化为日期字符串
+		// t, _ := time.Parse(timeLayout, callback.Lastsave)
+		// beego.Info(callback.Lastsave)
+		// beego.Info(callback.Users[0])
+		if len(callback.Actions) == 0 {
+			actionuserid = 0
+		} else {
+			actionuserid = callback.Actions[0].Userid
+		}
+		// _, err1, err2 := models.AddOnlyHistory(onlyattachment.Id, actionuserid, callback.History.ServerVersion, first+1, callback.Key, callback.Url, callback.Changesurl, dataTimeStr, callback.Lastsave)
+		_, err1, err2 := models.AddOnlyHistory(onlyattachment.Id, actionuserid, callback.History.ServerVersion, first+1, callback.Key, nowdocurl, changeszipurl, dataTimeStr, callback.Lastsave)
+		if err1 != nil {
+			beego.Error(err1)
+		}
+		if err2 != nil {
+			beego.Error(err2)
+		}
+		//写入changes数据库
+		for _, v := range callback.History.Changes {
+			_, err1, err2 = models.AddOnlyChanges(callback.Key, v.User.Id, v.User.Name, v.Created)
+			if err1 != nil {
+				beego.Error(err1)
+			}
+			if err2 != nil {
+				beego.Error(err2)
+			}
+		}
+
 		c.Data["json"] = map[string]interface{}{"error": 0}
 		c.ServeJSON()
 	} else if callback.Status == 6 && callback.Forcesavetype == 1 {
@@ -1213,6 +1266,7 @@ func (c *OnlyController) UrltoCallback() {
 			beego.Error(err)
 		}
 		// f, err := os.OpenFile("./attachment/onlyoffice/"+onlyattachment.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
+		//强制保存——不好用，前端不要设置成强制保存！！
 		f, err := os.Create("./attachment/onlyoffice/" + onlyattachment.FileName)
 		if err != nil {
 			beego.Error(err)
@@ -1236,7 +1290,7 @@ func (c *OnlyController) UrltoCallback() {
 		//更新附件的时间和changesurl
 		//不更新可以吗？此时有人没有关闭浏览器，有人重新打开文档，
 		//用新的key在服务器上编辑文档了！！！
-		err = models.UpdateOnlyAttachment(idNum)
+		err = models.UpdateOnlyAttachment(idNum, onlyattachment.FileName)
 		if err != nil {
 			beego.Error(err)
 		}
@@ -1249,6 +1303,7 @@ func (c *OnlyController) UrltoCallback() {
 }
 
 //cms中返回值
+//没改历史版本问题
 func (c *OnlyController) OfficeViewCallback() {
 	id := c.Input().Get("id")
 	//pid转成64为
@@ -1987,6 +2042,154 @@ func getnodesons(idNum int, nodes []DocNode) (slice []DocNode) {
 	}
 	return slice
 }
+
+//文档格式转换
+type Conversionsend struct {
+	Async      bool   `json:"async"`
+	Filetype   string `json:"filetype"`
+	Key        string `json:"key"`
+	Outputtype string `json:"async"`
+	Thumbnail  Nail   `json:"thumbnail"`
+	Title      string `json:"title"`
+	Url        string `json:"url"`
+}
+
+type Nail struct {
+	Aspect int  `json:"aspect"`
+	First  bool `json:"first"`
+	Height int  `json:"height"`
+	Width  int  `json:"width"`
+}
+type Conversionresponse struct {
+	EndConvert bool   `json:"endconvert"`
+	FileUrl    string `json:"fileurl"`
+	Percent    int    `json:"percent"`
+}
+
+// @Title post conversion doc
+// @Description post doc to onlyoffice conversion
+// @Success 200 {object} models.AddArticle
+// @Failure 400 Invalid page supplied
+// @Failure 404 articl not found
+// @router /conversion [post]
+func (c *OnlyController) Conversion() {
+	// {
+	// 	"async": false,
+	//    "filetype": "docx",
+	//    "key": "Khirz6zTPdfd7",
+	//    "outputtype": "png",
+	//    "thumbnail": {
+	//        "aspect": 0,
+	//        "first": true,
+	//        "height": 150,
+	//        "width": 100
+	//    },
+	//    "title": "Example Document Title.docx",
+	//    "url": "https://example.com/url-to-example-document.docx"
+	// }
+	// {
+	//    "endConvert": true,
+	//    "fileUrl": "https://documentserver/ResourceService.ashx?filename=output.doc",
+	//    "percent": 100
+	// }
+	var nail Nail
+	nail.Aspect = 0
+	nail.First = true
+	nail.Height = 850
+	nail.Width = 600
+	var conversionsend Conversionsend
+	conversionsend.Async = false
+	conversionsend.Filetype = "docx"
+	conversionsend.Key = "Khirz6zTPdfd7"
+	conversionsend.Outputtype = "pdf"
+	conversionsend.Thumbnail = nail
+	conversionsend.Title = "Example Document Title.docx"
+	conversionsend.Url = "http://192.168.99.1/attachment/onlyoffice/111历史版本试验v4.docx"
+
+	req := httplib.Post("http://192.168.99.100:9000/convertservice.ashx")
+	// req.Header("contentType", "application/json")
+	req.Header("Content-Type", "application/json")
+	// 	bt,err:=ioutil.ReadFile("hello.txt")
+	// if err!=nil{
+	//     log.Fatal("read file err:",err)
+	// }
+	beego.Info(conversionsend)
+	b, err := json.Marshal(conversionsend)
+	req.Body(string(b))
+	beego.Info(string(b))
+	var conversionresponse Conversionresponse
+
+	jsonstring, err := req.String()
+	if err != nil {
+		beego.Error(err)
+	} else {
+		//json字符串解析到结构体，以便进行追加
+		beego.Info(jsonstring)
+		// err = json.Unmarshal([]byte(jsonstring), &conversionresponse)
+		err = xml.Unmarshal([]byte(jsonstring), &conversionresponse)
+		// 	fmt.Println(s)
+		if err != nil {
+			beego.Error(err)
+		}
+
+		resp, err := http.Get(conversionresponse.FileUrl)
+		if err != nil {
+			beego.Error(err)
+		}
+		beego.Info(resp)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			beego.Error(err)
+		}
+		defer resp.Body.Close()
+		if err != nil {
+			beego.Error(err)
+		}
+		f, err := os.Create("./attachment/onlyoffice/" + "Example Document Title.pdf")
+		if err != nil {
+			beego.Error(err)
+		}
+		defer f.Close()
+		_, err = f.Write(body) //这里直接用resp.Body如何？
+		// _, err = f.WriteString(str)
+		// _, err = io.Copy(body, f)
+		if err != nil {
+			beego.Error(err)
+		}
+
+		// http.ServeFile(c.Ctx.ResponseWriter, c.Ctx.Request, "//attachment/onlyoffice/Example Document Title.docx")
+		filePath := "attachment/onlyoffice/Example Document Title.pdf"
+		c.Ctx.Output.Download(filePath) //这个能保证下载文件名称正确
+		c.Data["json"] = conversionresponse
+		c.ServeJSON()
+	}
+}
+
+// 4.func Unmarshal(data []byte, v interface{}) error
+// 将一个 xml 反序列化为对象 结构体中的字段必须是公有的,即大写字母开头的。
+// 如果要解析的 xml 是小的,可以 使用 tag 来指定 Struct 的字段与 xml 标记的对应关系
+
+// package main
+
+// import (
+// 	"encoding/xml"
+// 	"fmt"
+// )
+
+// type Student struct {
+// 	XMLName xml.Name `xml:"student"`
+// 	Name    string   `xml:"name"`
+// 	Age     int      `xml:"age"`
+// }
+
+// func main() {
+// 	str := `<?xml version="1.0" encoding="utf-8"?>
+//            <student>
+// <name>张三</name> <age>19</age> </student>`
+// 	var s Student
+// 	xml.Unmarshal([]byte(str), &s)
+// 	fmt.Println(s)
+// }
 
 // 原来golang下载文件这么简单
 // 分为三步

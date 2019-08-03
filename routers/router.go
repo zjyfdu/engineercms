@@ -160,6 +160,11 @@ func init() {
 					&controllers.TodoController{},
 				),
 			),
+			beego.NSNamespace("/onlyoffice",
+				beego.NSInclude(
+					&controllers.OnlyController{},
+				),
+			),
 			// beego.NSNamespace("/cms",
 			// 	beego.NSInclude(
 			// 		&controllers.CMSController{},

@@ -406,7 +406,7 @@
         pick: '#picker',
         // 只允许选择规定文件类型。
         accept: {
-            title: 'Images',
+            title: '选择文档',
             extensions: 'doc,docx,wps,xls,xlsx,et,csv,ppt,pptx,dps,txt,pdf',
             mimeTypes: '*/*'
         }
@@ -898,10 +898,10 @@
                     <div id="uploader" style="position:middle;text-align: center;width: 100%;">
                       <!--用来存放文件信息-->
                       <!-- <div id="templist"></div> -->
-                      <div id="thelist"></div>
-                      <div class="btns">
-                        <div id="picker">选择文件</div>
-                        <button id="ctlBtn" class="btn btn-default">开始上传</button>
+                      <div id="thelisttemplate"></div>
+                      <div class="btnstemplate">
+                        <div id="pickertemplate">选择文件</div>
+                        <button id="ctlBtntemplate" class="btn btn-default">开始上传</button>
                       </div>
                     </div>
                   </div>
