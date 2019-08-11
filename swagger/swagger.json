@@ -2247,6 +2247,29 @@
                 }
             }
         },
+        "/onlyoffice/conversion": {
+            "post": {
+                "tags": [
+                    "onlyoffice"
+                ],
+                "description": "post doc to onlyoffice conversion",
+                "operationId": "OnlyController.post conversion doc",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.AddArticle"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
+                    }
+                }
+            }
+        },
         "/project/getprojects": {
             "get": {
                 "tags": [
@@ -2589,6 +2612,73 @@
                 }
             }
         },
+        "/wx/addwxdiary": {
+            "post": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "post diary by projectid",
+                "operationId": "DiaryController.post wx diary by catalogId",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "title",
+                        "description": "The title of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "diarydate",
+                        "description": "The diarydate of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "diaryactivity",
+                        "description": "The diaryactivity of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "diaryweather",
+                        "description": "The diaryweather of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "content",
+                        "description": "The content of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "skey",
+                        "description": "The skey of user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.AddDiary"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "Diary not found"
+                    }
+                }
+            }
+        },
         "/wx/addwxeditorarticle": {
             "post": {
                 "tags": [
@@ -2750,6 +2840,38 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/.AddArticle"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
+                    }
+                }
+            }
+        },
+        "/wx/deletewxdiary": {
+            "post": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "post diary by catalogid",
+                "operationId": "DiaryController.post wx diary by diaryId",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of diary",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.Adddiary"
                         }
                     },
                     "400": {
@@ -2942,6 +3064,84 @@
                 }
             }
         },
+        "/wx/getwxdiaries": {
+            "get": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "get diaries by page",
+                "operationId": "DiaryController.get wx diaries list",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page for diaries list",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "skey",
+                        "description": "The skey for user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articls not found"
+                    }
+                }
+            }
+        },
+        "/wx/getwxdiary/{id}": {
+            "get": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "get diary by diaryid",
+                "operationId": "DiaryController.get wx diary by diaryId",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "The id of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "skey",
+                        "description": "The skey of user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetDiary"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
+                    }
+                }
+            }
+        },
         "/wx/islogin": {
             "get": {
                 "tags": [
@@ -3084,6 +3284,52 @@
                     },
                     "404": {
                         "description": "standards not found"
+                    }
+                }
+            }
+        },
+        "/wx/updatewxdiary": {
+            "post": {
+                "tags": [
+                    "wx"
+                ],
+                "description": "post diary by diaryid",
+                "operationId": "DiaryController.post wx diary by diaryid",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "title",
+                        "description": "The title of diary",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "content",
+                        "description": "The content of diary",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.AddDiary"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
                     }
                 }
             }
@@ -3428,10 +3674,16 @@
         ".AddArticle": {
             "type": "object"
         },
+        ".AddDiary": {
+            "type": "object"
+        },
         ".AddTopicLike": {
             "type": "object"
         },
         ".AddTopicReply": {
+            "type": "object"
+        },
+        ".Adddiary": {
             "type": "object"
         },
         ".DeleteTopicReply": {
@@ -3444,6 +3696,9 @@
             "type": "object"
         },
         ".GetAttachbyId": {
+            "type": "object"
+        },
+        ".GetDiary": {
             "type": "object"
         },
         ".GetProductsPage": {
@@ -3463,6 +3718,10 @@
         {
             "name": "admin",
             "description": "Flowtest API\n"
+        },
+        {
+            "name": "wx",
+            "description": "CMSWXDIARY API\n"
         },
         {
             "name": "adminlog",

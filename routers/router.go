@@ -132,6 +132,7 @@ func init() {
 					&controllers.MainController{},
 					&controllers.StandardController{},
 					&controllers.RegistController{},
+					&controllers.DiaryController{},
 				),
 			),
 			beego.NSNamespace("/adminlog",

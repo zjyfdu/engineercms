@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](LICENSE) [![Build Status](https://travis-ci.org/3xxx/engineercms.svg?branch=master)](https://travis-ci.org/3xxx/engineercms) [![GoDoc](https://godoc.org/github.com/3xxx/engineercms?status.svg)](https://godoc.org/github.com/3xxx/engineercms)
 
-[Demo2](https://zsj.itdos.com/)
+[Demo](https://zsj.itdos.com/)
 ——基于engineercms的设代资料管理平台（真实应用环境）
 
 1. 本系统采用go语言（基于[beego](https://github.com/astaxie/beego)框架）开发，运行文件为编译后的二进制可执行文件，所以无需像其他语言（php、nodejs、java等语言）编写的web应用那样，需要配置运行服务环境。
@@ -68,9 +68,13 @@
 
 √√√ONLYOFFICE实时文档协作支持。除了支持office的docx，xlsx及pptx格式外，还支持wps，et和dps格式。
 
-√在线预览dwg文件。
+√ONLYOFFICE中文档的历史版本对照功能。
 
-二 todo:
+√ONLYOFFICE中文档的格式转换功能，如word转pdf。
+
+√ONLYOFFICE中文档协作的权限设置，采用casbin。
+
+√在线预览dwg文件。
 
 √手机端添加图片、视频发布文档；——已开发小程序“珠三角设代”应用中并[开源](https://github.com/3xxx/wechatengineercms)。
 
@@ -80,9 +84,15 @@
 
 √小程序打卡；
 
-×规范标准库编辑，爬虫；
+√小程序多人写同一天的设代日志；
+
+√小程序公告，展示车辆、会议室的调度、占用；
 
 √文档关联完善：编辑关联，关联打开链接；
+
+二 todo:
+
+×规范标准库编辑，爬虫；
 
 ×首页搜索后转入新页面，首页一带一路页面；
 
@@ -131,16 +141,16 @@ Linux系统下请替换掉执行文件engineercms(linux)
 
 ## 第三方包
 
-0. [beego框架](https://github.com/astaxie/beego)
-1. [casbin权限管理](https://github.com/casbin/casbin)
-2. [simplejson](https://github.com/bitly/go-simplejson)
-3. [excelize](https://github.com/360EntSecGroup-Skylar/excelize)
-4. [xlsx](https://github.com/tealeg/xlsx)
-5. [goquery](https://github.com/PuerkitoBio/goquery)
-6. [go-sqlite](https://github.com/mattn/go-sqlite3)
-7. [mahonia](https://github.com/axgle/mahonia)
-8. [flow文档流程](https://github.com/js-ojus/flow)
-9. [xorm](https://github.com/go-xorm/xorm)
+1. [beego框架](https://github.com/astaxie/beego)
+2. [casbin权限管理](https://github.com/casbin/casbin)
+3. [simplejson](https://github.com/bitly/go-simplejson)
+4. [excelize](https://github.com/360EntSecGroup-Skylar/excelize)
+5. [xlsx](https://github.com/tealeg/xlsx)
+6. [goquery](https://github.com/PuerkitoBio/goquery)
+7. [go-sqlite](https://github.com/mattn/go-sqlite3)
+8. [mahonia](https://github.com/axgle/mahonia)
+9. [flow文档流程](https://github.com/js-ojus/flow)
+10. [xorm](https://github.com/go-xorm/xorm)
 
 ## 前端
 1. [onlyoffice document server文档协作](https://github.com/ONLYOFFICE/DocumentServer)

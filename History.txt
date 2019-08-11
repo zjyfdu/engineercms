@@ -1,5 +1,8 @@
                        EngineerCMS revision history
 		       
+18, engineercms 1.11 (Au 11, 2019)
+	+) Add wechat diary		       
+		       
 17, engineercms 1.10 (May 27, 2019)
 	+) Add wechat todolist
 
