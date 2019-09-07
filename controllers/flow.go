@@ -1511,6 +1511,7 @@ func (c *FlowController) FlowGroupRoleList() {
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
 // @router /flowdoc [post]
+// 添加一个带流程的文档
 func (c *FlowController) FlowDoc() {
 	//连接数据库
 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
@@ -1523,6 +1524,7 @@ func (c *FlowController) FlowDoc() {
 	if err != nil {
 		beego.Error(err)
 	}
+	db.Close() //2019.09.07
 
 	//查询预先定义的doctype流程类型
 	dtid := c.Input().Get("dtid")
@@ -1567,7 +1569,7 @@ func (c *FlowController) FlowDoc() {
 		c.ServeJSON()
 	} else {
 		tx.Commit() //这个必须要！！！！！！
-		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
+		c.Data["json"] = map[string]interface{}{"err": "ok", "data": "写入成功!"}
 		c.ServeJSON()
 	}
 }
@@ -1796,6 +1798,7 @@ func (c *FlowController) FlowEvent() {
 	if err != nil {
 		beego.Error(err)
 	}
+	db.Close() //2019.09.07
 
 	dtid := c.Input().Get("dtid")
 	dtID, err := strconv.ParseInt(dtid, 10, 64)
@@ -2172,10 +2175,12 @@ func (c *FlowController) FlowNext() {
 	if err != nil {
 		beego.Error(err)
 	}
+
 	tx1, err := db.Begin()
 	if err != nil {
 		beego.Error(err)
 	}
+	db.Close() //2019.09.07
 	// GetByDocType从数据库检索请求的工作流的详细信息。
 	// 注意:此方法检索工作流的主要信息。组成此工作流的节点的信息必须单独获取。
 	// jsoninfo := c.GetString("docaction") //获取formdata

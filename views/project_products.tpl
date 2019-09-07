@@ -48,7 +48,10 @@
     #modalDialog5 .modal-header {cursor: move;}
     #modalDialog6 .modal-header {cursor: move;}
     #modalDialog7 .modal-header {cursor: move;}
-    #modalNewDwg .modal-header {cursor: move;}
+    #modalDialog8 .modal-header {cursor: move;}
+    #modalDialog9 .modal-header {cursor: move;}
+    /*#modalNewDwg .modal-header {cursor: move;}*/
+    /*#modalFlow .modal-header {cursor: move;}*/
       /*body {
           text-align: center;
       }*/
@@ -63,15 +66,13 @@
       div#modalTable2 {/*.modal .fade .in*/
         z-index: 3;
       }
-
       /*.form-horizontal .control-label{
         padding-left:10px; 
       }
       .form-horizontal .form-group{
         float: left;
         width: 50%;
-      }*/
-          
+      }*/    
   </style>
 </head>
 
@@ -96,9 +97,12 @@
         <button {{if ne "true" .RoleDelete}} style="display:none" {{end}} type="button" data-name="deleteButton" id="deleteButton" class="btn btn-default">
         <i class="fa fa-trash">删除</i>
         </button>
-        <button {{if ne "true" .RoleNewDwg}} style="display:none" {{end}} type="button" data-name="newdwgButton" id="newdwgButton" class="btn btn-default">
-        <i class="fa fa-trash">NEWdwg</i>
+        <button {{if ne "true" .RoleFlow}} style="display:none" {{end}} type="button" data-name="flowButton" id="flowButton" class="btn btn-default">
+        <i class="fa fa-trash">Flow</i>
         </button>
+        <!-- <button {{if ne "true" .RoleNewDwg}} style="display:none" {{end}} type="button" data-name="newdwgButton" id="newdwgButton" class="btn btn-default">
+        <i class="fa fa-trash">NEWdwg</i>
+        </button> -->
         <!-- <button type="button" data-name="synchIP" id="synchIP" class="btn btn-default">
         <i class="fa fa-refresh">同步</i>
         </button> -->
@@ -128,14 +132,14 @@
       pageNumber: 1,
       pageList: [15, 50, 100],
       uniqueId:"id",
-      singleSelect:"true",
+      // singleSelect:"true",
       clickToSelect:"true",
       showExport:"true",
       queryParams:function queryParams(params) {   //设置查询参数
         var param = {
-            limit: params.pageSize,   //每页多少条数据
-            pageNo: params.pageNumber, // 页码
-            searchText:$(".search .form-control").val()
+          limit: params.pageSize,   //每页多少条数据
+          pageNo: params.pageNumber, // 页码
+          searchText:$(".search .form-control").val()
         };
         //搜索框功能
         //当查询条件中包含中文时，get请求默认会使用ISO-8859-1编码请求参数，在服务端需要对其解码
@@ -151,7 +155,8 @@
       columns: [
         {
           title: '选择',
-          radio: 'true',
+          // radio: 'true',
+          checkbox:'true',
           width: '10',
           align:"center",
           valign:"middle"
@@ -1059,6 +1064,94 @@
       }  
   })
 
+  // 成果流程
+  $("#flowButton").click(function() {
+     var selectRow=$('#table0').bootstrapTable('getSelections');
+     if (selectRow.length<=0) {
+       alert("请先勾选成果！");
+       return false;
+     }
+     //问题：如果多选，而其中有自己的，也有自己不具备权限的********
+     if ({{.Uid}}==0){
+       alert("权限不足！");
+       return;
+     }
+
+    if (selectRow[0].Uid==={{.Uid}}||{{.RoleFlow}}=="true"){
+      if (selectRow[0].Attachmentlink[0]){//||selectRow[0].Pdflink[0].Link||selectRow[0].Articlecontent[0].Link)
+      var site=/http:\/\/.*?\//.exec(selectRow[0].Attachmentlink[0].Link);//非贪婪模式 
+      }
+      if (selectRow[0].Articlecontent[0]){
+      var site=/http:\/\/.*?\//.exec(selectRow[0].Articlecontent[0].Link);//非贪婪模式 
+      }
+      if (selectRow[0].Pdflink[0]){
+      var site=/http:\/\/.*?\//.exec(selectRow[0].Pdflink[0].Link);//非贪婪模式 
+      }
+      if (site){
+        alert("同步成果不允许！");
+        return;
+      }
+
+      var title=$.map(selectRow,function(row){
+        return row.Title;
+      })
+
+      var ids="";
+      for(var i=0;i<selectRow.length;i++){
+        if(i==0){
+          ids=selectRow[i].Id;
+        }else{
+          ids=ids+","+selectRow[i].Id;
+        }  
+      }
+      $("div#flowattachment").remove();
+      $("div#flowdocname").remove();
+      // var th1="<input id='pid' type='hidden' name='pid' value='" +{{.Id}}+"'/>"
+      var th1="<div id='flowattachment' class='form-group must'><label class='col-sm-3 control-label'>附件</label><div class='col-sm-7'><input type='tel' class='form-control' id='flowdata_attachment' name='flowdata_attachment' value="+ids+"></div></div>"
+      var th2="<div id='flowdocname' class='form-group must'><label class='col-sm-3 control-label'>文档名称</label><div class='col-sm-7'><input type='tel' class='form-control' id='flowdata_docname' name='flowdata_docname' value="+title+"></div></div>"
+      $(".modal-body-content").append(th1);
+      $(".modal-body-content").append(th2);
+
+      // $("#doctype").append('<option value="a">项目模板</option>');
+      $.ajax({
+        type:"get",
+        url:"/v1/admin/flowtypelist?page=1&limit=10",
+        success:function(data,status){
+          $.each(data.doctypes,function(i,d){
+          $("#doctype").append('<option value="' + d.ID + '">'+d.Name+'</option>');
+          });
+        },
+      });
+      $.ajax({
+        type:"get",
+        url:"/v1/admin/flowaccesscontextlist?page=1&limit=10",
+        success:function(data,status){
+          $.each(data,function(i,d){
+          $("#accesscontext").append('<option value="' + d.ID + '">'+d.Name+'</option>');
+          });
+        },
+      });
+      $.ajax({
+        type:"get",
+        url:"/v1/admin/flowgrouplist?page=1&limit=10",
+        success:function(data,status){
+          $.each(data,function(i,d){
+          $("#group").append('<option value="' + d.ID + '">'+d.Name+'</option>');
+          });
+        },
+      });
+
+      $('#modalFlow').modal({
+        show:true,
+        backdrop:'static'
+      });
+
+    }else{
+      alert("权限不够！"+selectRow[0].Uid);
+      return;
+    }  
+  })
+
   // 新建dwg文件
   $("#newdwgButton").click(function() {
       if ({{.RoleNewDwg}}!="true"){
@@ -1199,50 +1292,6 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             <!-- <button type="button" class="btn btn-primary" onclick="save1()">保存</button> -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-    <!-- 新建dwg文件 -->
-  <div class="form-horizontal">
-    <div class="modal fade" id="modalNewDwg">
-      <div class="modal-dialog"  id="modalDialog1">
-        <div class="modal-content">
-          <div class="modal-header" style="background-color: #8bc34a">
-            <button type="button" class="close" data-dismiss="modal">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h3 class="modal-title">新建DWG文件</h3>
-          </div>
-          <div class="modal-body">
-            <div class="modal-body-content">
-              <div class="form-group must">
-                <label class="col-sm-3 control-label">编号</label>
-                <div class="col-sm-7">
-                  <input type="text" class="form-control" id="NewDwgcode" name="NewDwgcode"></div>
-              </div>
-              <div class="form-group must">
-                <label class="col-sm-3 control-label">名称</label>
-                <div class="col-sm-7">
-                  <input type="tel" class="form-control" id="NewDwgname" name="NewDwgname"></div>
-              </div>
-              <div class="form-group must">
-                <label class="col-sm-3 control-label">关键字</label>
-                <div class="col-sm-7">
-                  <input type="tel" class="form-control" id="NewDwglabel" name="NewDwglabel" placeholder="以英文,号分割"></div>
-              </div>
-              <div class="form-group must">
-                <label class="col-sm-3 control-label">设计</label>
-                <div class="col-sm-7">
-                  <input type="tel" class="form-control" id="NewDwgprincipal" name="NewDwgprincipal"></div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary" onclick="saveNewDwg()">保存</button>
           </div>
         </div>
       </div>
@@ -1557,6 +1606,120 @@
       </div>
     </div>
   </div>
+
+  <!-- 新建dwg文件 -->
+  <div class="form-horizontal">
+    <div class="modal fade" id="modalNewDwg">
+      <div class="modal-dialog"  id="modalDialog8">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #8bc34a">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title">新建DWG文件</h3>
+          </div>
+          <div class="modal-body">
+            <div class="modal-body-content">
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">编号</label>
+                <div class="col-sm-7">
+                  <input type="text" class="form-control" id="NewDwgcode" name="NewDwgcode"></div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">名称</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="NewDwgname" name="NewDwgname"></div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">关键字</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="NewDwglabel" name="NewDwglabel" placeholder="以英文,号分割"></div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">设计</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="NewDwgprincipal" name="NewDwgprincipal"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="saveNewDwg()">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新建flow -->
+  <div class="form-horizontal">
+    <div class="modal fade" id="modalFlow">
+      <div class="modal-dialog" id="modalDialog9">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #8bc34a">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title">流程</h3>
+          </div>
+          <div class="modal-body">
+            <div class="modal-body-content">
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">流程类型</label>
+                <div class="col-sm-7">
+                  <select name="doctype" id="doctype" class="form-control" required>
+                    <option>选择flow类型：</option>
+                    <!-- <option value="1">SL</option> -->
+                    <!-- <option value="2">DL</option> -->
+                    <!-- <option value="0">SZ</option> -->
+                  </select>
+                </div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">AccessContext</label>
+                <div class="col-sm-7">
+                  <select name="accesscontext" id="accesscontext" class="form-control" required>
+                    <option>选择ac：</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group must">
+                <label class="col-sm-3 control-label">group</label>
+                <div class="col-sm-7">
+                  <select name="group" id="group" class="form-control" required>
+                    <option>选择用户组：</option>
+                  </select>
+                </div>
+              </div>
+              <!-- <div class="form-group must">
+                <label class="col-sm-3 control-label">文章</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="flowdata_article" name="flowdata_article" value="">
+                </div>
+              </div> -->
+              <!-- <div class="form-group must">
+                <label class="col-sm-3 control-label">附件</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="flowdata_attachment" name="flowdata_attachment" value=ids>
+                </div>
+              </div> -->
+              <!-- <div class="form-group must">
+                <label class="col-sm-3 control-label">pdf</label>
+                <div class="col-sm-7">
+                  <input type="tel" class="form-control" id="flowdata_pdf" name="flowdata_pdf">
+                </div>
+              </div> -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" onclick="saveFlowDoc()">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
   <!-- <script type="text/javascript" src="/static/froala/js/jquery.min.1.11.0.js"></script> -->
@@ -1681,7 +1844,30 @@ $(function (){
     }
   }
 
-    //新建dwg文件
+  //添加流程flow
+  function saveFlowDoc(){
+    var doctype = $('#doctype').val();
+    var accesscontext = $('#accesscontext').val();
+    var group = $('#group').val();
+    var docdata = $('#flowdata_attachment').val();
+    var docname = $('#flowdata_docname').val();
+    if (doctype&&group){  
+      $.ajax({
+        type:"post",
+        url:"/v1/admin/flowdoc",
+        data: {dtid:doctype,acid:accesscontext,gid:group,docname:docname,docdata:docdata},
+        success:function(data,status){
+          alert("添加“"+data.err+"”成功！(status:"+status+".)");
+          $('#modalFlow').modal('hide');
+        },
+      });
+    }else{
+      alert("请填写编号和名称！");
+      return;
+    }
+  }
+
+  //新建dwg文件
   function saveNewDwg(){
     // var radio =$("input[type='radio']:checked").val();
     var projectid = $('#pid').val();
@@ -1835,6 +2021,7 @@ $(function (){
         document.getElementById("relevancy1").disabled=true; 
       } 
     }
+
     function station_select2(){ 
       if(box2.checked){ 
         document.getElementById("relevancy2").disabled=false; 
@@ -1852,7 +2039,10 @@ $(function (){
       $("#modalDialog5").draggable({ handle: ".modal-header" });
       $("#modalDialog6").draggable({ handle: ".modal-header" });
       $("#modalDialog7").draggable({ handle: ".modal-header" });
-      $("#modalNewDwg").draggable({ handle: ".modal-header" });
+      $("#modalDialog8").draggable({ handle: ".modal-header" });
+      $("#modalDialog9").draggable({ handle: ".modal-header" });
+      // $("#modalNewDwg").draggable({ handle: ".modal-header" });
+      // $("#modalFlow").draggable({ handle: ".modal-header" });
       $("#myModal").css("overflow", "hidden");//禁止模态对话框的半透明背景滚动
     })
 </script>

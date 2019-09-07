@@ -333,7 +333,7 @@ func GetCheckUser2(selectmonth1, selectmonth2 time.Time, activityid int64, limit
 	// err = engine.Distinct("user_id").AllCols().Find(&checks)
 	// err := engine.Sql("select * from userinfo, userdetail where userinfo.detail_id = userdetail.id").Find(&users)
 	// return users, engine.Sql("SELECT DISTINCT checkin.user_id FROM checkin INNER JOIN user ON checkin.user_id = user.id LIMIT ? OFFSET ?", limit, offset).Find(&users)
-	return users, engine.Table("checkin").Join("INNER", "user", "checkin.user_id = user.id").Where("checkin.select_date >= ? AND checkin.select_date <=? AND checkin.activity_id=?", selectmonth1, selectmonth2, activityid).Distinct("checkin.user_id", "user.nickname").Limit(limit, offset).Find(&users)
+	return users, engine.Table("checkin").Join("INNER", "user", "checkin.user_id = user.id").Where("checkin.select_date >= ? AND checkin.select_date <= ? AND checkin.activity_id = ?", selectmonth1, selectmonth2, activityid).Distinct("checkin.user_id", "user.nickname").Limit(limit, offset).Find(&users)
 	// return users, engine.Sql("SELECT * from checkin").Find(&users)
 	//distinct和limit不能和sql组合
 }

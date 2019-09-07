@@ -148,9 +148,11 @@ func (c *ProdController) GetProjProd() {
 	if e.Enforce(useridstring, projurls+"/", "POST", ".1") || isadmin {
 		c.Data["RoleAdd"] = "true"
 		c.Data["RoleNewDwg"] = "true"
+		c.Data["RoleFlow"] = "true"
 	} else {
 		c.Data["RoleAdd"] = "false"
 		c.Data["RoleNewDwg"] = "false"
+		c.Data["RoleFlow"] = "false"
 	}
 	if e.Enforce(useridstring, projurls+"/", "PUT", ".1") || isadmin {
 		c.Data["RoleUpdate"] = "true"
@@ -195,6 +197,13 @@ func (c *ProdController) GetProjProd() {
 	}
 	elapsed := time.Since(start)
 	beego.Info(elapsed)
+
+	//取出流程flow类型
+	//要么等点击按钮的时候，用ajax获取
+	// flowtypelist
+	// flowgrouplist
+	// flowaccesscontextlist
+
 	if matched == true {
 		c.TplName = "mproject_products.tpl"
 	} else {

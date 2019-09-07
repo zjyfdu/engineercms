@@ -47,6 +47,7 @@ func AddDiary(title, content, diarydate string, projectid, uid int64) (id int64,
 			Diarydate: diarydate,
 			Content:   content,
 			ProjectId: projectid,
+			UserId:    uid,
 			Created:   time.Now(),
 			Updated:   time.Now(),
 		}
@@ -78,6 +79,17 @@ func GetWxDiaries(pid, limit, offset int64) (diaries []*Diary, err error) {
 		return nil, err
 	}
 	return diaries, err
+}
+
+type DiaryUser struct {
+	Diary `xorm:"extends"`
+	User  `xorm:"extends"`
+}
+
+//微信小程序，根据projectid取得所有设代日志
+func GetWxDiaries2(pid int64, limit, offset int) ([]*DiaryUser, error) {
+	diaries := make([]*DiaryUser, 0)
+	return diaries, engine.Table("diary").Join("INNER", "user", "diary.user_id = user.id").Where("diary.project_id = ?", pid).Desc("diarydate").Limit(limit, offset).Find(&diaries)
 }
 
 //根据id取得日志
