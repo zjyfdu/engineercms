@@ -7,7 +7,10 @@ import (
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
 	// "github.com/astaxie/beego/context"
+	"database/sql"
 	"github.com/astaxie/beego/httplib"
+	"github.com/js-ojus/flow"
+	"log"
 	"os"
 	"path"
 	"regexp"
@@ -36,6 +39,18 @@ type ProductLink struct {
 	Pdflink        []PdfLink
 	Attachmentlink []AttachmentLink
 	Articlecontent []ArticleContent
+	DocState       flow.DocState
+	ProdDoc        models.ProductDocument
+}
+type PdfLink struct {
+	Id        int64
+	Title     string
+	Link      string
+	ActIndex  string
+	FileSize  int64
+	Downloads int64
+	Created   time.Time
+	Updated   time.Time
 }
 
 type AttachmentLink struct {
@@ -44,17 +59,6 @@ type AttachmentLink struct {
 	Link     string
 	FileSize int64
 	// Suffix    string
-	Downloads int64
-	Created   time.Time
-	Updated   time.Time
-}
-
-type PdfLink struct {
-	Id        int64
-	Title     string
-	Link      string
-	ActIndex  string
-	FileSize  int64
 	Downloads int64
 	Created   time.Time
 	Updated   time.Time
@@ -77,6 +81,25 @@ type prodTableserver struct {
 	Rows  []ProductLink `json:"rows"`
 	Page  int64         `json:"page"`
 	Total int64         `json:"total"` //string或int64都行！
+}
+
+//后端分页的数据结构
+type prodTableserver2 struct {
+	Rows  []*models.ProductAttachment `json:"rows"`
+	Page  int64                       `json:"page"`
+	Total int64                       `json:"total"` //string或int64都行！
+}
+
+var db *sql.DB
+
+func init() {
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// flow.RegisterDB(tdb)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db = tdb
 }
 
 //根据项目侧栏id查看这个id下的成果页面，table中的数据填充用GetProducts
@@ -232,7 +255,18 @@ type RelevancyProj struct {
 //这里增加项目同步ip的获得成果，设置连接超时。
 //专门做一个接口provideproducts,由
 func (c *ProdController) GetProducts() {
+	var err error
 	id := c.Ctx.Input.Param(":id")
+	c.Data["Id"] = id
+	var idNum int64
+	if id != "" {
+		//id转成64为
+		idNum, err = strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	searchText := c.Input().Get("searchText")
 	limit := c.Input().Get("limit")
 	limit1, err := strconv.ParseInt(limit, 10, 64)
 	if err != nil {
@@ -243,51 +277,59 @@ func (c *ProdController) GetProducts() {
 	if err != nil {
 		beego.Error(err)
 	}
-	searchText := c.Input().Get("searchText")
-	// beego.Info(id)
-	c.Data["Id"] = id
-	var idNum int64
-	// var err error
-	if id != "" {
-		//id转成64为
-		idNum, err = strconv.ParseInt(id, 10, 64)
-		if err != nil {
-			beego.Error(err)
-		}
-		//由成果id（后台传过来的行id）取得侧栏目录id
-		// prod, err := models.GetProd(idNum)
-		// if err != nil {
-		// 	beego.Error(err)
-		// }
-		// //由proj id取得url
-		// Url, _, err = GetUrlPath(prod.ProjectId)
-		// if err != nil {
-		// 	beego.Error(err)
-		// }
-		// beego.Info(Url)
-	} //else {
-	//}
 	var offset int64
 	if page1 <= 1 {
 		offset = 0
 	} else {
 		offset = (page1 - 1) * limit1
 	}
+
+	// var offset, limit1, page1 int
+	// limit := c.Input().Get("limit")
+	// if limit == "" {
+	// 	limit1 = 10
+	// } else {
+	// 	limit1, err = strconv.Atoi(limit)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 	}
+	// }
+	// page := c.Input().Get("pageNo")
+	// if page == "" {
+	// 	page1 = 1
+	// } else {
+	// 	page1, err = strconv.Atoi(page)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 	}
+	// }
+	// if page1 <= 1 {
+	// 	offset = 0
+	// } else {
+	// 	offset = (page1 - 1) * limit1
+	// }
+
 	//根据项目id取得所有成果
+	//2019-09-21这里要修改成联合查询，得到成果下的附件和文章，以及成果的flowdocument
+	//***           ******
+	//***           ****
+	//***           **
 	products, err := models.GetProductsPage(idNum, limit1, offset, 0, searchText)
 	if err != nil {
 		beego.Error(err)
 	}
-	//由proj id取得url
-	// Url, _, err := GetUrlPath(idNum)
+
+	// products, err := models.GetProductAttachment(idNum, limit1, offset)
 	// if err != nil {
 	// 	beego.Error(err)
 	// }
-	// beego.Info(Url)
+
 	link := make([]ProductLink, 0)
 	Attachslice := make([]AttachmentLink, 0)
 	Pdfslice := make([]PdfLink, 0)
 	Articleslice := make([]ArticleContent, 0)
+	tx, _ := db.Begin()
+	db.Close()
 	for _, w := range products {
 		//取到每个成果的附件（模态框打开）；pdf、文章——新窗口打开
 		//循环成果
@@ -407,6 +449,19 @@ func (c *ProdController) GetProducts() {
 		// }
 		linkarr[0].Relevancy = relevancies1
 		relevancies1 = make([]RelevancyProj, 0)
+
+		//这里去查flow表格里文档状态
+		proddoc, err := models.GetProductDocument(w.Id)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			document, err := flow.Documents.Get(tx, flow.DocTypeID(proddoc.DocTypeId), flow.DocumentID(proddoc.DocumentId))
+			if err != nil {
+				beego.Error(err)
+			}
+			linkarr[0].DocState = document.State
+			linkarr[0].ProdDoc = proddoc
+		}
 		// }
 		link = append(link, linkarr...)
 	}
@@ -416,9 +471,9 @@ func (c *ProdController) GetProducts() {
 		beego.Error(err)
 	}
 	table := prodTableserver{link, page1, count}
-
+	// table := prodTableserver2{products, 1, 20}
 	c.Data["json"] = table
-	// c.Data["json"] = link //products
+	// c.Data["json"] = table //products
 	c.ServeJSON()
 	// c.Data["json"] = root
 	// c.ServeJSON()

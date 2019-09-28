@@ -2,18 +2,19 @@ package controllers
 
 import (
 	"database/sql"
-	"github.com/astaxie/beego"
-	// "strings"
-	// "testing"
 	"fmt"
+	"github.com/3xxx/engineercms/models"
+	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/js-ojus/flow"
+	"log"
+	"strconv"
+	// "strings"
+	// "testing"
 	// "github.com/3xxx/meritms/models"
 	// _ "github.com/mattn/go-sqlite3"
 	// "github.com/astaxie/beego/httplib"
 	// "github.com/astaxie/beego/logs"
-	"log"
-	"strconv"
 	// "time"
 )
 
@@ -80,8 +81,8 @@ func (c *FlowController) FlowType() {
 
 	name := c.Input().Get("name")
 	beego.Info(name)
-	jsoninfo := c.GetString("name1") //获取formdata
-	beego.Info(jsoninfo)
+	// jsoninfo := c.GetString("name1") //获取formdata
+	// beego.Info(jsoninfo)
 	//定义流程类型
 	_, err := flow.DocTypes.New(tx, name) //"图纸设计流程"
 	if err != nil {
@@ -134,12 +135,12 @@ func (c *FlowController) FlowTypeList() {
 			beego.Error(err)
 		}
 	}
-
 	if page1 <= 1 {
 		offset = 0
 	} else {
 		offset = (page1 - 1) * limit1
 	}
+
 	doctype, err := flow.DocTypes.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
@@ -292,6 +293,95 @@ func (c *FlowController) FlowState() {
 
 // @Title post wf docstate...
 // @Description post workflowdocstate..
+// @Param name query string false "The name of docstate"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowstateupdate [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowStateUpdate() {
+	// func init() {
+	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
+	// orm.RegisterModel(new(Model))//注册 model
+	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
+	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
+	// }
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db := tdb
+	tx, _ := db.Begin()
+	db.Close()
+
+	name := c.Input().Get("name")
+	dtid := c.Input().Get("dtid")
+	//pid转成64为
+	dtID, err := strconv.ParseInt(dtid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//定义流程类型
+	err = flow.DocStates.Rename(tx, flow.DocStateID(dtID), name) //"图纸设计流程"
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tx.Commit() //这个必须要！！！！！！
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
+}
+
+// @Title post wf docstate...
+// @Description post workflowdocstate..
+// @Param name query string  true "The name of docstate"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowstatedelete [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowStateDelete() {
+	// func init() {
+	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
+	// orm.RegisterModel(new(Model))//注册 model
+	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
+	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
+	// }
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db := tdb
+	tx, _ := db.Begin()
+	db.Close()
+
+	name := c.Input().Get("name")
+	//定义流程类型
+	_, err := flow.DocStates.New(tx, name) //"图纸设计流程"
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tx.Commit() //这个必须要！！！！！！
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
+}
+
+//后端分页的数据结构
+type docstatelist struct {
+	Docstate []*flow.DocState `json:"docstates"`
+	Page     int64            `json:"page"`
+	Total    int              `json:"total"` //string或int64都行！
+}
+
+// @Title post wf docstate...
+// @Description post workflowdocstate..
 // @Param page query string false "The page of docstate"
 // @Param limit query string false "The size of page"
 // @Success 200 {object} models.GetProductsPage
@@ -332,8 +422,13 @@ func (c *FlowController) FlowStateList() {
 	if err != nil {
 		beego.Error(err)
 	}
+	arr, err := flow.DocStates.List(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := docstatelist{docstate, page1, len(arr)}
 	// tx.Commit()
-	c.Data["json"] = docstate
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
@@ -384,6 +479,70 @@ func (c *FlowController) FlowAction() {
 	}
 }
 
+// @Title post wf docaction...
+// @Description post workflowdocaction..
+// @Param name query string false "The name of docaction"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowactionupdate [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowActionUpdate() {
+	// func init() {
+	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
+	// orm.RegisterModel(new(Model))//注册 model
+	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
+	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
+	// }
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db := tdb
+	tx, _ := db.Begin()
+	db.Close()
+
+	name := c.Input().Get("name")
+	dtid := c.Input().Get("dtid")
+	//pid转成64为
+	dtID, err := strconv.ParseInt(dtid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//定义流程类型
+	err = flow.DocActions.Rename(tx, flow.DocActionID(dtID), name) //"图纸设计流程"
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tx.Commit() //这个必须要！！！！！！
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
+}
+
+// @Title post wf docaction...
+// @Description post workflowdocaction..
+// @Param name query string  true "The name of docaction"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowactiondelete [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowActionDelete() {
+
+}
+
+//后端分页的数据结构
+type docactionlist struct {
+	Docaction []*flow.DocAction `json:"docactions"`
+	Page      int64             `json:"page"`
+	Total     int               `json:"total"` //string或int64都行！
+}
+
 // @Title get wf docaction...
 // @Description get workflowdocaction..
 // @Param page query string true "The page of docaction"
@@ -421,11 +580,16 @@ func (c *FlowController) FlowActionList() {
 	} else {
 		offset = (page1 - 1) * limit1
 	}
-	docstate, err := flow.DocActions.List(offset, limit1)
+	docaction, err := flow.DocActions.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
 	}
-	c.Data["json"] = docstate
+	arr, err := flow.DocActions.List(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := docactionlist{docaction, page1, len(arr)}
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
@@ -493,6 +657,104 @@ func (c *FlowController) FlowTransition() {
 	// if err != nil {
 	// 	beego.Error(err)
 	// }
+}
+
+// @Title post wf doctransition...
+// @Description post workflowdoctransition..
+// @Param name query string false "The name of doctransition"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowtransitionupdate [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowTransitionUpdate() {
+	// func init() {
+	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
+	// orm.RegisterModel(new(Model))//注册 model
+	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
+	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
+	// }
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db := tdb
+	tx, _ := db.Begin()
+	db.Close()
+
+	name := c.Input().Get("name")
+	dtid := c.Input().Get("dtid")
+	//pid转成64为
+	dtID, err := strconv.ParseInt(dtid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//定义流程类型
+	err = flow.DocTypes.RenameTransition(tx, flow.DocTransitionID(dtID), name) //"图纸设计流程"
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tx.Commit() //这个必须要！！！！！！
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
+}
+
+// @Title post wf doctransition...
+// @Description post workflowdoctransition..
+// @Param name query string  true "The name of doctransition"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowtransitiondelete [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowTransitionDelete() {
+	// func init() {
+	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
+	// orm.RegisterModel(new(Model))//注册 model
+	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
+	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
+	// }
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db := tdb
+	tx, _ := db.Begin()
+	db.Close()
+
+	dtid := c.Input().Get("dtid")
+	//pid转成64为
+	dtID, err := strconv.ParseInt(dtid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	dsid := c.Input().Get("dsid")
+	//pid转成64为
+	dsID, err := strconv.ParseInt(dsid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	daid := c.Input().Get("daid")
+	//pid转成64为
+	daID, err := strconv.ParseInt(daid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	err = flow.DocTypes.RemoveTransition(tx, flow.DocTypeID(dtID), flow.DocStateID(dsID), flow.DocActionID(daID))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tx.Commit() //这个必须要！！！！！！
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
 }
 
 //后端分页的数据结构
@@ -623,6 +885,13 @@ func (c *FlowController) FlowWorkflow() {
 	//略
 }
 
+//后端分页的数据结构
+type workflowlist struct {
+	Workflows []*flow.Workflow `json:"workflows"`
+	Page      int64            `json:"page"`
+	Total     int              `json:"total"` //string或int64都行！
+}
+
 // @Title post wf Workflow...
 // @Description post Workflow..
 // @Param page query string  true "The page of Workflow"
@@ -661,7 +930,15 @@ func (c *FlowController) FlowWorkflowList() {
 		offset = (page1 - 1) * limit1
 	}
 	workflows, err := flow.Workflows.List(offset, limit1)
-	c.Data["json"] = workflows
+	if err != nil {
+		beego.Error(err)
+	}
+	arr, err := flow.Workflows.List(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := workflowlist{workflows, page1, len(arr)}
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
@@ -696,6 +973,57 @@ func (c *FlowController) FlowAccessContext() {
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
+}
+
+// @Title post wf docaccesscontext...
+// @Description post workflowdocaccesscontext..
+// @Param name query string false "The name of docaccesscontext"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowaccesscontextupdate [post]
+// 管理员定义流程类型docstate、流程状态state、流程节点node、
+// 流程动作action、流程流向transition、流程事件event
+func (c *FlowController) FlowAccessContextUpdate() {
+	// func init() {
+	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
+	// orm.RegisterModel(new(Model))//注册 model
+	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
+	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
+	// }
+	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	if tdb == nil {
+		log.Fatal("given database handle is `nil`")
+	}
+	db := tdb
+	tx, _ := db.Begin()
+	db.Close()
+
+	name := c.Input().Get("name")
+	dtid := c.Input().Get("dtid")
+	//pid转成64为
+	dtID, err := strconv.ParseInt(dtid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//定义流程类型
+	err = flow.AccessContexts.Rename(tx, flow.AccessContextID(dtID), name) //"图纸设计流程"
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tx.Commit() //这个必须要！！！！！！
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
+}
+
+//后端分页的数据结构
+type accesscontextlist struct {
+	AccessContexts []*flow.AccessContext `json:"accesscontexts"`
+	Page           int64                 `json:"page"`
+	Total          int                   `json:"total"` //string或int64都行！
 }
 
 // @Title get wf AccessContext...
@@ -737,7 +1065,15 @@ func (c *FlowController) FlowAccessContextList() {
 		offset = (page1 - 1) * limit1
 	}
 	accesscontexts, err := flow.AccessContexts.List(prefix, offset, limit1)
-	c.Data["json"] = accesscontexts
+	if err != nil {
+		beego.Error(err)
+	}
+	arr, err := flow.AccessContexts.List(prefix, 0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := accesscontextlist{accesscontexts, page1, len(arr)}
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
@@ -830,6 +1166,13 @@ func (c *FlowController) FlowNode() {
 	// }
 }
 
+//后端分页的数据结构
+// type nodelist struct {
+// 	Nodes []*flow.Node `json:"nodes"`
+// 	Page  int64        `json:"page"`
+// 	Total int          `json:"total"` //string或int64都行！
+// }
+
 // @Title get wf Node...
 // @Description post Node..
 // @Param page query string  true "The page of Node"
@@ -839,15 +1182,37 @@ func (c *FlowController) FlowNode() {
 // @router /flownodelist [get]
 // 管理员定义流程Node
 func (c *FlowController) FlowNodeList() {
-	// var offset, limit int64
-	// limit = 5
-	// page := c.Input().Get("page")
-	// page1, err := strconv.ParseInt(page, 10, 64)
-	// if err != nil {
-	// 	beego.Error(err)
+	// prefix := c.Input().Get("prefix")
+	// var offset, limit1, page1 int64
+	// var err error
+	// limit := c.Input().Get("limit")
+	// if limit == "" {
+	// 	limit1 = 0
+	// } else {
+	// 	limit1, err = strconv.ParseInt(limit, 10, 64)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 	}
 	// }
+	// page := c.Input().Get("page")
+	// if page == "" {
+	// 	limit1 = 0
+	// 	page1 = 1
+	// } else {
+	// 	page1, err = strconv.ParseInt(page, 10, 64)
+	// 	if err != nil {
+	// 		beego.Error(err)
+	// 	}
+	// }
+
+	// if page1 <= 1 {
+	// 	offset = 0
+	// } else {
+	// 	offset = (page1 - 1) * limit1
+	// }
+
 	workflowid := c.Input().Get("workflowid")
-	workflowid1, err := strconv.ParseInt(workflowid, 10, 64)
+	workflowID, err := strconv.ParseInt(workflowid, 10, 64)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -858,7 +1223,7 @@ func (c *FlowController) FlowNodeList() {
 	// 	offset = (page1 - 1) * limit
 	// }
 	// nodes, err := flow.Nodes.NodeList(offset, limit)
-	nodes, err := flow.Nodes.List(flow.WorkflowID(workflowid1))
+	nodes, err := flow.Nodes.List(flow.WorkflowID(workflowID))
 	c.Data["json"] = nodes
 	c.ServeJSON()
 }
@@ -941,6 +1306,13 @@ func (c *FlowController) FlowUser() {
 	// _, err = flow.Groups.NewSingleton(tx, uID4)
 }
 
+//后端分页的数据结构
+type userlist struct {
+	Users []*flow.User `json:"users"`
+	Page  int64        `json:"page"`
+	Total int          `json:"total"` //string或int64都行！
+}
+
 // @Title get wf user...
 // @Description post user..
 // @Param page query string  true "The page of user"
@@ -982,10 +1354,14 @@ func (c *FlowController) FlowUserList() {
 	nodes, err := flow.Users.List(prefix, offset, limit1)
 	if err != nil {
 		beego.Error(err)
-	} else {
-		c.Data["json"] = nodes
-		c.ServeJSON()
 	}
+	arr, err := flow.Users.List(prefix, 0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := userlist{nodes, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 // @Title post wf Group...
@@ -1022,6 +1398,13 @@ func (c *FlowController) FlowGroup() {
 		c.ServeJSON()
 	}
 	// gID2 := fatal1(flow.Groups.New(tx, "校核人员组", "G")).(flow.GroupID)
+}
+
+//后端分页的数据结构
+type grouplist struct {
+	Groups []*flow.Group `json:"groups"`
+	Page   int64         `json:"page"`
+	Total  int           `json:"total"` //string或int64都行！
 }
 
 // @Title get wf Group...
@@ -1061,13 +1444,17 @@ func (c *FlowController) FlowGroupList() {
 	} else {
 		offset = (page1 - 1) * limit1
 	}
-	nodes, err := flow.Groups.List(offset, limit1)
+	groups, err := flow.Groups.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
-	} else {
-		c.Data["json"] = nodes
-		c.ServeJSON()
 	}
+	arr, err := flow.Groups.List(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := grouplist{groups, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 // @Title post wf GroupUser...
@@ -1215,6 +1602,13 @@ func (c *FlowController) FlowRole() {
 	// roleID2 := fatal1(flow.Roles.New(tx, "校核人员角色")).(flow.RoleID)
 }
 
+//后端分页的数据结构
+type rolelist struct {
+	Roles []*flow.Role `json:"roles"`
+	Page  int64        `json:"page"`
+	Total int          `json:"total"` //string或int64都行！
+}
+
 // @Title get wf Role...
 // @Description post Role..
 // @Param page query string  true "The page of Role"
@@ -1254,10 +1648,14 @@ func (c *FlowController) FlowRoleList() {
 	roles, err := flow.Roles.List(offset, limit1)
 	if err != nil {
 		beego.Error(err)
-	} else {
-		c.Data["json"] = roles
-		c.ServeJSON()
 	}
+	arr, err := flow.Roles.List(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := rolelist{roles, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 // @Title post wf Permission...
@@ -1446,6 +1844,13 @@ func (c *FlowController) FlowGroupRole() {
 	// }
 }
 
+//后端分页的数据结构
+type grouprolelist struct {
+	GroupRoles []*flow.GroupRolesstruct `json:"grouproles"`
+	Page       int64                    `json:"page"`
+	Total      int                      `json:"total"` //string或int64都行！
+}
+
 // @Title get wf GroupRole...
 // @Description get GroupRole..
 // @Param page query string  true "The page of GroupRole"
@@ -1496,7 +1901,12 @@ func (c *FlowController) FlowGroupRoleList() {
 	if err != nil {
 		beego.Error(err)
 	}
-	c.Data["json"] = grouproles
+	arr, err := flow.AccessContexts.GroupRolesList(0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := grouprolelist{grouproles, page1, len(arr)}
+	c.Data["json"] = list
 	c.ServeJSON()
 }
 
@@ -1544,6 +1954,12 @@ func (c *FlowController) FlowDoc() {
 	}
 	name := c.Input().Get("docname")
 	data := c.Input().Get("docdata")
+	//docdata是成果productid,可以是数组
+	productid, err := strconv.ParseInt(data, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//可以传另外一个参数productid过来，然后在这里写入productdocument表格
 
 	//查询预先定义的流程类型workflow，这个相当于doctype下面再分很多种流程
 	//比如doctype为图纸设计流程，下面可以分为二级校审流程，三级校审流程，四级校审流程
@@ -1554,6 +1970,14 @@ func (c *FlowController) FlowDoc() {
 
 	//开始为具体一个文件设立流程-此处是新建一个文件。对于旧文件应该怎么操作来着？
 	//document根据doctype取得唯一workflow的state作为document的state
+
+	// 文档表示工作流中的任务，它跟踪工作流的生命周期。
+	// 文档是工作流引擎及其操作的核心。在这个过程中，它会积累各种细节，并跟踪修改的时间。
+	// 生命周期通常包括几个状态转换，这些状态转换的详细信息也会被跟踪。
+	// “Document”是一个递归结构:它可以包含其他文档。因此，在创建文档时，
+	// 将使用从根文档到其直接父文档的路径对其进行初始化。对于根文档，此路径为空。
+	// 大多数应用程序应该在其文档结构中嵌入“Document”，而不是直接使用它。
+	// 这使它们能够控制它们的数据持久性机制，同时将工作流管理委托给“flow”。
 	docNewInput := flow.DocumentsNewInput{
 		DocTypeID:       flow.DocTypeID(dtID),       //属于图纸设计类型的流程
 		AccessContextID: flow.AccessContextID(acID), //所有用户权限符合这个contex的要求
@@ -1562,16 +1986,30 @@ func (c *FlowController) FlowDoc() {
 		Data:            data,                       //文件的描述
 	}
 	// flow.Documents.New(tx, &docNewInput)
-	_, err = flow.Documents.New(tx, &docNewInput)
+	documentid, err := flow.Documents.New(tx, &docNewInput)
 	if err != nil {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
 		tx.Commit() //这个必须要！！！！！！
+		//可以传另外一个参数productid过来，然后在这里写入productdocument表格
+		//DocTypeID
+		_, err = models.AddProductDocument(dtID, int64(documentid), productid)
+		if err != nil {
+			beego.Error(err)
+		}
+
 		c.Data["json"] = map[string]interface{}{"err": "ok", "data": "写入成功!"}
 		c.ServeJSON()
 	}
+}
+
+//后端分页的数据结构
+type doclist struct {
+	Docs  []*flow.Documentstruct `json:"docs"`
+	Page  int64                  `json:"page"`
+	Total int                    `json:"total"` //string或int64都行！
 }
 
 // @Title get wf doclist
@@ -1664,10 +2102,14 @@ func (c *FlowController) FlowDocList() {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
 		c.ServeJSON()
-	} else {
-		c.Data["json"] = documents
-		c.ServeJSON()
 	}
+	arr, err := flow.Documents.DocumentList(flow.DocTypeID(dtID), 0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := doclist{documents, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 // @Title get wf doclist
@@ -1932,6 +2374,13 @@ func (c *FlowController) FlowEventList() {
 	}
 }
 
+//后端分页的数据结构
+type documentlist struct {
+	Docs  []*flow.Document `json:"docs"`
+	Page  int64            `json:"page"`
+	Total int              `json:"total"` //string或int64都行！
+}
+
 // @Title get wf document
 // @Description get document
 // @Param dtid query string  true "The id of doctype"
@@ -2019,10 +2468,14 @@ func (c *FlowController) FlowDocumentList() {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
 		c.ServeJSON()
-	} else {
-		c.Data["json"] = documents
-		c.ServeJSON()
 	}
+	arr, err := flow.Documents.List(&documentslistinput, 0, 0)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := documentlist{documents, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 type DocumentDetail struct {
@@ -2031,6 +2484,8 @@ type DocumentDetail struct {
 	Action   []flow.DocAction
 	History  []*flow.DocEventsHistory
 	Text     string
+	//这里增加一个映射product
+	Product models.Product
 }
 
 // @Title get wf document details
@@ -2140,7 +2595,8 @@ func (c *FlowController) FlowDocumentDetail() {
 		beego.Error(err)
 	}
 	documentdetail[0].History = doceventshistory
-	//action按钮
+	//这里根据flow.DocTypeID(dtID), flow.DocumentID(docID)查询product
+
 	if err != nil {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
@@ -2287,6 +2743,13 @@ func (c *FlowController) FlowNext() {
 	}
 }
 
+//后端分页的数据结构
+type mailboxlist struct {
+	Notification []*flow.Notification `json:"notification"`
+	Page         int64                `json:"page"`
+	Total        int                  `json:"total"` //string或int64都行！
+}
+
 // @Title get user mailbox
 // @Description get usermailbox
 // @Param uid query string true "The id of user"
@@ -2350,10 +2813,14 @@ func (c *FlowController) FlowUserMailbox() {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
 		c.ServeJSON()
-	} else {
-		c.Data["json"] = notification
-		c.ServeJSON()
 	}
+	arr, err := flow.Mailboxes.ListByUser(flow.UserID(uID), 0, 0, unreadbool)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := mailboxlist{notification, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 // @Title get group mailbox
@@ -2414,15 +2881,18 @@ func (c *FlowController) FlowGroupMailbox() {
 	}
 
 	notification, err := flow.Mailboxes.ListByGroup(flow.GroupID(gID), offset, limit1, unreadbool)
-
 	if err != nil {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
 		c.ServeJSON()
-	} else {
-		c.Data["json"] = notification
-		c.ServeJSON()
 	}
+	arr, err := flow.Mailboxes.ListByGroup(flow.GroupID(gID), 0, 0, unreadbool)
+	if err != nil {
+		beego.Error(err)
+	}
+	list := mailboxlist{notification, page1, len(arr)}
+	c.Data["json"] = list
+	c.ServeJSON()
 }
 
 // fatal1 expects a value and an error value as its arguments.

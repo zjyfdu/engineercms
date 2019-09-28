@@ -28,8 +28,16 @@ type Product struct {
 	// Attachments     []*Attachment `orm:"reverse(many)"` // fk 的反向关系
 }
 
+//增加一个表：product——flow document-flow.DocTypeID(dtID), flow.DocumentID(docID)
+type ProductDocument struct {
+	Id         int64
+	DocTypeId  int64
+	DocumentId int64
+	ProductId  int64
+}
+
 func init() {
-	orm.RegisterModel(new(Product)) //, new(Article)
+	orm.RegisterModel(new(Product), new(ProductDocument)) //, new(Article)
 	// orm.RegisterDriver("sqlite", orm.DRSqlite)
 	// orm.RegisterDataBase("default", "sqlite3", "database/engineer.db", 10)
 }
@@ -168,6 +176,64 @@ func GetProductsPage(id, limit, offset, uid int64, searchText string) (products 
 		_, err = qs.Filter("ProjectId", id).Filter("Uid", uid).Limit(limit, offset).OrderBy("-created").All(&products)
 	}
 	return products, err
+}
+
+//flow程序向数据库中添加成果的流程关联数据
+func AddProductDocument(dtid, documentid, productid int64) (id int64, err error) {
+	o := orm.NewOrm()
+	// err := o.QueryTable("user").Filter("name", "slene").One(&user)
+	// if err == orm.ErrMultiRows {
+	// 	// 多条的时候报错——单条呢？没有错误，错误为nil
+	// 	fmt.Printf("Returned Multi Rows Not One")
+	// }
+	// if err == orm.ErrNoRows {
+	// 	// 没有找到记录
+	// 	fmt.Printf("Not row found")
+	// }
+	var proddoc ProductDocument
+	err = o.QueryTable("ProductDocument").Filter("ProductId", productid).One(&proddoc)
+	if err == orm.ErrNoRows { // 没有找到记录
+		productdocument := &ProductDocument{
+			DocTypeId:  dtid,
+			DocumentId: documentid,
+			ProductId:  productid,
+		}
+		id, err = o.Insert(productdocument)
+		if err != nil {
+			return 0, err
+		}
+	} else if err == orm.ErrMultiRows {
+		return 0, err
+	} else if err == nil {
+		return proddoc.Id, err
+	}
+	return id, err
+}
+
+type ProductAttachment struct {
+	Product         `xorm:"extends"`
+	Attachment      `xorm:"extends"`
+	Article         `xorm:"extends"`
+	Relevancy       `xorm:"extends"`
+	ProductDocument `xorm:"extends"` //跨数据库，暂不支持
+}
+
+//根据侧栏id分页查出所有成果——按编号排序_联合查询
+func GetProductAttachment(id int64, limit, offset int) (products []*ProductAttachment, err error) {
+	productattachments := make([]*ProductAttachment, 0)
+	// return productattachments, engine.Table("product").Join("INNER", "attachment", "product.id = attachment.product_id").Join("INNER", "article", "product.id = article.product_id").Join("INNER", "relevancy", "product.id = relevancy.product_id").Join("INNER", "product_document", "product.id = product_document.product_id").Where("product.project_id = ?", id).Desc("created").Limit(limit, offset).Find(&productattachments)
+	return productattachments, engine.Table("product").Join("LEFT", "attachment", "product.id = attachment.product_id").Join("LEFT", "article", "product.id = article.product_id").Join("LEFT", "relevancy", "product.id = relevancy.product_id").Join("LEFT", "product_document", "product.id = product_document.product_id").Where("product.project_id = ?", id).Desc("created").Limit(limit, offset).Find(&productattachments)
+}
+
+//根据productid查询productdocument的flow docstate
+func GetProductDocument(id int64) (proddoc ProductDocument, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable("ProductDocument")
+	err = qs.Filter("ProductId", id).One(&proddoc)
+	if err != nil {
+		return proddoc, err
+	}
+	return proddoc, err
 }
 
 //取得侧栏id下成果总数

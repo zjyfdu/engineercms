@@ -98,7 +98,7 @@
         <i class="fa fa-trash">删除</i>
         </button>
         <button {{if ne "true" .RoleFlow}} style="display:none" {{end}} type="button" data-name="flowButton" id="flowButton" class="btn btn-default">
-        <i class="fa fa-trash">Flow</i>
+        <i class="fa fa-share-alt">Flow</i>
         </button>
         <!-- <button {{if ne "true" .RoleNewDwg}} style="display:none" {{end}} type="button" data-name="newdwgButton" id="newdwgButton" class="btn btn-default">
         <i class="fa fa-trash">NEWdwg</i>
@@ -245,6 +245,14 @@
           formatter:RelevFormatter,
           // events:actionRelevancy,
           // visible："false",
+          align:"center",
+          valign:"middle"
+        },
+        {
+          field: 'DocState',
+          title: '状态',
+          formatter:setDocState,
+          events:actionEvents,
           align:"center",
           valign:"middle"
         }
@@ -433,6 +441,12 @@
         pdfUrl= "<a class='pdf' href='javascript:void(0)' title='查看pdf列表'><i class='fa fa-list-ol'></i></a>";
         return pdfUrl;
       }
+    }
+  }
+
+  function setDocState(value,row,index){
+    if (value.Name){
+      return "<a href='/cms/#/flow/documentdetail?docid="+ row.ProdDoc.DocumentId +"&dtid="+row.ProdDoc.DocTypeId+"'target='_blank'>" + value.Name + "</a>";
     }
   }
 
@@ -1107,8 +1121,8 @@
       $("div#flowattachment").remove();
       $("div#flowdocname").remove();
       // var th1="<input id='pid' type='hidden' name='pid' value='" +{{.Id}}+"'/>"
-      var th1="<div id='flowattachment' class='form-group must'><label class='col-sm-3 control-label'>附件</label><div class='col-sm-7'><input type='tel' class='form-control' id='flowdata_attachment' name='flowdata_attachment' value="+ids+"></div></div>"
-      var th2="<div id='flowdocname' class='form-group must'><label class='col-sm-3 control-label'>文档名称</label><div class='col-sm-7'><input type='tel' class='form-control' id='flowdata_docname' name='flowdata_docname' value="+title+"></div></div>"
+      var th1="<div id='flowattachment' class='form-group must'><label class='col-sm-3 control-label'>成果id</label><div class='col-sm-7'><input type='tel' class='form-control' id='flowdata_attachment' name='flowdata_attachment' value="+ids+"></div></div>"
+      var th2="<div id='flowdocname' class='form-group must'><label class='col-sm-3 control-label'>成果名称</label><div class='col-sm-7'><input type='tel' class='form-control' id='flowdata_docname' name='flowdata_docname' value="+title+"></div></div>"
       $(".modal-body-content").append(th1);
       $(".modal-body-content").append(th2);
 
@@ -1126,7 +1140,7 @@
         type:"get",
         url:"/v1/admin/flowaccesscontextlist?page=1&limit=10",
         success:function(data,status){
-          $.each(data,function(i,d){
+          $.each(data.accesscontexts,function(i,d){
           $("#accesscontext").append('<option value="' + d.ID + '">'+d.Name+'</option>');
           });
         },
@@ -1135,7 +1149,7 @@
         type:"get",
         url:"/v1/admin/flowgrouplist?page=1&limit=10",
         success:function(data,status){
-          $.each(data,function(i,d){
+          $.each(data.groups,function(i,d){
           $("#group").append('<option value="' + d.ID + '">'+d.Name+'</option>');
           });
         },
@@ -1667,7 +1681,7 @@
               <div class="form-group must">
                 <label class="col-sm-3 control-label">流程类型</label>
                 <div class="col-sm-7">
-                  <select name="doctype" id="doctype" class="form-control" required>
+                  <select name="doctype" id="doctype" class="form-control" required placeholder="选择flow类型：">
                     <option>选择flow类型：</option>
                     <!-- <option value="1">SL</option> -->
                     <!-- <option value="2">DL</option> -->

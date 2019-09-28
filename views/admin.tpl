@@ -60,7 +60,8 @@
             <div class="sidebar-menu">
               <ul id="tree"></ul>
             </div>
-            <!-- sidebar-menu  --> </div>
+            <!-- sidebar-menu  -->
+          </div>
           <!--<div id="mCSB_1_scrollbar_vertical" class="mCSB_scrollTools mCSB_1_scrollbar mCS-light mCSB_scrollTools_vertical" style="display: block;">  
           <div class="mCSB_draggerContainer">
             <div id="mCSB_1_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 30px; top: 0px; display: block; height: 66px; max-height: 194px;">
@@ -120,7 +121,7 @@
       [
               {
                 text: "欢迎您~{{.Ip}}", 
-          icon: "fa fa-optin-monster",
+                icon: "fa fa-optin-monster",
                 selectable: true,
                 id: '010',
               },
@@ -139,12 +140,18 @@
                     id: '011',
                     nodeId: '011'
                   },
-                { 
+                  { 
                     icon: "fa fa-align-right",
                     text: "分级目录",
                     id: '012',
                     nodeId: '012'
-                  }, 
+                  },
+                  { 
+                    icon: "fa fa-share-alt",
+                    text: "流程配置",
+                    id: '013',
+                    nodeId: '013'
+                  },
                   { 
                     icon: "fa fa-bug",
                     text: "搜索IP",
@@ -399,7 +406,7 @@
 
 
         $('#tree').on('nodeSelected', function(event, data) {
-          document.getElementById("iframepage").src="/admin/"+data.id;
+          
           if (data.id=="010"){
             $(".breadcrumb").html("<i class='fa fa-home'></i>后台&gt;日历")
           }else if (data.id=="011"){
@@ -408,6 +415,7 @@
             $(".breadcrumb").html("<i class='fa fa-home'></i>后台&gt;系统设置&gt;"+data.text)
           }else if(data.id=="013"){
             $(".breadcrumb").html("<i class='fa fa-home'></i>后台&gt;系统设置&gt;"+data.text)
+            window.open('/cms/#/flow/', '_blank').location;
           }else if(data.id=="014"){
             $(".breadcrumb").html("<i class='fa fa-home'></i>后台&gt;系统设置&gt;"+data.text)
           }else if(data.id=="021"){
@@ -449,6 +457,7 @@
           }else if(data.id=="062"){
             $(".breadcrumb").html("<i class='fa fa-home'></i>后台&gt;系统日志&gt;"+data.text)
           }
+          document.getElementById("iframepage").src="/admin/"+data.id;
         }); 
         // var obj = {};
         // obj.text = "123";
@@ -472,10 +481,8 @@
     <!-- </div> -->
         <!-- <iframe src="/secofficeshow" name='main' id="iframepage" frameborder="0" width="100%" scrolling="no" marginheight="0" marginwidth="0" onLoad="iFrameHeight()"></iframe> -->
         <!-- <iframe src="/secofficeshow" name='main' id="iframepage" frameborder="0" width="100%" scrolling="no" marginheight="0" marginwidth="0" onload="changeFrameHeight()"></iframe> -->
-
     <!-- <iframe src="/admin/01" name='main' frameborder="0"  width="100%" scrolling="no" marginheight="0" marginwidth="0" id="iframepage" onload="this.height=100"></iframe>  -->
   <!-- </div>   -->
-
 
   <script type="text/javascript">
     function reinitIframe(){//http://caibaojian.com/frame-adjust-content-height.html

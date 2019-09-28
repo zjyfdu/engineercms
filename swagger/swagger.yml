@@ -125,7 +125,48 @@ paths:
           description: Invalid page supplied
         "404":
           description: data not found
+  /admin/flowaccesscontextupdate:
+    post:
+      tags:
+      - admin
+      description: post workflowdocaccesscontext..
+      operationId: FlowController.post wf docaccesscontext...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docaccesscontext
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
   /admin/flowaction:
+    post:
+      tags:
+      - admin
+      description: post workflowdocaction..
+      operationId: FlowController.post wf docaction...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docaction
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowactiondelete:
     post:
       tags:
       - admin
@@ -157,6 +198,26 @@ paths:
         name: page
         description: The page of docaction
         required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowactionupdate:
+    post:
+      tags:
+      - admin
+      description: post workflowdocaction..
+      operationId: FlowController.post wf docaction...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docaction
         type: string
       responses:
         "200":
@@ -676,6 +737,27 @@ paths:
           description: Invalid page supplied
         "404":
           description: data not found
+  /admin/flowstatedelete:
+    post:
+      tags:
+      - admin
+      description: post workflowdocstate..
+      operationId: FlowController.post wf docstate...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docstate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
   /admin/flowstatelist:
     get:
       tags:
@@ -690,6 +772,26 @@ paths:
       - in: query
         name: limit
         description: The size of page
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowstateupdate:
+    post:
+      tags:
+      - admin
+      description: post workflowdocstate..
+      operationId: FlowController.post wf docstate...
+      parameters:
+      - in: query
+        name: name
+        description: The name of docstate
         type: string
       responses:
         "200":
@@ -721,6 +823,27 @@ paths:
           description: Invalid page supplied
         "404":
           description: data not found
+  /admin/flowtransitiondelete:
+    post:
+      tags:
+      - admin
+      description: post workflowdoctransition..
+      operationId: FlowController.post wf doctransition...
+      parameters:
+      - in: query
+        name: name
+        description: The name of doctransition
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
   /admin/flowtransitionlist:
     get:
       tags:
@@ -732,6 +855,26 @@ paths:
         name: page
         description: The page of transition
         required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
+  /admin/flowtransitionupdate:
+    post:
+      tags:
+      - admin
+      description: post workflowdoctransition..
+      operationId: FlowController.post wf doctransition...
+      parameters:
+      - in: query
+        name: name
+        description: The name of doctransition
         type: string
       responses:
         "200":
