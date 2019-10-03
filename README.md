@@ -110,7 +110,7 @@
 
 ## 下载和安装
 
-在release标签中下载二进制文件和源码压缩包。[https://github.com/3xxx/EngineerCMS/releases](https://github.com/3xxx/EngineerCMS/releases)
+在release标签中下载二进制文件和源码压缩包(不再提供最新编译文件，请到网盘下载)。[https://github.com/3xxx/EngineerCMS/releases](https://github.com/3xxx/EngineerCMS/releases)
 
 将二进制文件放到源码文件夹下直接运行即可。
 
