@@ -1083,6 +1083,40 @@ paths:
           description: Invalid page supplied
         "404":
           description: data not found
+  /admin/flowusermailbox2:
+    get:
+      tags:
+      - admin
+      description: get usermailbox
+      operationId: FlowController.get user mailbox
+      parameters:
+      - in: query
+        name: uid
+        description: The id of user
+        required: true
+        type: string
+      - in: query
+        name: page
+        description: The page of mailbox
+        required: true
+        type: string
+      - in: query
+        name: limit
+        description: The limit page of mailbox
+        type: string
+      - in: query
+        name: unread
+        description: The unread of mailbox
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/.GetProductsPage'
+        "400":
+          description: Invalid page supplied
+        "404":
+          description: data not found
   /admin/flowworkflow:
     post:
       tags:

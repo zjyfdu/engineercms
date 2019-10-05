@@ -446,7 +446,7 @@
 
   function setDocState(value,row,index){
     if (value.Name){
-      return "<a href='/cms/#/flow/documentdetail?docid="+ row.ProdDoc.DocumentId +"&dtid="+row.ProdDoc.DocTypeId+"'target='_blank'>" + value.Name + "</a>";
+      return "<a href='/cms/#/flow/documentdetail2?docid="+ row.ProdDoc.DocumentId +"&dtid="+row.ProdDoc.DocTypeId+"'target='_blank'>" + value.Name + "</a>";
     }
   }
 

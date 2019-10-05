@@ -80,6 +80,9 @@ func (c *MainController) Get() {
 		c.Redirect("/index", 301)
 	default:
 		c.Redirect("/index", 301)
+		// c.Redirect("/cms", 301)
+		// c.TplName = "index.tpl"
+		// c.TplName = "index.html"
 		// beego.Info("cmsdefault")
 		// c.Redirect("/cms", 301)
 	}

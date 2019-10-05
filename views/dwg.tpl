@@ -340,6 +340,10 @@ function DynInsert() {
 
 //初始化
 function InitMxDrawX() {
+  var dwgurl={{.DwgLink}}
+  // alert(dwgurl.Path)//.replace(/\u0026/,"&")
+  var path=dwgurl.Path+"?hotqinsessionid={{.Sessionid}}"
+  alert(path)
   if (mxOcx) {
     if (!mxOcx.IsIniting()) 
     {
@@ -350,7 +354,8 @@ function InitMxDrawX() {
       //var sDwgFile = mxOcx.GetOcxAppPath() + "\\管道安装大样图.dwg";
       //mxOcx.OpenDwgFile(sDwgFile);
       //....
-      mxOcx.OpenWebDwgFile("{{.DwgLink}}?hotqinsessionid={{.Sessionid}}");
+      // mxOcx.OpenWebDwgFile("{{.DwgLink}}?hotqinsessionid={{.Sessionid}}");
+      mxOcx.OpenWebDwgFile(path);
       // mxOcx.HideToolBarControl(_T("绘图工具"),_T("绘线,绘矩形框"),true,true);
       document.getElementById("MxDrawXCtrl").EnableToolBarButton("另存为dwg文件", false);
       document.getElementById("MxDrawXCtrl").EnableToolBarButton("保存", false);

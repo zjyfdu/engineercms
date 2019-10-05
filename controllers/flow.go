@@ -29,8 +29,11 @@ func (c *FlowController) Get() {
 	c.TplName = "flow.tpl"
 }
 
-// var db *sql.DB
+// var tx *sql.Tx每个方法里这样用还是像下面这样用？？
+// tx, _ := db.Begin()
+// db.Close()
 
+// var db *sql.DB
 // func init() {
 // 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
 // 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
@@ -64,20 +67,24 @@ func (c *FlowController) WorkFlow() {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowType() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	// func init() {
 	// orm.RegisterDriver("mysql", orm.DRMySQL)//注册驱动
 	// orm.RegisterModel(new(Model))//注册 model
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
+
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 
 	name := c.Input().Get("name")
 	beego.Info(name)
@@ -90,7 +97,7 @@ func (c *FlowController) FlowType() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -114,6 +121,8 @@ type doctypelist struct {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowTypeList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -172,15 +181,15 @@ func (c *FlowController) FlowTypeUpdate() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -194,7 +203,7 @@ func (c *FlowController) FlowTypeUpdate() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -216,15 +225,15 @@ func (c *FlowController) FlowTypeDelete() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	//定义流程类型
 	_, err := flow.DocTypes.New(tx, name) //"图纸设计流程"
@@ -232,7 +241,7 @@ func (c *FlowController) FlowTypeDelete() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -254,15 +263,15 @@ func (c *FlowController) FlowState() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	//定义流程状态
 	_, err := flow.DocStates.New(tx, name) //"设计中..."
@@ -271,7 +280,7 @@ func (c *FlowController) FlowState() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -307,15 +316,15 @@ func (c *FlowController) FlowStateUpdate() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -329,7 +338,7 @@ func (c *FlowController) FlowStateUpdate() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -351,15 +360,15 @@ func (c *FlowController) FlowStateDelete() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	//定义流程类型
 	_, err := flow.DocStates.New(tx, name) //"图纸设计流程"
@@ -367,7 +376,7 @@ func (c *FlowController) FlowStateDelete() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -391,6 +400,8 @@ type docstatelist struct {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowStateList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -448,15 +459,15 @@ func (c *FlowController) FlowAction() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	reconfirm := c.Input().Get("reconfirm")
 	beego.Info(reconfirm)
@@ -473,7 +484,7 @@ func (c *FlowController) FlowAction() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -495,15 +506,15 @@ func (c *FlowController) FlowActionUpdate() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -517,7 +528,7 @@ func (c *FlowController) FlowActionUpdate() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -553,6 +564,8 @@ type docactionlist struct {
 // 管理员定义流程类型doctype、流程状态state、流程节点node、
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowActionList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -609,15 +622,15 @@ func (c *FlowController) FlowTransition() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	// dtid := c.Input().Get("dtid")
 	dtid := c.GetString("dtid")
 	// beego.Info(dtid)
@@ -648,7 +661,7 @@ func (c *FlowController) FlowTransition() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -675,15 +688,15 @@ func (c *FlowController) FlowTransitionUpdate() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -697,7 +710,7 @@ func (c *FlowController) FlowTransitionUpdate() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -719,15 +732,15 @@ func (c *FlowController) FlowTransitionDelete() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
 	dtID, err := strconv.ParseInt(dtid, 10, 64)
@@ -751,7 +764,7 @@ func (c *FlowController) FlowTransitionDelete() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -773,6 +786,8 @@ type transitionlist struct {
 // @router /flowtransitionlist [get]
 // 展示doctype下from docstate可能的transion
 func (c *FlowController) FlowTransitionList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	// dtid := c.Input().Get("dtid")
 	// dtID, err := strconv.ParseInt(dtid, 10, 64)
 	// if err != nil {
@@ -843,15 +858,15 @@ func (c *FlowController) FlowWorkflow() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name") //图纸设计-三级校审流程
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -871,7 +886,7 @@ func (c *FlowController) FlowWorkflow() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		beego.Info(workflowID)
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
@@ -902,6 +917,8 @@ type workflowlist struct {
 // 管理员定义流程Workflow
 // 输入doctype和初始action
 func (c *FlowController) FlowWorkflowList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -952,15 +969,15 @@ func (c *FlowController) FlowWorkflowList() {
 // 管理员定义流程AccessContext
 // 流程命名空间
 func (c *FlowController) FlowAccessContext() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	//定义用户、组、角色、权限集合
 	_, err := flow.AccessContexts.New(tx, name) //"Context"
@@ -969,7 +986,7 @@ func (c *FlowController) FlowAccessContext() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -991,15 +1008,15 @@ func (c *FlowController) FlowAccessContextUpdate() {
 	// orm.RegisterDataBase("default", "mysql", "test:123456@/test?charset=utf8",30,30)//注册默认数据库
 	//orm.RegisterDataBase("default", "mysql", "test:@/test?charset=utf8")//密码为空格式
 	// }
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -1013,7 +1030,7 @@ func (c *FlowController) FlowAccessContextUpdate() {
 		fmt.Println(err)
 	}
 
-	tx.Commit() //这个必须要！！！！！！
+	// tx.Commit() //这个必须要！！！！！！
 
 	c.Data["json"] = "ok"
 	c.ServeJSON()
@@ -1036,6 +1053,8 @@ type accesscontextlist struct {
 // 管理员定义流程AccessContext
 // 流程命名空间
 func (c *FlowController) FlowAccessContextList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	prefix := c.Input().Get("prefix")
 	var offset, limit1, page1 int64
 	var err error
@@ -1089,15 +1108,15 @@ func (c *FlowController) FlowAccessContextList() {
 // A `Node` each has to be defined for each document state of the workflow,
 // except the final state. Please look at `_Workflows.AddNode`.
 func (c *FlowController) FlowNode() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	dtid := c.Input().Get("dtid")
 	//pid转成64为
@@ -1152,7 +1171,7 @@ func (c *FlowController) FlowNode() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1241,15 +1260,15 @@ func (c *FlowController) FlowNodeList() {
 // 管理员定义流程user
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowUser() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	first_name := c.Input().Get("firstname")
 	last_name := c.Input().Get("lastname")
 	email := c.Input().Get("email")
@@ -1273,7 +1292,7 @@ func (c *FlowController) FlowUser() {
 		uid, _ := res.LastInsertId()
 		uID1 := flow.UserID(uid)
 		_, err = flow.Groups.NewSingleton(tx, uID1)
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1323,6 +1342,8 @@ type userlist struct {
 // 管理员定义流程user
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowUserList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	prefix := c.Input().Get("prefix")
 	var offset, limit1, page1 int64
 	var err error
@@ -1375,15 +1396,15 @@ func (c *FlowController) FlowUserList() {
 // 管理员定义流程Group
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowGroup() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	grouptype := c.Input().Get("grouptype")
 	//注意：单人组自动建立！！！
@@ -1393,7 +1414,7 @@ func (c *FlowController) FlowGroup() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1417,6 +1438,8 @@ type grouplist struct {
 // 管理员定义流程Group
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowGroupList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1467,15 +1490,15 @@ func (c *FlowController) FlowGroupList() {
 // 管理员定义流程GroupUser
 // 将users加入group
 func (c *FlowController) FlowUserGroup() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	// uid := c.Input().Get("uid")
 	// beego.Info(uid)
 	uid := make([]string, 0, 2)
@@ -1499,7 +1522,7 @@ func (c *FlowController) FlowUserGroup() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1520,6 +1543,8 @@ type GroupUsers struct {
 // @router /flowgroupuserslist [get]
 // 查询Group下的所有Users
 func (c *FlowController) FlowGroupUsersList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -1579,15 +1604,15 @@ func (c *FlowController) FlowGroupUsersList() {
 // 管理员定义流程Role
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowRole() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	name := c.Input().Get("name")
 	_, err := flow.Roles.New(tx, name)
 	if err != nil {
@@ -1595,7 +1620,7 @@ func (c *FlowController) FlowRole() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1668,15 +1693,15 @@ func (c *FlowController) FlowRoleList() {
 // 管理员定义流程Permission
 // 流程动作action、流程流向transition、流程事件event
 func (c *FlowController) FlowPermission() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	roleid := c.Input().Get("roleid")
 	//pid转成64为
 	roleID, err := strconv.ParseInt(roleid, 10, 64)
@@ -1704,7 +1729,7 @@ func (c *FlowController) FlowPermission() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1799,15 +1824,15 @@ func (c *FlowController) FlowRolePermissionList() {
 // 管理员定义流程GroupRole
 // 来自accesscontext
 func (c *FlowController) FlowGroupRole() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, _ := db.Begin()
-	db.Close()
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, _ := db.Begin()
+	// db.Close()
+	var tx *sql.Tx
 	acid := c.Input().Get("acid")
 	//pid转成64为
 	acID, err := strconv.ParseInt(acid, 10, 64)
@@ -1833,7 +1858,7 @@ func (c *FlowController) FlowGroupRole() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -1924,17 +1949,18 @@ func (c *FlowController) FlowGroupRoleList() {
 // 添加一个带流程的文档
 func (c *FlowController) FlowDoc() {
 	//连接数据库
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, err := db.Begin()
-	if err != nil {
-		beego.Error(err)
-	}
-	db.Close() //2019.09.07
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	var tx *sql.Tx
+	// tx, err := db.Begin()
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+	// db.Close() //2019.09.07
 
 	//查询预先定义的doctype流程类型
 	dtid := c.Input().Get("dtid")
@@ -1992,7 +2018,7 @@ func (c *FlowController) FlowDoc() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		//可以传另外一个参数productid过来，然后在这里写入productdocument表格
 		//DocTypeID
 		_, err = models.AddProductDocument(dtID, int64(documentid), productid)
@@ -2230,18 +2256,18 @@ func (c *FlowController) FlowDocList() {
 // 添加events：
 func (c *FlowController) FlowEvent() {
 	//连接数据库
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, err := db.Begin()
-	if err != nil {
-		beego.Error(err)
-	}
-	db.Close() //2019.09.07
-
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, err := db.Begin()
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+	// db.Close() //2019.09.07
+	var tx *sql.Tx
 	dtid := c.Input().Get("dtid")
 	dtID, err := strconv.ParseInt(dtid, 10, 64)
 	if err != nil {
@@ -2269,7 +2295,7 @@ func (c *FlowController) FlowEvent() {
 		beego.Error(err)
 	}
 	text := c.Input().Get("text")
-	beego.Info(text)
+	// beego.Info(text)
 	//建立好document，循环建立events，根据哪个来建立？
 	//根据document的Doctypes.Transitions获取state和action
 	//循环建立events，然后展示给客户端
@@ -2289,7 +2315,7 @@ func (c *FlowController) FlowEvent() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx.Commit() //这个必须要！！！！！！
+		// tx.Commit() //这个必须要！！！！！！
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
 	}
@@ -2304,6 +2330,8 @@ func (c *FlowController) FlowEvent() {
 // @router /flowdoceventlist [get]
 // 查询events：
 func (c *FlowController) FlowEventList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	// var tx *sql.Tx
 	dtid := c.Input().Get("dtid")
 	dtID, err := strconv.ParseInt(dtid, 10, 64)
@@ -2396,6 +2424,8 @@ type documentlist struct {
 // 1.列表显示文档
 // 2.点击一个具体文档——显示详情——显示actions
 func (c *FlowController) FlowDocumentList() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -2498,6 +2528,8 @@ type DocumentDetail struct {
 // @router /flowdocumentdetail [get]
 // 2.点击一个具体文档——显示详情——显示actions
 func (c *FlowController) FlowDocumentDetail() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var tx *sql.Tx
 	//查询预先定义的doctype流程类型
 	dtid := c.Input().Get("dtid")
@@ -2620,23 +2652,27 @@ func (c *FlowController) FlowDocumentDetail() {
 // @router /flownext [post]
 // FlowDocAction列出了文档和动作，用户点击action，则这里进行修改docstate
 func (c *FlowController) FlowNext() {
-	// var tx *sql.Tx //用这个nil，后面就不用commit了吧，都在flow里commit了。
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db := tdb
-	tx, err := db.Begin()
-	if err != nil {
-		beego.Error(err)
-	}
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
 
-	tx1, err := db.Begin()
-	if err != nil {
-		beego.Error(err)
-	}
-	db.Close() //2019.09.07
+	var tx *sql.Tx //用这个nil，后面就不用commit了吧，都在flow里commit了。
+
+	// driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+	// tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+	// if tdb == nil {
+	// 	log.Fatal("given database handle is `nil`")
+	// }
+	// db := tdb
+	// tx, err := db.Begin()
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+
+	// tx1, err := db.Begin()
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+	var tx1 *sql.Tx
+	// db.Close() //2019.09.07
 	// GetByDocType从数据库检索请求的工作流的详细信息。
 	// 注意:此方法检索工作流的主要信息。组成此工作流的节点的信息必须单独获取。
 	// jsoninfo := c.GetString("docaction") //获取formdata
@@ -2685,11 +2721,26 @@ func (c *FlowController) FlowNext() {
 		beego.Error(err)
 	}
 
+	var uID int64
+	username, _, _, _, _ := checkprodRole(c.Ctx)
+	// beego.Info(username)
+	// beego.Info(uid)
+	// if err != nil {
+	// 	beego.Error(err)
+	// }
+	flowuser, err := flow.Users.GetByName(username)
+	if err != nil {
+		beego.Error(err)
+	} else {
+		uID = int64(flowuser.ID)
+	}
+	// beego.Info(uID)
 	//当前用户所在的用户组
-	singletongroup, err := flow.Users.SingletonGroupOf(flow.UserID(8))
+	singletongroup, err := flow.Users.SingletonGroupOf(flow.UserID(uID))
 	if err != nil {
 		beego.Error(err)
 	}
+	// beego.Info(singletongroup)
 	//接受用户组
 	gid := make([]string, 0, 2)
 	c.Ctx.Input.Bind(&gid, "gid")
@@ -2702,7 +2753,7 @@ func (c *FlowController) FlowNext() {
 		}
 		groupIds = append(groupIds, flow.GroupID(gID))
 	}
-
+	// beego.Info(groupIds)
 	text := c.Input().Get("text")
 	if text == "" {
 		text = "no comments"
@@ -2720,9 +2771,10 @@ func (c *FlowController) FlowNext() {
 	deID, err := flow.DocEvents.New(tx, &docEventInput)
 	if err != nil {
 		beego.Error(err)
-	} else {
-		tx.Commit()
 	}
+	// else {
+	// 	tx.Commit()
+	// }
 	myDocEvent, err := flow.DocEvents.Get(flow.DocEventID(deID))
 	if err != nil {
 		beego.Error(err)
@@ -2736,7 +2788,7 @@ func (c *FlowController) FlowNext() {
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "写入失败!"}
 		c.ServeJSON()
 	} else {
-		tx1.Commit() //用这个nil，后面就不用commit了吧，都在flow里commit了。
+		// tx1.Commit() //用这个nil，后面就不用commit了吧，都在flow里commit了。
 		fmt.Println("newDocStateId=", newDocStateId, err)
 		c.Data["json"] = map[string]interface{}{"err": nil, "data": "写入成功!"}
 		c.ServeJSON()
@@ -2760,8 +2812,10 @@ type mailboxlist struct {
 // @Failure 400 Invalid page supplied
 // @Failure 404 data not found
 // @router /flowusermailbox [get]
-// 1.列表显示用户邮件
+// 1.管理员看到的——列表显示用户邮件
 func (c *FlowController) FlowUserMailbox() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -2795,8 +2849,8 @@ func (c *FlowController) FlowUserMailbox() {
 	if err != nil {
 		beego.Error(err)
 	}
-	unread := c.Input().Get("unread")
 	var unreadbool bool
+	unread := c.Input().Get("unread")
 	if unread != "" {
 		if unread == "true" {
 			unreadbool = true
@@ -2808,7 +2862,6 @@ func (c *FlowController) FlowUserMailbox() {
 	}
 
 	notification, err := flow.Mailboxes.ListByUser(flow.UserID(uID), offset, limit1, unreadbool)
-
 	if err != nil {
 		beego.Error(err)
 		c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
@@ -2821,6 +2874,78 @@ func (c *FlowController) FlowUserMailbox() {
 	list := mailboxlist{notification, page1, len(arr)}
 	c.Data["json"] = list
 	c.ServeJSON()
+}
+
+// @Title get user mailbox
+// @Description get usermailbox
+// @Param uid query string true "The id of user"
+// @Param page query string true "The page of mailbox"
+// @Param limit query string false "The limit page of mailbox"
+// @Param unread query string false "The unread of mailbox"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /flowusermailbox2 [get]
+// 1.列表显示用户个人邮件
+func (c *FlowController) FlowUserMailbox2() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
+	var offset, limit1, page1 int64
+	var err error
+	limit := c.Input().Get("limit")
+	if limit == "" {
+		limit1 = 0
+	} else {
+		limit1, err = strconv.ParseInt(limit, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	page := c.Input().Get("page")
+	if page == "" {
+		limit1 = 0
+		page1 = 1
+	} else {
+		page1, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+	}
+	if page1 <= 1 {
+		offset = 0
+	} else {
+		offset = (page1 - 1) * limit1
+	}
+
+	var uID int64
+	var unreadbool bool
+	username, _, uid, _, _ := checkprodRole(c.Ctx)
+	beego.Info(username)
+	beego.Info(uid)
+	if err != nil {
+		beego.Error(err)
+	} else {
+		flowuser, err := flow.Users.GetByName(username)
+		if err != nil {
+			beego.Error(err)
+		} else {
+			uID = int64(flowuser.ID)
+			unreadbool = false
+			notification, err := flow.Mailboxes.ListByUser(flow.UserID(uID), offset, limit1, unreadbool)
+			if err != nil {
+				beego.Error(err)
+				c.Data["json"] = map[string]interface{}{"err": err, "data": "查询失败!"}
+				c.ServeJSON()
+			}
+			arr, err := flow.Mailboxes.ListByUser(flow.UserID(uID), 0, 0, unreadbool)
+			if err != nil {
+				beego.Error(err)
+			}
+			list := mailboxlist{notification, page1, len(arr)}
+			c.Data["json"] = list
+			c.ServeJSON()
+		}
+	}
 }
 
 // @Title get group mailbox

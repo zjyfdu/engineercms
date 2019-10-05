@@ -10,7 +10,7 @@ import (
 	"database/sql"
 	"github.com/astaxie/beego/httplib"
 	"github.com/js-ojus/flow"
-	"log"
+	// "log"
 	"os"
 	"path"
 	"regexp"
@@ -90,17 +90,17 @@ type prodTableserver2 struct {
 	Total int64                       `json:"total"` //string或int64都行！
 }
 
-var db *sql.DB
+// var db *sql.DB
 
-func init() {
-	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
-	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
-	// flow.RegisterDB(tdb)
-	if tdb == nil {
-		log.Fatal("given database handle is `nil`")
-	}
-	db = tdb
-}
+// func init() {
+// 	driver, connStr := "mysql", "travis@/flow?charset=utf8&parseTime=true"
+// 	tdb := fatal1(sql.Open(driver, connStr)).(*sql.DB)
+// 	// flow.RegisterDB(tdb)
+// 	if tdb == nil {
+// 		log.Fatal("given database handle is `nil`")
+// 	}
+// 	db = tdb
+// }
 
 //根据项目侧栏id查看这个id下的成果页面，table中的数据填充用GetProducts
 //任何一级目录下都可以放成果
@@ -328,8 +328,9 @@ func (c *ProdController) GetProducts() {
 	Attachslice := make([]AttachmentLink, 0)
 	Pdfslice := make([]PdfLink, 0)
 	Articleslice := make([]ArticleContent, 0)
-	tx, _ := db.Begin()
-	db.Close()
+	// tx, _ := db.Begin()
+	var tx *sql.Tx
+	// db.Close()
 	for _, w := range products {
 		//取到每个成果的附件（模态框打开）；pdf、文章——新窗口打开
 		//循环成果
