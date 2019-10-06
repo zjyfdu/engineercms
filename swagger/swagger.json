@@ -614,6 +614,70 @@
                 }
             }
         },
+        "/admin/flowdocumentlist2": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get document",
+                "operationId": "FlowController.get wf document",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The id of doctype",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "acid",
+                        "description": "The id of accesscontext",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "gid",
+                        "description": "The id of group",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "dsid",
+                        "description": "The id of docstate",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "The page of doc",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The limit page of doc",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
         "/admin/flowgroup": {
             "post": {
                 "tags": [
@@ -3988,7 +4052,7 @@
     "tags": [
         {
             "name": "admin",
-            "description": "Flowtest API\n"
+            "description": "VueFlow API\n"
         },
         {
             "name": "wx",

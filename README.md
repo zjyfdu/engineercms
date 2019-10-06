@@ -118,7 +118,7 @@
 
 Linux系统下请替换掉执行文件engineercms(linux)
 
-不清楚的，可以加我QQ504284或者微信hotqin999聊。
+不清楚的，可以加我QQ504284或者微信hotqin999聊，也可参考quickerstart.txt。
 
 [wiki](https://github.com/3xxx/EngineerCMS/wiki)。包括linux系统下的编译。linux系统下的部署参见网盘中的文档。
 

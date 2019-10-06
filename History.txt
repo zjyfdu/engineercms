@@ -1,5 +1,8 @@
                        EngineerCMS revision history
 		       
+19, engineercms 1.12 (Oct 06, 2019)
+	+) Add flowchart	
+
 18, engineercms 1.11 (Au 11, 2019)
 	+) Add wechat diary		       
 		       
