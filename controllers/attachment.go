@@ -241,8 +241,19 @@ func (c *AttachController) GetAllAttachments() {
 	// c.ServeJSON()
 }
 
+// @Title get wf document details
+// @Description get documentdetail
+// @Param dtid query string  true "The id of doctype"
+// @Param docid query string  true "The id of doc"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /project/product/pdf/:id [get]
+// 2.点击一个具体文档——显示详情——显示actions
 //取得某个成果id下的附件中的pdf给table
 func (c *AttachController) GetPdfs() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	id := c.Ctx.Input.Param(":id")
 	// beego.Info(id)
 	c.Data["Id"] = id
@@ -1283,7 +1294,7 @@ func (c *AttachController) Attachment() {
 	if err != nil {
 		beego.Error(err)
 	}
-	if strings.Contains(filePath, "?hotqinsessionid=") {
+	if strings.Contains(filePath, "?") { //hotqinsessionid=
 		filePathtemp := strings.Split(filePath, "?")
 		filePath = filePathtemp[0]
 		// beego.Info(filePath)

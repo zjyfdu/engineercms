@@ -118,6 +118,7 @@ func init() {
 				beego.NSInclude(
 					&controllers.AdminController{},
 					&controllers.FlowController{},
+					&controllers.AttachController{},
 					// &controllers.LoginController{},
 					// &controllers.CustomerCookieCheckerController{},
 				),
@@ -164,6 +165,11 @@ func init() {
 			beego.NSNamespace("/onlyoffice",
 				beego.NSInclude(
 					&controllers.OnlyController{},
+				),
+			),
+			beego.NSNamespace("/fileinput",
+				beego.NSInclude(
+					&controllers.FileinputController{},
 				),
 			),
 			// beego.NSNamespace("/cms",
@@ -625,9 +631,12 @@ func init() {
 	beego.Router("/standard/valid", &controllers.StandardController{}, "get:Valid")
 	//删除有效库中选中
 	beego.Router("/standard/deletevalid", &controllers.StandardController{}, "post:DeleteValid")
+
 	//对标
 	beego.Router("/legislation", &controllers.LegislationController{}, "*:Index")
 	beego.Router("/legislation/checklist", &controllers.LegislationController{}, "*:Checklist")
+	//上传文档，提供解析和替换（增加）标准号
+	beego.Router("/legislation/fileinput", &controllers.LegislationController{}, "get:FileInput")
 
 	//微信小程序
 	//小程序发表文章提交

@@ -99,7 +99,7 @@ func SaveLibrary(library Library) (lid int64, err error) {
 	o.Raw("PRAGMA synchronous = OFF; ", 0, 0, 0).Exec()
 	//判断是否有重名
 	// var spider Spider //下面这个filter放在topic=&Topic{后面用返回one(topic)则查询出错！
-	//只有编号和主机都不同才写入。
+	//只有编号和主题都不同才写入。
 	var library1 Library //数据库中已有的数据
 	err = o.QueryTable("library").Filter("number", library.Number).Filter("title", library.Title).Filter("category", library.Category).One(&library1)
 	// err = o.QueryTable("topic").Filter("categoryid", cid).Filter("tnumber", tnumber).One(&topic, "Id")

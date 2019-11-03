@@ -68,7 +68,7 @@ func (c *LegislationController) Checklist() { //checklist用的是post方法
 				aa[i].Id = Id1
 
 				if len(library) != 0 { //library != nil这样不行，空数组不是nil
-					beego.Info(library)
+					// beego.Info(library)
 					//3、构造struct
 					for j, w := range library {
 						// beego.Info(w)
@@ -169,5 +169,17 @@ func (c *LegislationController) Checklist() { //checklist用的是post方法
 	c.ServeJSON()
 
 	logs.Info(c.Ctx.Input.IP() + " " + "SearchLegislationsName:" + name)
+	logs.Close()
+}
+
+//上传文档供解析-替换（增加）标准号
+func (c *LegislationController) FileInput() { //
+	c.Data["IsLegislation"] = true //
+	c.TplName = "legislation_upfile.tpl"
+
+	logs := logs.NewLogger(1000)
+	logs.SetLogger("file", `{"filename":"log/test.log"}`)
+	logs.EnableFuncCallDepth(true)
+	logs.Info(c.Ctx.Input.IP())
 	logs.Close()
 }

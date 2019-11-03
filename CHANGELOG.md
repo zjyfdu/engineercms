@@ -1,4 +1,25 @@
+# API v1.0.3
+
+## Nov, 2019
+
++ 采用bootstrap fileinput来实现上传excel到服务端，解析后和规范标准库进行比对，将规范号填入excel，供用户下载。
++ 增加了flow和flowchart，engineercms从此具备了文档状态功能，具备了通用事务流程工程。
+
+## Aug, 2019
+
+* 修复mysql中数据表casbin_rule；
+* 修复standards规范标准库的导入错误；
+* 修复批量上传文档修改命名中的#和/；
++ 增加小程序公告——车辆安排信息；
++ 增加onlyoffice历史版本；
++ 增加onlyoffice文档转换API；
+
+
 # API v1.0.2
+
+## Oct, 2019
+
++ vue.js结合beego，增加了文档状态和事务流程管理
 
 ## Aug, 2019
 

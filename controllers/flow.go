@@ -2748,6 +2748,8 @@ func (c *FlowController) FlowUserMailbox2() {
 // @router /flowgroupmailbox [get]
 // 1.列表显示用户邮件
 func (c *FlowController) FlowGroupMailbox() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+
 	var offset, limit1, page1 int64
 	var err error
 	limit := c.Input().Get("limit")
@@ -2806,6 +2808,143 @@ func (c *FlowController) FlowGroupMailbox() {
 	list := mailboxlist{notification, page1, len(arr)}
 	c.Data["json"] = list
 	c.ServeJSON()
+}
+
+// @Title get flowchart text
+// @Description get flowchart text
+// @Param docstate query string true "The state of document"
+// @Success 200 {object} models.GetProductsPage
+// @Failure 400 Invalid page supplied
+// @Failure 404 data not found
+// @router /liucheng [get]
+// 2.点击一个具体文档——显示详情——显示actions
+func (c *FlowController) LiuCheng() {
+	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
+	var code, code1, code2, code3, code4, code5, code6, code7, code8, code9, code10, code11, code12, code13, code14, code15, code16, code17, code18, code19, code20 string
+	code14 = "st->input->design->check->countersign\n"
+	code15 = "countersign(yes,right)->countersignYes->review\n"
+	code16 = "countersign(no,left)->review->auditcond\n"
+	code17 = "auditcond(yes)->audit->approvalcond\n"
+	code18 = "auditcond(no,right)->print\n"
+	code19 = "approvalcond(no,right)->print\n"
+	code20 = "approvalcond(yes)->approval->print->e\n"
+	docstate := c.Input().Get("docstate")
+	switch docstate {
+	case "设计中...":
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|current\n"
+		code5 = "check=>operation: 校核\n"
+		code6 = "countersign=>condition: 是否跨专业?\n"
+		code7 = "countersignYes=>operation: 专业会签\n"
+
+		code8 = "review=>operation: 审查\n"
+		code9 = "auditcond=>condition: 是否核定\n"
+		code10 = "audit=>operation: 核定\n"
+		code11 = "approvalcond=>condition: 是否批准\n"
+		code12 = "approval=>operation: 批准\n"
+		code13 = "print=>inputoutput: 出版|future\n"
+	case "校核中...":
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|past\n"
+		code5 = "check=>operation: 校核|current\n"
+		code6 = "countersign=>condition: 是否跨专业?\n"
+		code7 = "countersignYes=>operation: 专业会签\n"
+
+		code8 = "review=>operation: 审查\n"
+		code9 = "auditcond=>condition: 是否核定\n"
+		code10 = "audit=>operation: 核定\n"
+		code11 = "approvalcond=>condition: 是否批准\n"
+		code12 = "approval=>operation: 批准\n"
+		code13 = "print=>inputoutput: 出版|future\n"
+	case "审查中...":
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|past\n"
+		code5 = "check=>operation: 校核|past\n"
+		code6 = "countersign=>condition: 是否跨专业?|past\n"
+		code7 = "countersignYes=>operation: 专业会签|past\n"
+
+		code8 = "review=>operation: 审查|current\n"
+		code9 = "auditcond=>condition: 是否核定\n"
+		code10 = "audit=>operation: 核定\n"
+		code11 = "approvalcond=>condition: 是否批准\n"
+		code12 = "approval=>operation: 批准\n"
+		code13 = "print=>inputoutput: 出版|future\n"
+	case "核定中...":
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|past\n"
+		code5 = "check=>operation: 校核|past\n"
+		code6 = "countersign=>condition: 是否跨专业?|past\n"
+		code7 = "countersignYes=>operation: 专业会签|past\n"
+
+		code8 = "review=>operation: 审查|past\n"
+		code9 = "auditcond=>condition: 是否核定|past\n"
+		code10 = "audit=>operation: 核定|current\n"
+		code11 = "approvalcond=>condition: 是否批准\n"
+		code12 = "approval=>operation: 批准\n"
+		code13 = "print=>inputoutput: 出版|future\n"
+	case "批准中...":
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|past\n"
+		code5 = "check=>operation: 校核|past\n"
+		code6 = "countersign=>condition: 是否跨专业?|past\n"
+		code7 = "countersignYes=>operation: 专业会签|past\n"
+
+		code8 = "review=>operation: 审查|past\n"
+		code9 = "auditcond=>condition: 是否核定|past\n"
+		code10 = "audit=>operation: 核定|past\n"
+		code11 = "approvalcond=>condition: 是否批准|past\n"
+		code12 = "approval=>operation: 批准|current\n"
+		code13 = "print=>inputoutput: 出版|future\n"
+	case "出版中...":
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|past\n"
+		code5 = "check=>operation: 校核|past\n"
+		code6 = "countersign=>condition: 是否跨专业?|past\n"
+		code7 = "countersignYes=>operation: 专业会签|past\n"
+
+		code8 = "review=>operation: 审查|past\n"
+		code9 = "auditcond=>condition: 是否核定|past\n"
+		code10 = "audit=>operation: 核定|past\n"
+		code11 = "approvalcond=>condition: 是否批准|past\n"
+		code12 = "approval=>operation: 批准|past\n"
+		code13 = "print=>inputoutput: 出版|current\n"
+	default:
+		code1 = "st=>start: 开始|past\n"
+		code2 = "e=>end: 结束|past\n"
+
+		code3 = "input=>inputoutput: 初设、招标文件；审图意见|past\n"
+		code4 = "design=>operation: 设计|past\n"
+		code5 = "check=>operation: 校核|past\n"
+		code6 = "countersign=>condition: 是否跨专业?|past\n"
+		code7 = "countersignYes=>operation: 专业会签|past\n"
+
+		code8 = "review=>operation: 审查|past\n"
+		code9 = "auditcond=>condition: 是否核定|past\n"
+		code10 = "audit=>operation: 核定|past\n"
+		code11 = "approvalcond=>condition: 是否批准|past\n"
+		code12 = "approval=>operation: 批准|past\n"
+		code13 = "print=>inputoutput: 出版|past\n"
+	}
+	code = code1 + code2 + code3 + code4 + code5 + code6 + code7 + code8 + code9 + code10 + code11 + code12 + code13 + code14 + code15 + code16 + code17 + code18 + code19 + code20
+	c.Ctx.WriteString(code)
 }
 
 // fatal1 expects a value and an error value as its arguments.

@@ -420,7 +420,6 @@ func (c *StandardController) ImportExcel() {
 
 //上传excel文件，导入到有效版本数据库
 func (c *StandardController) ImportLibrary() {
-	beego.Info("hah")
 	//获取上传的文件
 	_, h, err := c.GetFile("excel2")
 	if err != nil {
@@ -443,12 +442,9 @@ func (c *StandardController) ImportLibrary() {
 			beego.Error(err)
 		}
 	}
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
 	var library models.Library
 	//读出excel内容写入数据库
-	// excelFileName := path                    //"/home/tealeg/foo.xlsx"
+	// excelFileName := path//"/home/tealeg/foo.xlsx"
 	xlFile, err := xlsx.OpenFile(path) //excelFileName
 	if err != nil {
 		beego.Error(err)

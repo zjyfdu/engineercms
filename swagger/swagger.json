@@ -1821,6 +1821,77 @@
                 }
             }
         },
+        "/admin/liucheng": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get flowchart text",
+                "operationId": "FlowController.get flowchart text",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "docstate",
+                        "description": "The state of document",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
+        "/admin/project/product/pdf/{id}": {
+            "get": {
+                "tags": [
+                    "admin"
+                ],
+                "description": "get documentdetail",
+                "operationId": "AttachController.get wf document details",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "dtid",
+                        "description": "The id of doctype",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "docid",
+                        "description": "The id of doc",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.GetProductsPage"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "data not found"
+                    }
+                }
+            }
+        },
         "/admin/workflow": {
             "get": {
                 "tags": [
@@ -2578,6 +2649,52 @@
                     },
                     "404": {
                         "description": "articls not found"
+                    }
+                }
+            }
+        },
+        "/fileinput/bootstrapfileinput": {
+            "post": {
+                "tags": [
+                    "fileinput"
+                ],
+                "description": "post file by BootstrapFileInput",
+                "operationId": "FileinputController.post bootstrapfileinput",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.SUCCESS"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
+                    }
+                }
+            }
+        },
+        "/fileinput/uploadwxeditorimg": {
+            "post": {
+                "tags": [
+                    "fileinput"
+                ],
+                "description": "post article img by catalogid",
+                "operationId": "FileinputController.post wx artile img by catalogId",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/.SUCCESS"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid page supplied"
+                    },
+                    "404": {
+                        "description": "articl not found"
                     }
                 }
             }
@@ -4051,10 +4168,6 @@
     },
     "tags": [
         {
-            "name": "admin",
-            "description": "VueFlow API\n"
-        },
-        {
             "name": "wx",
             "description": "CMSWXDIARY API\n"
         },
@@ -4073,6 +4186,10 @@
         {
             "name": "todo",
             "description": "CMSTODO API\n"
+        },
+        {
+            "name": "fileinput",
+            "description": "CMSWX froala API\n"
         }
     ]
 }

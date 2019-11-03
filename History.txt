@@ -1,5 +1,9 @@
                        EngineerCMS revision history
 		       
+20, engineercms 1.13 (Nov 03, 2019)
+	+) Add bootstrap fileinput
+	+) Add legislation excle compare
+
 19, engineercms 1.12 (Oct 06, 2019)
 	+) Add flowchart	
 
