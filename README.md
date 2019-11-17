@@ -219,3 +219,15 @@ IPAD移动端效果
 froala富文本编辑器支持word图片自动上传，视频和附件
 ![snap13](https://user-images.githubusercontent.com/10678867/42722537-3c71c216-8780-11e8-8065-f1538bbcad18.png)
 ![snap6](https://user-images.githubusercontent.com/10678867/42722539-40376bc6-8780-11e8-8173-1f6e9e60ef14.png)
+
+
+# 修改日志
+## 191117
+1. git clone https://github.com/3xxx/engineercms.git
+2. 按照一些go的依赖
+3. 其中权限管理用的是casbin，casbin刚升级到v2，接口变了，需要退回到v1版本，
+```shell
+git checkout v1.9.1  //in GOPATH/src/casbin/casbin
+git checkout 9b17d80 //in GPOATH/src/casbin/xorm-adapter
+```
+4. 修改了index主页

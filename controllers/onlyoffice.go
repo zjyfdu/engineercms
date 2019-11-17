@@ -3,11 +3,15 @@ package controllers
 import (
 	"encoding/json"
 	"encoding/xml"
+
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
+	"github.com/unidoc/unioffice/document"
+
 	// "github.com/astaxie/beego/orm"
 	// "github.com/casbin/beego-orm-adapter"
-	"baliance.com/gooxml/document"
+	// "baliance.com/gooxml/document"
+
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -17,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	// "mime/multipart"
 	"github.com/astaxie/beego/httplib"
 	// "bytes"
@@ -541,8 +546,8 @@ func (c *OnlyController) GetData() {
 							docxarr[0].Permission = k[2]
 						}
 					}
-					roles := e.GetRolesForUser(useridstring) //取出用户的所有角色
-					for _, w1 := range roles {               //2018.4.30修改这个bug，这里原先w改为w1
+					roles, _ := e.GetRolesForUser(useridstring) //取出用户的所有角色
+					for _, w1 := range roles {                  //2018.4.30修改这个bug，这里原先w改为w1
 						roleRes = e.GetPermissionsForUser(w1) //取出角色的所有权限，改为w1
 						for _, k := range roleRes {
 							// beego.Info(k)
@@ -720,8 +725,8 @@ func (c *OnlyController) OnlyOffice() {
 				}
 			}
 
-			roles := e.GetRolesForUser(useridstring) //取出用户的所有角色
-			for _, w1 := range roles {               //2018.4.30修改这个bug，这里原先w改为w1
+			roles, _ := e.GetRolesForUser(useridstring) //取出用户的所有角色
+			for _, w1 := range roles {                  //2018.4.30修改这个bug，这里原先w改为w1
 				roleRes = e.GetPermissionsForUser(w1) //取出角色的所有权限，改为w1
 				for _, k := range roleRes {
 					// beego.Info(k)

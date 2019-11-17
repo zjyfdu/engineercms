@@ -2,13 +2,17 @@ package controllers
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/httplib"
-	"time"
+
 	// "os"
-	"github.com/PuerkitoBio/goquery"
 	"io"
+
+	"github.com/PuerkitoBio/goquery"
+
 	// "net/http"
 	"path"
 	"regexp"
@@ -1657,7 +1661,8 @@ func (c *ArticleController) DeleteWxArticle() {
 			}
 			uid := strconv.FormatInt(user.Id, 10)
 			roleid := strconv.FormatInt(role.Id, 10)
-			if e.HasRoleForUser(uid, "role_"+roleid) {
+			hasroletmp, _ := e.HasRoleForUser(uid, "role_"+roleid)
+			if hasroletmp {
 				id := c.Input().Get("id")
 				//id转成64为
 				idNum, err := strconv.ParseInt(id, 10, 64)

@@ -3,13 +3,17 @@ package controllers
 import (
 	"crypto/md5"
 	"encoding/hex"
+
 	// "fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+
 	// "net/url"
+	"strconv"
+
 	"github.com/3xxx/engineercms/controllers/utils"
 	"github.com/3xxx/engineercms/models"
-	"strconv"
+
 	// "github.com/astaxie/beego/session"
 	"encoding/json"
 	// "github.com/casbin/beego-orm-adapter"
@@ -391,7 +395,7 @@ func (c *LoginController) WxLogin() {
 			}
 			uid := strconv.FormatInt(user.Id, 10)
 			roleid := strconv.FormatInt(role.Id, 10)
-			isAdmin = e.HasRoleForUser(uid, "role_"+roleid)
+			isAdmin, _ = e.HasRoleForUser(uid, "role_"+roleid)
 			// useridstring := strconv.FormatInt(user.Id, 10)
 			//用户登录后，存储openid在服务端的session里，下次用户通过hotqinsessionid来取得openid
 			c.SetSession("openID", openID)

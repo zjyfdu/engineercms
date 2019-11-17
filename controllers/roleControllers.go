@@ -3,17 +3,18 @@ package controllers
 import (
 	// "encoding/json"
 	"fmt"
-	m "github.com/3xxx/engineercms/models"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	"github.com/casbin/beego-orm-adapter"
-	"github.com/casbin/casbin"
-	"github.com/casbin/xorm-adapter"
-	_ "github.com/mattn/go-sqlite3"
 	"path"
 	"regexp"
 	"strconv"
 	"strings"
+
+	m "github.com/3xxx/engineercms/models"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	beegoormadapter "github.com/casbin/beego-orm-adapter"
+	"github.com/casbin/casbin"
+	xormadapter "github.com/casbin/xorm-adapter"
+	_ "github.com/mattn/go-sqlite3"
 	// "engineercms/controllers/validator"
 	// "github.com/astaxie/beego/context"
 	// "github.com/asofdate/hauth/core/groupcache"
@@ -278,7 +279,7 @@ func (c *RoleController) Get() {
 		// 	beego.Error(err)
 		// }
 		//查出用户的角色，处于勾选状态，来自casbin\rbac_api.go
-		userroles := e.GetRolesForUser(id)
+		userroles, _ := e.GetRolesForUser(id)
 		userrole := make([]Userrole, 0)
 		var level string
 		level = "2"

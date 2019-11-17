@@ -3,13 +3,16 @@ package controllers
 import (
 	"crypto/md5"
 	"encoding/hex"
+
 	"github.com/astaxie/beego"
+
 	// "github.com/bitly/go-simplejson"
 	"encoding/json"
-	"github.com/3xxx/engineercms/models"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/3xxx/engineercms/models"
 )
 
 // type Userselect struct { //
@@ -177,7 +180,7 @@ func (c *RegistController) WxRegist() {
 				beego.Error(err)
 			} else {
 				roleid := strconv.FormatInt(role.Id, 10)
-				isAdmin = e.HasRoleForUser(uid, "role_"+roleid)
+				isAdmin, _ = e.HasRoleForUser(uid, "role_"+roleid)
 			}
 
 			//用户登录后，存储openid在服务端的session里，下次用户通过hotqinsessionid来取得openid

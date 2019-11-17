@@ -1,26 +1,18 @@
-//
 package controllers
 
 import (
-	// json "encoding/json"
-	// "fmt"
-	"github.com/astaxie/beego"
-	// "github.com/tealeg/xlsx"
-	// "github.com/bitly/go-simplejson"
-	// "io/ioutil"
-	// "github.com/astaxie/beego/logs"
-	"github.com/3xxx/engineercms/models"
-	// "sort"
 	"strconv"
-	// "strings"
 	"time"
+
+	"github.com/3xxx/engineercms/models"
+	"github.com/astaxie/beego"
 )
 
 type IndexController struct {
 	beego.Controller
 }
 
-type Userselect struct { //
+type Userselect struct {
 	Id   int64  //`json:"id"`
 	Ad   string `json:"id"`
 	Name string `json:"text"`
@@ -200,22 +192,7 @@ func (c *IndexController) Product() {
 }
 
 func (c *IndexController) Calendar() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
 	c.Data["IsCalendar"] = true
-	// c.Data["Ip"] = c.Ctx.Input.IP()
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
@@ -229,21 +206,6 @@ func (c *IndexController) Calendar() {
 //*******汽车
 //显示页面
 func (c *IndexController) GetCarCalendar() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// c.Data["Ip"] = c.Ctx.Input.IP()
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
 	c.Data["IsCarCalendar"] = true
 	// c.Data["Ip"] = c.Ctx.Input.IP()
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
@@ -750,22 +712,7 @@ func (c *IndexController) SearchCalendar() {
 //*****订餐
 //显示页面
 func (c *IndexController) GetOrderCalendar() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
 	c.Data["IsOrderCalendar"] = true
-	// c.Data["Ip"] = c.Ctx.Input.IP()
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
@@ -779,22 +726,7 @@ func (c *IndexController) GetOrderCalendar() {
 //*****考勤
 //显示页面
 func (c *IndexController) GetAttendanceCalendar() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
 	c.Data["IsAttendanceCalendar"] = true
-	// c.Data["Ip"] = c.Ctx.Input.IP()
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
