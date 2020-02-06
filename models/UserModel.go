@@ -8,6 +8,7 @@ import (
 	"log"
 	"strconv"
 	"time"
+
 	// "github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
@@ -71,26 +72,6 @@ func SaveUser(user User) (uid int64, err error) {
 			return uid, err
 		}
 	} //else { //应该进行更新操作
-	// user1 := &User{Id: user1.Id}
-	// 	user1.Username = user.Username
-	// 	user1.Nickname = user.Nickname
-	// 	user1.Password = user.Password
-	// 	user1.Repassword = user.Repassword
-	// 	user1.Email = user.Email
-	// 	user1.Department = user.Department
-	// 	user1.Secoffice = user.Secoffice
-	// 	// user1.Remark = user.Remark
-	// 	user1.Ip = user.Ip
-	// 	user1.Status = user.Status
-	// 	user1.Lastlogintime = user.Lastlogintime
-	// 	user1.Createtime = time.Now()
-	// 	user1.Role = user.Role
-	// 	_, err = o.Update(&user1)
-	// 	if err != nil {
-	// 		return 0, err
-	// 	}
-	// 	uid = user1.Id
-	// }
 	return uid, err
 }
 
@@ -623,7 +604,7 @@ func InsertUser() {
 	// u := new(User)
 	var u User
 	u.Username = "admin"
-	u.Nickname = "Hotqin888"
+	u.Nickname = "zjy"
 	Pwd1 := "admin"
 	md5Ctx := md5.New()
 	md5Ctx.Write([]byte(Pwd1))
@@ -635,9 +616,6 @@ func InsertUser() {
 	u.Status = 1
 	u.Role = "1"
 	id, err := SaveUser(u)
-	// o = orm.NewOrm()
-	// o.Insert(u)
-	// fmt.Println("insert user end")
 	if err == nil && id > 0 {
 		fmt.Println("insert user end")
 	} else {

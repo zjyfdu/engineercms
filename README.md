@@ -231,3 +231,10 @@ git checkout v1.9.1  //in GOPATH/src/casbin/casbin
 git checkout 9b17d80 //in GPOATH/src/casbin/xorm-adapter
 ```
 4. 修改了index主页
+5. 教训，一定不要用localhost，不然docker里没办法访问，直接用真实的ip
+
+## 20200205
+1. 账户密码都是admin
+2. onlyoffice.tpl，里面的ip要换点
+3. doc下面是Attachments，attachment里才有文档的扩展名
+4. 只剩下怎么编译成exe了

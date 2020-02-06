@@ -12,91 +12,6 @@ import (
 	"github.com/astaxie/beego/plugins/cors"
 )
 
-// var FilterFunc = func(ctx *context.Context) {
-// 	userName := ctx.Input.Session("userName")
-// 	if userName == nil {
-// 		ctx.Redirect()
-// 	}
-// 	v := ctx.Input.CruSession.Get("uname") //用来获取存储在服务器端中的数据??。
-// 	// beego.Info(v)                          //qin.xc
-// 	var user models.User
-// 	var err error
-// 	if v != nil { //如果登录了
-// 		uname = v.(string)
-// 		user, err = models.GetUserByUsername(uname)
-// 		if err != nil {
-// 			beego.Error(err)
-// 		} else {
-// 			uid = user.Id
-// 			role = user.Role
-// 		}
-// 	} else { //如果没登录
-// 		role = "anonymous"
-// 	}
-// }
-
-// var filterFunc = func(ctx *context.Context) {
-// 	username := ctx.Input.Session("username")
-// 	if username == nil {
-// 		ctx.Redirect(302, "/login")
-// 	}
-// }
-
-// func (this *UserController) HandleLogin() {
-// 	//1.获取数据
-// 	userName := this.GetString("username")
-// 	pwd := this.GetString("pwd")
-// 	check := this.GetString("check")
-// 	if userName == "" || pwd == "" {
-// 		this.Data["errmsg"] = "用户名或密码不能为空,请重新登陆！"
-// 		this.TplName = "login.html"
-// 		return
-// 	}
-// 	//2.查询数据
-// 	o := orm.NewOrm()
-// 	user := models.User{Name: userName}
-// 	err := o.Read(&user, "Name")
-// 	if err != nil {
-// 		this.Data["errmsg"] = "用户名或密码错误,请重新登陆！"
-// 		this.TplName = "login.html"
-// 		return
-// 	}
-// 	if user.PassWord != pwd {
-// 		this.Data["errmsg"] = "用户名或密码错误,请重新登陆！"
-// 		this.TplName = "login.html"
-// 		return
-// 	}
-// 	if user.Active != true {
-// 		this.Data["errmsg"] = "该用户没有激活，请先激活！"
-// 		this.TplName = "login.html"
-// 		return
-// 	}
-// 	if check == "on" {
-// 		this.Ctx.SetCookie("username", userName, time.Second*3600)
-// 	} else {
-// 		this.Ctx.SetCookie("username", userName, -1)
-// 	}
-// 	this.SetSession("userName", userName)
-// 	this.Redirect("/", 302)
-// }
-
-// var FilterUser = func(ctx *context.Context) {
-//     _, ok := ctx.Input.Session("uid").(int)
-//     if !ok && ctx.Request.RequestURI != "/login" {
-//         ctx.Redirect(302, "/login")
-//     }
-// }
-
-// beego.InsertFilter("/*",beego.BeforeRouter,FilterUser)
-
-// var FilterUser = func(ctx *context.Context) {
-//     _, ok := ctx.Input.Session("uid").(int)
-//     if !ok {
-//         ctx.Redirect(302, "/login")
-//     }
-// }
-// beego.InsertFilter("/user/:id([0-9]+)",beego.BeforeRouter,FilterUser)
-
 func init() {
 	//运行跨域请求
 	//在http请求的响应流头部加上如下信息
@@ -172,16 +87,6 @@ func init() {
 					&controllers.FileinputController{},
 				),
 			),
-			// beego.NSNamespace("/cms",
-			// 	beego.NSInclude(
-			// 		&controllers.CMSController{},
-			// 	),
-			// ),
-			// beego.NSNamespace("/suggest",
-			// 	beego.NSInclude(
-			// 		&controllers.SearchController{},
-			// 	),
-			// ),
 		)
 	beego.AddNamespace(ns)
 
@@ -238,7 +143,6 @@ func init() {
 	beego.Router("/api/meritms", &controllers.MainController{}, "get:Getmeritmsapi")
 	//根据app.conf里的设置，显示首页
 	beego.Router("/", &controllers.MainController{}, "get:Get")
-	beego.Router("/cms", &controllers.IndexController{}, "get:Cms")
 	//显示首页
 	beego.Router("/index", &controllers.IndexController{}, "*:GetIndex")
 	//首页放到onlyoffice
@@ -502,9 +406,6 @@ func init() {
 	//删除文章
 	beego.Router("/project/product/deletearticle", &controllers.ArticleController{}, "*:DeleteArticle")
 
-	//查看一个成果
-	// beego.Router("/project/product/?:id:string"
-
 	//向成果里添加附件：批量一对一模式
 	beego.Router("/project/product/addattachment", &controllers.AttachController{}, "post:AddAttachment")
 	//dwg写入服务器
@@ -638,26 +539,4 @@ func init() {
 	//上传文档，提供解析和替换（增加）标准号
 	beego.Router("/legislation/fileinput", &controllers.LegislationController{}, "get:FileInput")
 
-	//微信小程序
-	//小程序发表文章提交
-	// beego.Router("/wx/addwxarticle", &controllers.ArticleController{}, "post:AddWxArticle")
-	//小程序上传图片，返回地址
-	// beego.Router("/wx/uploadwximg", &controllers.FroalaController{}, "*:UploadWxImg")
-	//小程序获得文章列表，分页
-	// beego.Router("/wx/getwxarticles", &controllers.ArticleController{}, "*:GetWxArticles")
-	//小程序根据文章id返回文章数据
-	// beego.Router("/wx/getwxarticle/:id:string", &controllers.ArticleController{}, "*:GetWxArticle")
-	//微信登录
-	// beego.Router("/wx/wxlogin", &controllers.LoginController{}, "*:WxLogin")
-
 }
-
-// 那么Session在何时创建呢？当然还是在服务器端程序运行的过程中创建的，
-// 不同语言实现的应用程序有不同创建Session的方法，
-// 而在Java中是通过调用HttpServletRequest的getSession方法（使用true作为参数）创建的。
-// 在创建了Session的同时，服务器会为该Session生成唯一的Session id，
-// 而这个Session id在随后的请求中会被用来重新获得已经创建的Session；
-// 在Session被创建之后，就可以调用Session相关的方法往Session中增加内容了，
-// 而这些内容只会保存在服务器中，发到客户端的只有Session id；
-// 当客户端再次发送请求的时候，会将这个Session id带上，
-// 服务器接受到请求之后就会依据Session id找到相应的Session，从而再次使用之

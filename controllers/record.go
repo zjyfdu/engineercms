@@ -2,22 +2,12 @@ package controllers
 
 //识别档案号，对档案号进行正则判别，如果符合正则表达式，则进行提取
 import (
-	// "github.com/nfnt/resize"
-	// "image"
-	// "image/draw"
-	// "image/jpeg"
-	// "image/png"
-	// "io/ioutil"
-	// "log"
-	// "math/rand"
-	// "os"
-	"github.com/astaxie/beego"
 	"path"
 	"regexp"
-	// "strconv"
-	// "fmt"
+
+	"github.com/astaxie/beego"
+
 	"strings"
-	// "time"
 )
 
 //分离图号图名
@@ -90,47 +80,8 @@ func Record(filenameWithSuffix string) (Suffix, FileNumber, FileName, ProNumber,
 			// fmt.Println("项目编号：", SubString(FileNumber, 0, dianhaoloc-1))
 			//阶段
 			ProJiduan = SubString(FileNumber, dianhaoloc-1, 1)
-			// switch ProJiduan {
-			// case "A":
-			// 	fmt.Println("规划阶段：" + ProJiduan)
-			// case "B":
-			// 	fmt.Println("项目建议书阶段：" + ProJiduan)
-			// case "C":
-			// 	fmt.Println("可行性阶段：" + ProJiduan)
-			// case "D":
-			// 	fmt.Println("初步设计阶段：" + ProJiduan)
-			// case "E":
-			// 	fmt.Println("招标设计阶段：" + ProJiduan)
-			// case "F":
-			// 	fmt.Println("施工图设计阶段：" + ProJiduan)
-			// case "G":
-			// 	fmt.Println("竣工图阶段：" + ProJiduan)
-			// case "L":
-			// 	fmt.Println("专题：" + ProJiduan)
-			// }
 			//专业
 			ProZhuanye = SubString(FileNumber, dianhaoloc+1, 1)
-			// switch ProZhuanye {
-			// case "1":
-			// 	fmt.Println("综合：" + ProZhuanye)
-			// case "2":
-			// 	fmt.Println("规划：" + ProZhuanye)
-			// case "3":
-			// 	fmt.Println("测量：" + ProZhuanye)
-			// case "4":
-			// 	fmt.Println("地质：" + ProZhuanye)
-			// case "5":
-			// 	fmt.Println("水工：" + ProZhuanye)
-			// case "6":
-			// 	fmt.Println("建筑：" + ProZhuanye)
-			// case "7":
-			// 	fmt.Println("机电：" + ProZhuanye)
-			// case "8":
-			// 	fmt.Println("资环：" + ProZhuanye)
-			// case "9":
-			// 	fmt.Println("施工：" + ProZhuanye)
-			// }
-			//二级专业代码
 		} else { //新编号
 			jianhaoloc := UnicodeIndex(FileNumber, "-")
 			//项目编号
@@ -138,25 +89,6 @@ func Record(filenameWithSuffix string) (Suffix, FileNumber, FileName, ProNumber,
 			// fmt.Println("项目编号：", SubString(FileNumber, 0, jianhaoloc-2))
 			//阶段
 			ProJiduan = SubString(FileNumber, jianhaoloc-2, 1)
-			// switch ProJiduan {
-			// case "A":
-			// 	fmt.Println("规划阶段：" + ProJiduan)
-			// case "B":
-			// 	fmt.Println("项目建议书阶段：" + ProJiduan)
-			// case "C":
-			// 	fmt.Println("可行性阶段：" + ProJiduan)
-			// case "D":
-			// 	fmt.Println("初步设计阶段：" + ProJiduan)
-			// case "E":
-			// 	fmt.Println("招标设计阶段：" + ProJiduan)
-			// case "F":
-			// 	fmt.Println("施工图设计阶段：" + ProJiduan)
-			// case "G":
-			// 	fmt.Println("竣工图阶段：" + ProJiduan)
-			// case "L":
-			// 	fmt.Println("专题：" + ProJiduan)
-			// }
-			//文件类型
 			ProLeixing = SubString(FileNumber, jianhaoloc-1, 1)
 			switch ProLeixing {
 			case "B":
@@ -177,27 +109,6 @@ func Record(filenameWithSuffix string) (Suffix, FileNumber, FileName, ProNumber,
 			}
 			//专业
 			ProZhuanye = SubString(FileNumber, jianhaoloc+1, 1)
-			// switch ProZhuanye {
-			// case "1":
-			// 	fmt.Println("综合：" + ProZhuanye)
-			// case "2":
-			// 	fmt.Println("规划：" + ProZhuanye)
-			// case "3":
-			// 	fmt.Println("测量：" + ProZhuanye)
-			// case "4":
-			// 	fmt.Println("地质：" + ProZhuanye)
-			// case "5":
-			// 	fmt.Println("水工：" + ProZhuanye)
-			// case "6":
-			// 	fmt.Println("建筑：" + ProZhuanye)
-			// case "7":
-			// 	fmt.Println("机电：" + ProZhuanye)
-			// case "8":
-			// 	fmt.Println("资环：" + ProZhuanye)
-			// case "9":
-			// 	fmt.Println("施工：" + ProZhuanye)
-			// }
-			//二级专业代码
 		}
 	} else { //2016-6-29增加，如果不符合表达式，比如：05水利科技.pdf
 		blankloc := UnicodeIndex(filenameOnly, " ") // 查找空格这个字符的位置
@@ -338,26 +249,6 @@ func SplitStandardName(filenameWithSuffix string) (Category, Categoryname, FileN
 		default: //图集
 			Category = "Atlas"
 		}
-		//		reg = regexp.MustCompile(`[\P{Han}]+`)
-		//		FileNumber1 := reg.FindAllString(filenameOnly, -1)
-		//		FileNumber = FileNumber1[0]
-		//		//	fmt.Printf("%q\n", FileNumber)
-		//		lengthnumber := len([]rune(FileNumber))
-		//		//		lengthname := len([]rune(filenameOnly))
-		//		FileName = SubString(filenameOnly, lengthnumber, lengthname)
-		//		//chazhaolianxushuzi
-		//		fmt.Printf("%q\n", FileName)
-		//		if SubString(FileNumber, lengthnumber-1, lengthnumber) == " " { //如果最后一个字符是空格,                                                   //如果没有空格，则用正则表达式获取编号
-		//			FileNumber = SubString(FileNumber, 0, lengthnumber-1)
-		//		}
-		//	fmt.Printf("%q\nFileNumber：", FileNumber)
-		//这里继续提取年代
-		//2016-4-20减号后连续数字，不超过4位
-		//		jianhao := UnicodeIndex(FileNumber, "-")
-		//		lengthnumber = len([]rune(FileNumber))
-		//		Year = SubString(FileNumber, jianhao+1, lengthnumber)
-		//	fmt.Printf("%q\nYear：", Year)
-		// fmt.Printf("%q\n", Category)
 	} else {
 		//如果不符合正则，则对字母和汉字，数字和汉字，空格前后进行分割
 		blankloc := UnicodeIndex(filenameOnly, " ") // 查找空格这个字符的位置
@@ -530,65 +421,3 @@ func SubString(str string, begin, length int) (substr string) {
 	// 返回子串
 	return string(rs[begin:end])
 }
-
-//	fmt.Println(FileNumber)
-//	rs := []rune("SL8888CT-500-88 泵站厂房布置图")
-//	lengthname := len([]rune(filenameOnly))
-//	if end == 0 { //如果没有空格，则用正则表达式获取编号
-//		re, _ := regexp.Compile("[^a-zA-Z0-9-.~]")
-//		loc := re.FindStringIndex(filenameOnly)
-//		fmt.Println("loc=", filenameWithSuffix[loc[0]:loc[1]]) //国
-//		fmt.Println("loc[0]=", loc[0])                         //loc[0]= 20
-//		if loc != nil {
-//			end = loc[0]
-//			FileNumber = SubString(filenameOnly, 0, end)
-//			fmt.Println("文件编号：", FileNumber)
-//			// 查找连续的汉字——改成查找第一个汉字？
-//			re = regexp.MustCompile(`[\p{Han}]`)
-//			//			lochan := re.FindStringIndex(filenameOnly)
-//			//			fmt.Println("第一个汉字位置：", lochan[0])
-//			FileName = SubString(filenameOnly, lochan[0], lengthname-lochan[0])
-//			fmt.Println("文件名称：", FileName)
-
-//			re, _ = regexp.Compile("[-]")
-//			loc = re.FindStringIndex(FileNumber)
-//			if loc != nil {
-//				end = loc[0]
-//			} //7
-//			fmt.Println("第一个“-”位置：", loc) //[7 8]
-
-//			loc1 := re.FindAllStringIndex(FileNumber, -1) //[[7 8] [11 12]]
-//			if loc1 != nil {
-//				fmt.Println("取多个-位置的第一个", loc1[0][0])                        //11
-//				fmt.Println("多个的-位置", re.FindAllStringIndex(FileNumber, -1)) //-1表示所有，1表示显示一个，2表示2个
-//			}
-//			//n换行
-//			//查找连续的数字
-//			re, _ := regexp.Compile(`[0-9]+`)
-//			fmt.Println("连续的数字:", re.FindAllString(filenameOnly, -1))
-//			//loc := re.FindStringIndex(filenameOnly)
-//			//查找.和-之间的字符
-//			re, _ = regexp.Compile(`\..*-`) //  .AT-500-
-//			fmt.Println(".和-之间：", re.FindAllString(filenameOnly, -1))
-//			//查找第二个字母之前
-//			fulleFilename3 := SubString(FileNumber, 0, end-2) //SL888
-//			fmt.Println("项目编号：", fulleFilename3)
-//			fulleFilename3 = SubString(FileNumber, end-2, 1) //F
-//			fulleFilename3 = SubString(FileNumber, end-1, 1) //T
-//			fulleFilename3 = SubString(FileNumber, end+1, 1) //5
-//			//fmt.Println(fulleFilename3)
-//			fulleFilename3 = SubString(FileNumber, end+1, 3) //500
-//			fmt.Println("专业中间编号：" + fulleFilename3)
-//			fulleFilename3 = SubString(FileNumber, end+5, 3) //500
-//			fmt.Println("专业编号：" + fulleFilename3)
-//			end = end - 1
-//		} else {
-//			FileNumber = filenameOnly
-//			end = -1
-//		}
-//	} else { //如果有空格
-//		FileNumber = SubString(filenameOnly, 0, end) //这里不能用fullfilename，因为前面赋值后当做了int类型
-//	}
-//	end = end + 1
-//	fulleFilename2 := SubString(filenameOnly, end, lengthname) //这里不能用fullfilename，因为前面赋值后当做了int类型
-//	fmt.Println(FileNumber)

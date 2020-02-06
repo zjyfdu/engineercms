@@ -61,10 +61,6 @@ type Employee struct { //职员的分院和科室属性
 	Marks      int    //记录个数
 }
 
-func (c *IndexController) Cms() {
-	c.TplName = "index.html"
-}
-
 //显示侧栏结构，科室里员工
 func (c *IndexController) GetIndex() {
 	c.Data["IsIndex"] = true
@@ -79,13 +75,7 @@ func (c *IndexController) GetIndex() {
 	achemployee := make([]AchEmployee, 0)
 	achsecoffice := make([]AchSecoffice, 0)
 	achdepart := make([]AchDepart, 0)
-	//由uname取得user,获得user的分院名称
-	// user, err := models.GetUserByUsername(uname)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// switch role {
-	// case 1: //管理员登录显示的侧栏是全部的
+
 	var depcount int                           //部门人员数
 	category1, err := models.GetAdminDepart(0) //得到所有分院（部门）
 	if err != nil {
@@ -174,12 +164,6 @@ func (c *IndexController) GetUser() {
 		mySlice = carousels[:10]
 	} else {
 		mySlice = carousels[:len(carousels)]
-		//
-		// for i := 0; i < 10; i++ {
-		// 	sum += i
-		// }
-		// for i, v := range carousels {
-		// }
 	}
 	c.Data["Carousel"] = mySlice
 	c.TplName = "index_user.tpl"
@@ -318,13 +302,8 @@ func (c *IndexController) UpdateCarCalendar() {
 	var public bool
 	// if public1 == "true" {
 	public = true
-	// } else {
-	// 	public = false
-	// }
 	const lll = "2006-01-02 15:04"
 	starttime, err := time.Parse(lll, start)
-	// beego.Info(start)
-	// beego.Info(starttime)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -339,27 +318,6 @@ func (c *IndexController) UpdateCarCalendar() {
 		c.Data["json"] = title
 		c.ServeJSON()
 	}
-	// pid := c.Ctx.Input.Param(":id")
-	//
-	// title := c.Input().Get("title")
-	// code := c.Input().Get("code")
-	// grade := c.Input().Get("grade")
-	// //pid转成64为
-	// cidNum, err := strconv.ParseInt(cid, 10, 64)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// gradeNum, err := strconv.Atoi(grade)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// err = models.UpdateAdminCategory(cidNum, title, code, gradeNum)
-	// if err != nil {
-	// 	beego.Error(err)
-	// } else {
-	// 	c.Data["json"] = "ok"
-	// 	c.ServeJSON()
-	// }
 }
 
 //拖曳
@@ -441,20 +399,6 @@ func (c *IndexController) DeleteCarCalendar() {
 //*****会议室
 //显示页面
 func (c *IndexController) MeetingroomCalendar() {
-	// username, role := checkprodRole(c.Ctx)
-	// roleint, err := strconv.Atoi(role)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// if role == "1" {
-	// 	c.Data["IsAdmin"] = true
-	// } else if roleint > 1 && roleint < 5 {
-	// 	c.Data["IsLogin"] = true
-	// } else {
-	// 	c.Data["IsAdmin"] = false
-	// 	c.Data["IsLogin"] = false
-	// }
-	// c.Data["Username"] = username
 	c.Data["IsMeetingroomCalendar"] = true
 	// c.Data["Ip"] = c.Ctx.Input.IP()
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
@@ -587,27 +531,6 @@ func (c *IndexController) UpdateMeetCalendar() {
 		c.Data["json"] = title
 		c.ServeJSON()
 	}
-	// pid := c.Ctx.Input.Param(":id")
-	//
-	// title := c.Input().Get("title")
-	// code := c.Input().Get("code")
-	// grade := c.Input().Get("grade")
-	// //pid转成64为
-	// cidNum, err := strconv.ParseInt(cid, 10, 64)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// gradeNum, err := strconv.Atoi(grade)
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
-	// err = models.UpdateAdminCategory(cidNum, title, code, gradeNum)
-	// if err != nil {
-	// 	beego.Error(err)
-	// } else {
-	// 	c.Data["json"] = "ok"
-	// 	c.ServeJSON()
-	// }
 }
 
 //拖曳

@@ -12,7 +12,7 @@
 
 	<body style="height: 100%; margin: 0;">
 		<div id="placeholder" style="height: 100%"></div>
-    <script type="text/javascript" src="http://192.168.99.100:9000/web-apps/apps/api/documents/api.js"></script>
+    <script type="text/javascript" src="http://192.168.100.21:9000/web-apps/apps/api/documents/api.js"></script>
 
     <script type="text/javascript">
 
@@ -142,29 +142,3 @@
    	</script>
 	</body>
 </html>
-
-<!-- {
-"key":"1521953170330601700",
-"status":2,
-
-"url":"http://192.168.99.100:9000/cache/files/1521953170330601700_4540/outpu
-t.docx/output.docx?md5=eSwnrSSumTeMuh59IoXhCQ==&expires=1524547423&disposition=a
-ttachment&ooname=output.docx",
-
-"changesurl":"http://192.168.99.100:9000/cache/fil
-es/1521953170330601700_4540/changes.zip/changes.zip?md5=w6DItkSwyBJkuHDl_CiZZQ==
-&expires=1524547423&disposition=attachment&ooname=output.zip",
-
-"history":{
-	"serverVersion":"5.0.7",
-	"changes":[{
-		"created":"2018-03-25 05:23:25",
-		"user":{"id":"127.0	.0.1","name":"127.0.0.1"}
-		}]
-},
-
-"users":["127.0.0.1"],
-"actions":[{"type":0,"userid":"127.0.0.1"}],
-"lastsave":"2018-03-25T05:23:30.342Z",
-"notmodified":false
-} -->

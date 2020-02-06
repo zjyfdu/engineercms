@@ -1,22 +1,16 @@
 package main
 
 import (
-	_ "github.com/3xxx/engineercms/controllers/version"
+	"os"
+
+	"github.com/3xxx/engineercms/models"
 	_ "github.com/3xxx/engineercms/routers"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"os"
-	"os/exec"
 	"path"
 	"strings"
 	"time"
-
-	"github.com/3xxx/engineercms/models"
 )
 
 func main() {
@@ -32,8 +26,7 @@ func main() {
 	//自动建表
 	orm.RunSyncdb("default", false, true)
 	models.InsertUser()
-	// insertGroup()
-	// models.InsertRole()
+
 	beego.Run()
 }
 
@@ -46,18 +39,4 @@ func loadtimes(t time.Time) int {
 func subsuffix(in string) string {
 	fileSuffix := path.Ext(in)
 	return strings.TrimSuffix(in, fileSuffix)
-}
-
-// GoLang 如何在网页显示当前环境的版本号
-func server() {
-	http.HandleFunc("/version", version)
-	http.ListenAndServe(":8080", nil)
-}
-
-func version(w http.ResponseWriter, r *http.Request) {
-	out, err := exec.Command("go", "version").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	io.WriteString(w, fmt.Sprintf("%s", out))
 }

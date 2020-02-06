@@ -142,22 +142,6 @@ func (c *ArticleController) ProvideArticles() {
 	}
 }
 
-//提供给成果列表的table中json数据
-// func (c *ArticleController) GetArticles() {
-// 	id := c.Ctx.Input.Param(":id")
-// 	if id == "" {
-// 		//显示全部
-// 		Articles, err := models.GetArticles()
-// 		if err != nil {
-// 			beego.Error(err)
-// 		}
-// 		c.Data["json"] = Articles
-// 		c.ServeJSON()
-// 	} else {
-// 		//根据标签查询
-// 	}
-// }
-
 //根据id查看，查出文章
 func (c *ArticleController) GetArticle() {
 	id := c.Ctx.Input.Param(":id")
@@ -842,17 +826,6 @@ func (c *ArticleController) GetWxArticle() {
 		Comment:    commentslice,
 		CommentNum: len(comments),
 	}
-	//以下都没用了
-	// dataList = [
-	//   {
-	//     "id": 5,
-	//     "imgUrl": "https://mmbiz.qpic.cn/mmbiz_jpg/UMDZj3FARlE2U5aRjrb6daAWWvXQkh7hskQEEX9Hnc9HpicK8j7WHCIpxJcXibIn9CHqM6u1XzUsnwgXaBeES3Aw/0?wx_fmt=jpeg",
-	//     "title": prod.Title"教程（5）有趣又简单的挤娃娃画",
-	//     "leassonType": 1,
-	//     "html":
-	// "time":
-	// }
-	// ]
 
 	//2.取得侧栏目录路径——路由id
 	//2.1 根据id取得路由

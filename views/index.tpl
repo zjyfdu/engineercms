@@ -4,9 +4,6 @@
 <title>EngineerCMS</title>
   <script src="/static/js/echarts.min.js"></script>
   <script src="/static/js/china.js"></script>  
-  <!-- <script src="/static/js/world.js"></script>   -->
-  <!-- <script src="/static/js/jquery.min223.js"></script>   -->
-  <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=hYCENCEx1nXO0Nt46ldexfG9oI49xBGh"></script> 
   <script src="/static/js/echarts-gl.min.js "></script> 
   <script src="/static/js/bmap.min.js"></script> 
 
@@ -19,7 +16,6 @@
   <!-- </div> -->
 <body>
 
-  <!-- <div id="main" style="height: 400"></div> -->
   <!-- 侧栏 -->
   <div id="treeview" class="col-xs-2 col-sm-2 col-md-2 col-lg-2"></div>
   <!-- 右侧frame -->
@@ -566,5 +562,3 @@
 
 </body>
 </html>
-<!-- <button id="directNextpage" onclick="window.location.reload('/topic/add?id={{.Category.Id}}&mid=1')">Direct Next Page</button> 这个方法跳不出去iframe
-  onclick="window.open('/topic/add?id={{.Category.Id}}&mid=1')"新标签页中打开  onclick="parent.location.href='/topic/add?id={{.Category.Id}}&mid=2'跳出iframe重新打开-->

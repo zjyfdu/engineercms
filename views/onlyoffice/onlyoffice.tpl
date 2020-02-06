@@ -12,11 +12,7 @@
 
 	<body style="height: 100%; margin: 0;">
 		<div id="placeholder" style="height: 100%"></div>
-    <script type="text/javascript" src="http://192.168.99.100:9000/web-apps/apps/api/documents/api.js"></script>
-    <!-- http://192.168.99.101:9000/web-apps/apps/api/documents/api.js
-      https://office.ls123.site/web-apps/apps/api/documents/api.js -->
-    <!-- https://docserver.itdos.com/web-apps/apps/api/documents/api.js -->
-    <!-- http://39.104.112.149/ds-vpath/web-apps/apps/api/documents/api.js -->
+    <script type="text/javascript" src="http://192.168.100.21:9000/web-apps/apps/api/documents/api.js"></script>
     <script type="text/javascript">
       var onAppReady = function() {
           console.log("ONLYOFFICE Document Editor is ready");
@@ -55,49 +51,7 @@
       	docEditor.refreshHistory({
         "currentVersion": {{.currentversion}},
         "history":{{.onlyhistory}},
-        //   "history": [
-        //     {
-        //     	"changes": changes,//[{{.changes1}}], //the changes from the history object returned after saving the document
-        //       "created": "2018-03-9 10:15:55",
-        //       "key": "1522427166608304100",//1521951775531484800这里影响历史版本切换
-        //       "serverVersion": "5.07", //the serverVersion from the history object returned after saving the document
-        //   	  "user": {
-        //   	    "id": "9",
-        //   	    "name": "qin.xc"
-        //   	  },
-        //   	  "version": 1
-        //   	},
-        //   	{
-        // 		  "changes": changes,
-        // 		  "created": "2018-03-10 14:11:35",
-        // 		  "key": "1522465759378671300",//
-        // 		  "user": {
-        // 		      "id": "9",
-        // 		      "name": "qin.xc"
-        // 		  },
-        // 		  "version": 2
-        // 		},
-        //   	{
-        // 		  "changes": changes,
-        // 		  "created": "2018-03-11 14:11:35",
-        // 		  "key": "1522470906000209200",//当前版本
-        // 		  "user": {
-        // 		      "id": "9",
-        // 		      "name": "qin.xc"
-        // 		  },
-        // 		  "version": 3
-        // 		},
-        // 		{
-        // 		  "changes": changes,
-        // 		  "created": "2018-03-11 14:11:35",
-        // 		  "key": "1522475922103673500",//当前版本
-        // 		  "user": {
-        // 		      "id": "9",
-        // 		      "name": "qin.xc"
-        // 		  },
-        // 		  "version": 4
-        // 		},
-    		// ]
+
   			});
 			};
 
@@ -128,15 +82,10 @@
             break;
 					}
     		}
-				var changeUrl2="http://192.168.99.1"+changeUrl.replace(/\u0026/,"&");
-				// alert(changeUrl2);
-        var previousurl="http://192.168.99.1"+previousUrl
-        // alert(previousurl);
-        var fileurl="http://192.168.99.1"+fileUrl
-        // alert(fileurl);
+				var changeUrl2="http://192.168.100.21:8088"+changeUrl.replace(/\u0026/,"&");
+        var previousurl="http://192.168.100.21:8088"+previousUrl
+        var fileurl="http://192.168.100.21:8088"+fileUrl
     		docEditor.setHistoryData({
-    			//下面这里存变化的位置
-      		// "changesUrl":"http://192.168.100.3700:9000/cache/files/1522475922103673500_7157/changes.zip/changes.zip?md5=syFUueSXdnCWe60Iym001g==&expires=1525068326&disposition=attachment&ooname=output.zip",//string1, //the changesUrl from the JSON object returned after saving the document
       		"changesUrl":changeUrl2,
       		"key": key,
       		"previous": {
@@ -148,7 +97,6 @@
     		})
 			};
 
-    	// alert({{.Doc.FileName}});
     	window.docEditor = new DocsAPI.DocEditor("placeholder",
       	{
         "events": {
@@ -168,7 +116,7 @@
           "fileType": "{{.fileType}}",
           "key": "{{.Key}}",//"Khirz6zTPdfd7"
           "title": "{{.Doc.FileName}}",
-          "url": "http://192.168.99.1/attachment/onlyoffice/{{.Doc.FileName}}?hotqinsessionid={{.Sessionid}}",
+          "url": "http://192.168.100.21:8088/attachment/onlyoffice/{{.Doc.FileName}}?hotqinsessionid={{.Sessionid}}",
           "info": {
             "author": "John Smith",
             "created": "2010-07-07 3:46 PM",
@@ -198,7 +146,7 @@
         },
         "documentType": "{{.documentType}}",
         "editorConfig": {
-          "callbackUrl": "http://192.168.99.1/url-to-callback?id={{.Doc.Id}}",
+          "callbackUrl": "http://192.168.100.21:8088/url-to-callback?id={{.Doc.Id}}",
         	"createUrl": "https://example.com/url-to-create-document/",
           "user": {
             "id": {{.Uid}},
@@ -211,24 +159,24 @@
             "customer": {
               "address": "116# Tianshou Road,Guangzhou China",
               "info": "QQ504284",
-              "logo": "http://192.168.99.1/static/img/user.jpg",//logo-big.png
+              "logo": "http://192.168.100.21:8088/static/img/user.jpg",//logo-big.png
               "mail": "xc-qin@163.com",
               "name": "Qin Xiao Chuan",
               "www": "github.com/3xxx"
             },
             "feedback": {
-              "url": "http://192.168.99.1/onlyoffice",
+              "url": "http://192.168.100.21:8088/onlyoffice",
               "visible": true
             },
             "forcesave": false,
             "goback": {
               "text": "Go to Documents",
-              "url": "http://192.168.99.1/onlyoffice"
+              "url": "http://192.168.100.21:8088/onlyoffice"
             },
             "logo": {
-              "image": "http://192.168.99.1/static/img/oo.png",//logo.png
-              "imageEmbedded": "http://192.168.99.1/static/img/oo.png",//logo_em.png
-              "url": "http://192.168.99.1/onlyoffice"
+              "image": "http://192.168.100.21:8088/static/img/oo.png",//logo.png
+              "imageEmbedded": "http://192.168.100.21:8088/static/img/oo.png",//logo_em.png
+              "url": "http://192.168.100.21:8088/onlyoffice"
             },
             "showReviewChanges": false,
             "zoom": 100,
@@ -263,29 +211,3 @@
    	</script>
 	</body>
 </html>
-
-<!-- {
-"key":"1521953170330601700",
-"status":2,
-
-"url":"http://192.168.99.100:9000/cache/files/1521953170330601700_4540/outpu
-t.docx/output.docx?md5=eSwnrSSumTeMuh59IoXhCQ==&expires=1524547423&disposition=a
-ttachment&ooname=output.docx",
-
-"changesurl":"http://192.168.99.100:9000/cache/fil
-es/1521953170330601700_4540/changes.zip/changes.zip?md5=w6DItkSwyBJkuHDl_CiZZQ==
-&expires=1524547423&disposition=attachment&ooname=output.zip",
-
-"history":{
-	"serverVersion":"5.0.7",
-	"changes":[{
-		"created":"2018-03-25 05:23:25",
-		"user":{"id":"127.0	.0.1","name":"127.0.0.1"}
-		}]
-},
-
-"users":["127.0.0.1"],
-"actions":[{"type":0,"userid":"127.0.0.1"}],
-"lastsave":"2018-03-25T05:23:30.342Z",
-"notmodified":false
-} -->

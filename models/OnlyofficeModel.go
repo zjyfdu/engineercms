@@ -1,12 +1,9 @@
 package models
 
 import (
-	// "github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	// _ "github.com/mattn/go-sqlite3"
-	// "strconv"
-	// "strings"
 	"time"
+
+	"github.com/astaxie/beego/orm"
 )
 
 type OnlyOffice struct {
@@ -16,10 +13,10 @@ type OnlyOffice struct {
 	Label     string    `orm:"null"`
 	End       time.Time `orm:"null;type(datetime)"`
 	Principal string    `orm:"null"`
-	// Ext     string    `orm:"null"`
-	Uid     int64     `orm:"null"`
-	Created time.Time `orm:"auto_now_add;type(datetime)"`
-	Updated time.Time `orm:"auto_now;type(datetime)"`
+	Uid       int64     `orm:"null"`
+	Created   time.Time `orm:"auto_now_add;type(datetime)"`
+	Updated   time.Time `orm:"auto_now;type(datetime)"`
+	Sticky    bool      `orm:"false"`
 }
 
 //附件
@@ -28,10 +25,9 @@ type OnlyAttachment struct {
 	FileName  string
 	FileSize  int64
 	Downloads int64
-	DocId     int64 //*Topic `orm:"rel(fk)"`
-	// Changesurl string    `orm:"null"` //文件修改记录
-	Created time.Time `orm:"auto_now_add;type(datetime)"`
-	Updated time.Time `orm:"auto_now;type(datetime)"`
+	DocId     int64     //*Topic `orm:"rel(fk)"`
+	Created   time.Time `orm:"auto_now_add;type(datetime)"`
+	Updated   time.Time `orm:"auto_now;type(datetime)"`
 }
 
 //历史版本
@@ -84,13 +80,6 @@ func GetDocList(offset, limit int) (docs []*OnlyOfficeAttatch, err error) {
 	engine.Table("OnlyOffice").Join("INNER", "user", "user.id = onlyoffice.uid").
 		Join("INNER", "OnlyAttachment", "OnlyAttachment.id = onlyoffice.id").Limit(limit, offset).
 		Find(&docs)
-
-	// o := orm.NewOrm()
-	// qs := o.QueryTable("OnlyOffice")
-	// _, err = qs.Limit(limit, offset).All(&docs)
-	// if err != nil {
-	// 	return docs, err
-	// }
 	return docs, err
 }
 
