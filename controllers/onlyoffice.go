@@ -164,7 +164,7 @@ func (c *OnlyController) Get() {
 		if err != nil {
 			beego.Error(err)
 		}
-		prodId, err := models.AddDoc(todayDoc, todayDoc, "", "", date, uid)
+		prodId, err := models.AddDoc(todayDoc, todayDoc, "", "复制"+yesDate, date, uid)
 		if err != nil {
 			beego.Error(err)
 		}

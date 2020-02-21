@@ -237,4 +237,4 @@ git checkout 9b17d80 //in GPOATH/src/casbin/xorm-adapter
 1. 账户密码都是admin
 2. onlyoffice.tpl，里面的ip要换点
 3. doc下面是Attachments，attachment里才有文档的扩展名
-4. 只剩下怎么编译成exe了
+4. 只剩下怎么编译成exe了，CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build main.go，会提示fatal error: 'windows.h' file not found，不用mac编windos了，

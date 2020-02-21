@@ -37,7 +37,6 @@
   <link rel="stylesheet" type="text/css" href="/static/css/select2.css"/>
   <script type="text/javascript" src="/static/js/select2.js"></script>
 
-<!-- <script language="javascript" src="/static/oo/ga-teamlab.js" type="text/javascript"></script> -->
   <style type="text/css">
     #modalDialog .modal-header {cursor: move;}
     #modalDialog1 .modal-header {cursor: move;}
@@ -51,21 +50,6 @@
     #modalDialog9 .modal-header {cursor: move;}
     #modalDialog10 .modal-header {cursor: move;}
     #modalDialog11 .modal-header {cursor: move;}
-      /*.form-group .datepicker{
-        z-index: 9999;
-      }*/
-    /*模态框效果*/
-    /*.modal-header {*/
-      /*background: #00FF00;*/
-      /*min-height: 16.42857143px;
-      padding: 15px;
-      border-bottom: 1px solid #e5e5e5;*/
-    /*}*/
-    /*.col-sm-1 input[type=checkbox]{
-　　display: inline-block;
-　　vertical-align: middle;
-　　margin-bottom: 2px; 
-    }*/
   </style>
 </head>
 
@@ -90,7 +74,6 @@
         <i class="fa fa-download">下载</i>
         </button>
   </div>
-<!--data-click-to-select="true" -->
   <table id="table0" 
         data-toggle="table" 
         data-url="/onlyoffice/data"
@@ -116,10 +99,10 @@
         <th data-width="10" data-radio="true"></th>
         <th data-formatter="index1" data-align="center">#</th>
         <th data-field="Code" data-halign="center">编号</th>
-        <th data-field="Title" data-halign="center">名称</th>
-        <th data-field="Label" data-formatter="setLable" data-halign="center" data-align="center">关键字</th>
-        <th data-field="Principal" data-halign="center" data-align="center">负责人</th>
-        <th data-field="Uname" data-halign="center" data-align="center">上传者</th>
+        <!-- <th data-field="Title" data-halign="center">名称</th> -->
+        <!-- <th data-field="Label" data-formatter="setLable" data-halign="center" data-align="center">关键字</th> -->
+        <th data-field="Principal" data-halign="center" data-align="center">说明</th>
+        <!-- <th data-field="Uname" data-halign="center" data-align="center">上传者</th> -->
         <th data-field="Docxlink" data-formatter="setDocx" data-events="actionEvents" data-halign="center" data-align="center">协作</th>
         <th data-field="Docxlink" data-formatter="setPermission" data-events="actionEvents" data-halign="center" data-align="center">权限</th>
         <th data-field="End" data-formatter="localDateFormatter" data-halign="center" data-align="center">结束时间</th>
@@ -295,12 +278,7 @@
 
   // 利用模板新建word excel或PPT
   $("#createButton").click(function() {
-      // if ({{.RoleAdd}}!="true"){
-      //   alert("权限不够！");
-      //   return;
-      // }
       $("input#pid").remove();
-      // $(".modal-body").append(th1);
       $('#modalCreate').modal({
         show:true,
         backdrop:'static'
@@ -672,9 +650,9 @@
                     <label class="col-sm-1 control-label">关键字</label>
                     <div class="col-sm-2">
                       <input type="tel" class="form-control" id="prodlabel11" placeholder="以英文,号分割"></div>
-                      <label class="col-sm-1 control-label">负责人</label>
+                      <label class="col-sm-1 control-label">说明</label>
                     <div class="col-sm-2">
-                      <input type="tel" class="form-control" id="prodprincipal11" placeholder="输入姓名"></div>
+                      <input type="tel" class="form-control" id="prodprincipal11" placeholder="说明"></div>
                       <label class="col-sm-1 control-label">结束时间</label>
                     <div class="col-sm-1">
                       <span style="position: relative;z-index: 9999;">
@@ -811,9 +789,9 @@
                   </div>    
               </div>
               <div class="form-group must">
-                <label class="col-sm-3 control-label">负责人</label>
+                <label class="col-sm-3 control-label">说明</label>
                 <div class="col-sm-7">
-                  <input type="tel" class="form-control" id="prodprincipal" placeholder="输入姓名"></div>
+                  <input type="tel" class="form-control" id="prodprincipal" placeholder="说明"></div>
               </div>
               <!--SWF在初始化的时候指定，在后面将展示-->
               <div id="uploader" style="position:relative;text-align: center;">
