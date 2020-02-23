@@ -65,8 +65,8 @@
         </button> -->
         <button type="button" data-name="addButton" id="addButton" class="btn btn-default" title="批量上传模式"> <i class="fa fa-plus">上传</i>
         </button>
-        <button type="button" data-name="editorProdButton" id="editorProdButton" class="btn btn-default"> <i class="fa fa-edit" title="修改成果信息">编辑</i>
-        </button>
+        <!-- <button type="button" data-name="editorProdButton" id="editorProdButton" class="btn btn-default"> <i class="fa fa-edit" title="修改成果信息">编辑</i>
+        </button> -->
         <button type="button" data-name="deleteButton" id="deleteButton" class="btn btn-default">
         <i class="fa fa-trash">删除</i>
         </button>
@@ -83,7 +83,7 @@
         data-show-columns="true"
         data-toolbar="#toolbar1"
         data-query-params="queryParams"
-        data-sort-name="Code"
+        data-sort-name="Updated"
         data-sort-order="desc"
         data-page-size="15"
         data-page-list="[10,15, 50, 100, All]"

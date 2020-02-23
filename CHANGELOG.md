@@ -1,5 +1,14 @@
 # API v1.0.3
 
+## Feb, 2020
+
+- 安装go，修改GOPATH，GOBIN
+- 安装git
+- 安装goland
+- go get一系列的包
+- 安装gcc，mingw，x86_64-posix-seh
+- casbin reset到1.9.1，xorm-adapter reset到19年5月23的一个版本9b17d80119c
+
 ## Nov, 2019
 
 + 采用bootstrap fileinput来实现上传excel到服务端，解析后和规范标准库进行比对，将规范号填入excel，供用户下载。

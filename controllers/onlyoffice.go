@@ -21,6 +21,8 @@ import (
 
 	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
+	"github.com/tealeg/xlsx"
+
 )
 
 type OnlyController struct {
@@ -112,6 +114,42 @@ type Rolepermission struct {
 	Permission string `json:"role"`
 }
 
+func copyEmptyXlsx(dst string, src string) (err error) {
+	rowkeep, _ := beego.AppConfig.Int("rowkeep")
+	colkeep, _ := beego.AppConfig.Int("colkeep")
+	logs.Info(rowkeep, colkeep)
+	xlfile, err := xlsx.OpenFile(src)
+	if err != nil {
+		return err
+	}
+	// 只保留第一个sheet
+	xlfile.Sheets = xlfile.Sheets[:1]
+	sheet := xlfile.Sheets[0]
+	// 修改sheet名
+	nowTime := time.Now()
+	nowTimeStr := nowTime.Format("0102")
+	sheet.Name = nowTimeStr
+
+	for rowIndex, row := range sheet.Rows {
+		if rowIndex < rowkeep {
+			continue
+		}
+		for cellIndex, cell := range row.Cells {
+			if cellIndex < colkeep {
+				continue
+			}
+			logs.Info(rowIndex, cellIndex, cell.Value)
+			cell.Value = ""
+		}
+	}
+	err = xlfile.Save(dst)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+
 //文档管理页面
 func (c *OnlyController) Get() {
 	//取得客户端用户名
@@ -132,8 +170,12 @@ func (c *OnlyController) Get() {
 
 	nowTime := time.Now()
 	todayDate := nowTime.Format("20060102")
-	yesTime := nowTime.AddDate(0, 0, -1)
-	yesDate := yesTime.Format("20060102")
+	//yesTime := nowTime.AddDate(0, 0, -1)
+	//yesDate := yesTime.Format("20060102")
+	var yesDate string = ""
+
+	// 上一个日报的日期，用正则搜索
+	yesRegex, _ := regexp.Compile(`20\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])`)
 
 	var todayDoc string = ""
 	var yesDoc string = ""
@@ -141,16 +183,21 @@ func (c *OnlyController) Get() {
 
 	for _, w := range docs {
 		logs.Info(w.Title)
+	}
+	for _, w := range docs {
 		if strings.Contains(w.Title, todayDate) {
 			todayDoc = w.Title
-		} else if strings.Contains(w.Title, yesDate) {
+			break
+		}
+		if yesDate == "" && yesRegex.FindString(w.Title) != "" {
+			yesDate = yesRegex.FindString(w.Title)
 			yesDoc = w.Title
 			Attachments, err := models.GetOnlyAttachments(w.Id)
 			if err != nil {
 				beego.Error(err)
 			}
 			ext = path.Ext(Attachments[0].FileName)
-			beego.Info(ext)
+			break
 		}
 	}
 
@@ -183,7 +230,14 @@ func (c *OnlyController) Get() {
 
 			destination, _ := os.Create(todayDoc)
 			defer destination.Close()
-			_, _ = io.Copy(destination, source)
+
+			err = copyEmptyXlsx(todayDoc, yesfilepath)
+			if err != nil {
+				logs.Info(err)
+				_, _ = io.Copy(destination, source)
+			} else {
+				logs.Info("copy empty succeed")
+			}
 		}
 	}
 
@@ -191,6 +245,7 @@ func (c *OnlyController) Get() {
 	c.TplName = "onlyoffice/docs.tpl"
 }
 
+// 这里的函数才获取文档列表
 func (c *OnlyController) GetData() {
 	//1.取得客户端用户名
 	var err error
@@ -314,8 +369,6 @@ func (c *OnlyController) GetData() {
 			Docxslice = append(Docxslice, docxarr...)
 		}
 		linkarr[0].Docxlink = Docxslice
-		// linkarr[0].Xlsxlink = Xlsxslice
-		// linkarr[0].Pptxlink = Pptxslice
 		Docxslice = make([]DocxLink, 0) //再把slice置0
 		//无权限的不显示
 		//如果permission=4，则不赋值给link
@@ -560,12 +613,8 @@ func (c *OnlyController) OnlyOffice() {
 		beego.Error(err)
 	}
 	if matched == true {
-		// beego.Info("移动端~")
-		// c.TplName = "onlyoffice/onlyoffice.tpl"
 		c.Data["Type"] = "mobile"
 	} else {
-		// beego.Info("电脑端！")
-		// c.TplName = "onlyoffice/onlyoffice.tpl"
 		c.Data["Type"] = "desktop"
 	}
 	c.TplName = "onlyoffice/onlyoffice.tpl"
@@ -574,9 +623,6 @@ func (c *OnlyController) OnlyOffice() {
 //cms中查阅office
 func (c *OnlyController) OfficeView() {
 	//设置响应头——没有作用
-	// c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", "*")             //允许访问所有域
-	// c.Ctx.ResponseWriter.Header().Add("Access-Control-Allow-Headers", "Content-Type") //header的类型
-	// c.Ctx.ResponseWriter.Header().Set("content-type", "application/json")             //返回数据格式是json
 	id := c.Ctx.Input.Param(":id")
 	//pid转成64为
 	idNum, err := strconv.ParseInt(id, 10, 64)

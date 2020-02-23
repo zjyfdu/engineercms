@@ -6,9 +6,7 @@ package routers
 
 import (
 	"github.com/3xxx/engineercms/controllers"
-	// "githsub.com/3xxx/engineercms/controllers/checkin"
 	"github.com/astaxie/beego"
-	// "github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
 )
 
@@ -27,15 +25,11 @@ func init() {
 	//自动化文档
 	ns :=
 		beego.NewNamespace("/v1",
-			// beego.NSBefore(FilterFunc),
-			// beego.NSBefore(auth),
 			beego.NSNamespace("/admin",
 				beego.NSInclude(
 					&controllers.AdminController{},
 					&controllers.FlowController{},
 					&controllers.AttachController{},
-					// &controllers.LoginController{},
-					// &controllers.CustomerCookieCheckerController{},
 				),
 			),
 			beego.NSNamespace("/wx",
