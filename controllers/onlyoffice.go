@@ -22,7 +22,6 @@ import (
 	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
 	"github.com/tealeg/xlsx"
-
 )
 
 type OnlyController struct {
@@ -149,7 +148,6 @@ func copyEmptyXlsx(dst string, src string) (err error) {
 	return nil
 }
 
-
 //文档管理页面
 func (c *OnlyController) Get() {
 	//取得客户端用户名
@@ -185,6 +183,15 @@ func (c *OnlyController) Get() {
 		logs.Info(w.Title)
 	}
 	for _, w := range docs {
+		Attachments, err := models.GetOnlyAttachments(w.Id)
+		ext = path.Ext(Attachments[0].FileName)
+		logs.Info(ext)
+		logs.Info(ext)
+		logs.Info(ext)
+		logs.Info(ext)
+		if ext != ".xlsx" {
+			continue
+		}
 		if strings.Contains(w.Title, todayDate) {
 			todayDoc = w.Title
 			break
@@ -192,12 +199,11 @@ func (c *OnlyController) Get() {
 		if yesDate == "" && yesRegex.FindString(w.Title) != "" {
 			yesDate = yesRegex.FindString(w.Title)
 			yesDoc = w.Title
-			Attachments, err := models.GetOnlyAttachments(w.Id)
+			Attachments, err = models.GetOnlyAttachments(w.Id)
 			if err != nil {
 				beego.Error(err)
 			}
 			ext = path.Ext(Attachments[0].FileName)
-			break
 		}
 	}
 
@@ -225,14 +231,13 @@ func (c *OnlyController) Get() {
 			todayDoc = DiskDirectory + "/" + todayDoc + ext
 			yesfilepath := DiskDirectory + "/" + yesDoc + ext
 			beego.Info(yesfilepath)
-			source, _ := os.Open(yesfilepath)
-			defer source.Close()
-
-			destination, _ := os.Create(todayDoc)
-			defer destination.Close()
 
 			err = copyEmptyXlsx(todayDoc, yesfilepath)
 			if err != nil {
+				source, _ := os.Open(yesfilepath)
+				defer source.Close()
+				destination, _ := os.Create(todayDoc)
+				defer destination.Close()
 				logs.Info(err)
 				_, _ = io.Copy(destination, source)
 			} else {

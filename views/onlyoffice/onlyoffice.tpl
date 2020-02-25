@@ -12,7 +12,7 @@
 
 	<body style="height: 100%; margin: 0;">
 		<div id="placeholder" style="height: 100%"></div>
-    <script type="text/javascript" src="http://192.168.100.21:9000/web-apps/apps/api/documents/api.js"></script>
+    <script type="text/javascript" src="http://192.168.1.104:9000/web-apps/apps/api/documents/api.js"></script>
     <script type="text/javascript">
       var onAppReady = function() {
           console.log("ONLYOFFICE Document Editor is ready");
@@ -82,9 +82,9 @@
             break;
 					}
     		}
-				var changeUrl2="http://192.168.100.21:8088"+changeUrl.replace(/\u0026/,"&");
-        var previousurl="http://192.168.100.21:8088"+previousUrl
-        var fileurl="http://192.168.100.21:8088"+fileUrl
+				var changeUrl2="http://192.168.1.104:8088"+changeUrl.replace(/\u0026/,"&");
+        var previousurl="http://192.168.1.104:8088"+previousUrl
+        var fileurl="http://192.168.1.104:8088"+fileUrl
     		docEditor.setHistoryData({
       		"changesUrl":changeUrl2,
       		"key": key,
@@ -116,7 +116,7 @@
           "fileType": "{{.fileType}}",
           "key": "{{.Key}}",//"Khirz6zTPdfd7"
           "title": "{{.Doc.FileName}}",
-          "url": "http://192.168.100.21:8088/attachment/onlyoffice/{{.Doc.FileName}}?hotqinsessionid={{.Sessionid}}",
+          "url": "http://192.168.1.104:8088/attachment/onlyoffice/{{.Doc.FileName}}?hotqinsessionid={{.Sessionid}}",
           "info": {
             "author": "John Smith",
             "created": "2010-07-07 3:46 PM",
@@ -146,7 +146,7 @@
         },
         "documentType": "{{.documentType}}",
         "editorConfig": {
-          "callbackUrl": "http://192.168.100.21:8088/url-to-callback?id={{.Doc.Id}}",
+          "callbackUrl": "http://192.168.1.104:8088/url-to-callback?id={{.Doc.Id}}",
         	"createUrl": "https://example.com/url-to-create-document/",
           "user": {
             "id": {{.Uid}},
@@ -159,24 +159,24 @@
             "customer": {
               "address": "116# Tianshou Road,Guangzhou China",
               "info": "QQ504284",
-              "logo": "http://192.168.100.21:8088/static/img/user.jpg",//logo-big.png
+              "logo": "http://192.168.1.104:8088/static/img/user.jpg",//logo-big.png
               "mail": "xc-qin@163.com",
               "name": "Qin Xiao Chuan",
               "www": "github.com/3xxx"
             },
             "feedback": {
-              "url": "http://192.168.100.21:8088/onlyoffice",
+              "url": "http://192.168.1.104:8088/onlyoffice",
               "visible": true
             },
             "forcesave": false,
             "goback": {
               "text": "Go to Documents",
-              "url": "http://192.168.100.21:8088/onlyoffice"
+              "url": "http://192.168.1.104:8088/onlyoffice"
             },
             "logo": {
-              "image": "http://192.168.100.21:8088/static/img/oo.png",//logo.png
-              "imageEmbedded": "http://192.168.100.21:8088/static/img/oo.png",//logo_em.png
-              "url": "http://192.168.100.21:8088/onlyoffice"
+              "image": "http://192.168.1.104:8088/static/img/oo.png",//logo.png
+              "imageEmbedded": "http://192.168.1.104:8088/static/img/oo.png",//logo_em.png
+              "url": "http://192.168.1.104:8088/onlyoffice"
             },
             "showReviewChanges": false,
             "zoom": 100,
