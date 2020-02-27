@@ -170,13 +170,13 @@ func UpdateOnlyAttachment(cid int64, filename string) (err error) {
 	o := orm.NewOrm()
 	attachment := &OnlyAttachment{Id: cid}
 	if o.Read(attachment) == nil {
-		attachment.FileName = filename
+		// attachment.FileName = filename
 		attachment.Updated = time.Now()
 		// if changesurl != "" {
 		// 	attachment.Changesurl = changesurl
 		// 	_, err = o.Update(attachment, "Updated", "Changesurl")
 		// } else {
-		_, err = o.Update(attachment, "FileName", "Updated")
+		_, err = o.Update(attachment, "Updated")
 		// }
 		if err != nil {
 			return err

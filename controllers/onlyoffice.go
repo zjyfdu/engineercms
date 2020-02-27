@@ -767,6 +767,81 @@ func (c *OnlyController) OfficeView() {
 //协作页面的保存和回调
 //关闭浏览器标签后获取最新文档保存到文件夹
 func (c *OnlyController) UrltoCallback() {
+	// pk1 := c.Ctx.Input.RequestBody
+	id := c.Input().Get("id")
+	//pid转成64为
+	idNum, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//根据附件id取得附件的prodid，路径
+	onlyattachment, err := models.GetOnlyAttachbyId(idNum)
+	if err != nil {
+		beego.Error(err)
+		beego.Error(err)
+		beego.Error(err)
+		beego.Error(err)
+		beego.Error(err)
+		beego.Error(err)
+	}
+
+	var callback Callback
+	json.Unmarshal(c.Ctx.Input.RequestBody, &callback)
+
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+
+	if callback.Status == 1 || callback.Status == 4 {
+		c.Data["json"] = map[string]interface{}{"error": 0}
+		c.ServeJSON()
+	} else if callback.Status == 2 {
+		resp, err := http.Get(callback.Url)
+		if err != nil {
+			beego.Error(err)
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			beego.Error(err)
+		}
+		defer resp.Body.Close()
+		if err != nil {
+			beego.Error(err)
+		}
+
+		f, err := os.OpenFile("./ttachment/onlyoffice/"+onlyattachment.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
+		beego.Info(onlyattachment.FileName)
+		beego.Info(onlyattachment.FileName)
+		beego.Info(onlyattachment.FileName)
+		beego.Info(onlyattachment.FileName)
+		beego.Info(onlyattachment.FileName)
+		beego.Info(onlyattachment.FileName)
+		if err != nil {
+			beego.Error(err)
+		}
+		defer f.Close()
+		_, err = f.Write(body)
+
+		if err != nil {
+			beego.Error(err)
+		} else {
+			err = models.UpdateOnlyAttachment(idNum, "")
+			if err != nil {
+				beego.Error(err)
+			}
+		}
+		c.Data["json"] = map[string]interface{}{"error": 0}
+		c.ServeJSON()
+	}
+}
+
+//协作页面的保存和回调
+//关闭浏览器标签后获取最新文档保存到文件夹
+func (c *OnlyController) UrltoCallback_new() {
 	var actionuserid int64
 	// pk1 := c.Ctx.Input.RequestBody
 	id := c.Input().Get("id")
@@ -832,8 +907,6 @@ func (c *OnlyController) UrltoCallback() {
 		}
 		defer f.Close()
 		_, err = f.Write(body) //这里直接用resp.Body如何？
-		// _, err = f.WriteString(str)
-		// _, err = io.Copy(body, f)
 		if err != nil {
 			beego.Error(err)
 		} else {

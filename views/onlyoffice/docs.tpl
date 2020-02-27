@@ -590,7 +590,6 @@
     
   // 删除成果
   $("#deleteButton").click(function() {
-    if ({{.IsAdmin}}){
       var selectRow=$('#table0').bootstrapTable('getSelections');
       if (selectRow.length<=0) {
         alert("请先勾选成果！");
@@ -616,7 +615,6 @@
           data: {ids:ids},
           success:function(data,status){
             alert("删除“"+data+"”成功！(status:"+status+".)");
-            //删除已选数据
             $('#table0').bootstrapTable('remove',{
               field:'Title',
               values:title
@@ -624,10 +622,6 @@
           }
         });
       }
-    }else{
-      alert("权限不够！");
-      return;
-    }
   })
 
 </script>
@@ -1188,23 +1182,11 @@
 
   // 删除附件
   $("#deleteAttachButton").click(function() {
-      // if ({{.role}}!=1){
-      //   alert("权限不够！");
-      //   return;
-      // }
-      if ({{.RoleDelete}}!="true"){
-        alert("权限不够！");
-        return;
-      }
+
       var selectRow=$('#attachments').bootstrapTable('getSelections');
       if (selectRow.length<=0) {
         alert("请先勾选！");
         return false;
-      }
-
-      if ({{.RoleDelete}}!="true"){
-        alert("权限不够！"+selectRow[0].Uid);
-        return;
       }
 
       if(confirm("确定删除吗？一旦删除将无法恢复！")){
