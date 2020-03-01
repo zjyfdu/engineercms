@@ -377,13 +377,6 @@ func init() {
 	//首页轮播图片的权限
 	beego.Router("/attachment/carousel/*.*", &controllers.AttachController{}, "get:GetCarousel")
 
-	//添加文章——froala上传插入的图片
-	beego.Router("/uploadimg", &controllers.FroalaController{}, "*:UploadImg")
-	//添加wiki——froala上传插入的图片
-	beego.Router("/uploadwikiimg", &controllers.FroalaController{}, "*:UploadWikiImg")
-	//添加文章——froala上传插入的视频
-	beego.Router("/uploadvideo", &controllers.FroalaController{}, "*:UploadVideo")
-
 	//wiki页面
 	beego.Router("/wiki", &controllers.WikiController{}) //get
 	//发表文章界面
@@ -403,7 +396,7 @@ func init() {
 	beego.Router("/reply/deletewiki", &controllers.ReplyController{}, "get:DeleteWiki")
 	//这个有哦何用？
 	beego.SetStaticPath("/attachment/wiki", "attachment/wiki")
-	beego.SetStaticPath("/swagger", "swagger")
+
 	// *全匹配方式 //匹配 /download/ceshi/file/api.json :splat=file/api.json
 	beego.Router("/searchwiki", &controllers.SearchController{}, "get:SearchWiki")
 
