@@ -2,14 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
-	"github.com/unidoc/unioffice/document"
 
 	"io/ioutil"
 	"net/http"
@@ -21,7 +19,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
 )
 
@@ -1255,217 +1252,4 @@ func (c *OnlyController) Getpermission() {
 	}
 	c.Data["json"] = rolepermission
 	c.ServeJSON()
-}
-
-//用户新建模板
-//上传文档分类：word，excel和ppt
-
-//文档结构数据
-type DocNode struct {
-	Id       int    `json:"id"`
-	Heading  string `json:"text"`
-	Level    int    `json:"level"` //分级
-	ParentId int
-}
-
-//树状目录数据——如何定位到word的位置呢
-type WordTree struct {
-	Id        int         `json:"id"`
-	Heading   string      `json:"text"`
-	Level     int         `json:"level"` //分级目录，这里其实没什么用了
-	WordTrees []*WordTree `json:"nodes"`
-}
-
-//生成word文档的文档结构图
-func (c *OnlyController) GetTree() {
-	doc, err := document.Open("./attachment/toc.docx")
-	if err != nil {
-		// log.Fatalf("error opening document: %s", err)
-		beego.Error(err)
-	}
-	var docnode []DocNode
-	var id int
-	id = 1
-	for _, para := range doc.Paragraphs() {
-		//if para.Style() == "1" || para.Style() == "Heading1" {
-		if para.Style() != "" {
-			var text1 string
-			for _, run := range para.Runs() {
-				text1 = text1 + run.Text()
-			}
-			aa := make([]DocNode, 1)
-			aa[0].Id = id
-			aa[0].Heading = text1
-			level, err := strconv.Atoi(strings.Replace(para.Style(), "Heading", "", -1))
-			if err != nil {
-				beego.Error(err)
-			}
-			aa[0].Level = level
-			//循环赋给parentid
-			var ispass bool
-			ispass = false
-			if len(docnode) > 0 {
-				for i := len(docnode); i > 0; i-- {
-					if level > docnode[i-1].Level {
-						aa[0].ParentId = docnode[i-1].Id
-						ispass = true
-						break
-					}
-				}
-			}
-			if !ispass {
-				aa[0].ParentId = 0
-			}
-			//aa := DocNode{id, text1, level, parentid}
-			docnode = append(docnode, aa...)
-			id++
-		}
-	}
-	//先构造第0级的树状数据结构
-	root := WordTree{0, "文档结构", 0, []*WordTree{}}
-	//下面node是那些level=1的
-	var node []DocNode
-	for _, k := range docnode {
-		if k.Level == 1 {
-			node = append(node, k)
-		}
-	}
-	//递归生成目录json
-	makedoctree(node, docnode, &root)
-	// beego.Info(root.WordTrees[0])//指针是这样显示的！！！！！！！
-	c.Data["json"] = root
-	c.TplName = "doctree.tpl"
-}
-
-//递归生成树状结构数据
-func makedoctree(node, nodes []DocNode, tree *WordTree) {
-	// 遍历第一层
-	for _, v := range node {
-		id := v.Id
-		heading := v.Heading
-		level := v.Level
-		// 将当前名、层级和id作为子节点添加到目录下
-		child := WordTree{id, heading, level, []*WordTree{}}
-		tree.WordTrees = append(tree.WordTrees, &child)
-		slice := getnodesons(id, nodes)
-		//fmt.Println(slice)
-		// 如果遍历的当前节点下还有节点，则进入该节点进行递归
-		if len(slice) > 0 {
-			makedoctree(slice, nodes, &child)
-		}
-	}
-	return
-}
-
-//取得这个id的下级（儿子）目录
-func getnodesons(idNum int, nodes []DocNode) (slice []DocNode) {
-	for _, k := range nodes {
-		if k.ParentId == idNum {
-			slice = append(slice, k)
-		}
-	}
-	return slice
-}
-
-//文档格式转换
-type Conversionsend struct {
-	Async      bool   `json:"async"`
-	Filetype   string `json:"filetype"`
-	Key        string `json:"key"`
-	Outputtype string `json:"async"`
-	Thumbnail  Nail   `json:"thumbnail"`
-	Title      string `json:"title"`
-	Url        string `json:"url"`
-}
-
-type Nail struct {
-	Aspect int  `json:"aspect"`
-	First  bool `json:"first"`
-	Height int  `json:"height"`
-	Width  int  `json:"width"`
-}
-type Conversionresponse struct {
-	EndConvert bool   `json:"endconvert"`
-	FileUrl    string `json:"fileurl"`
-	Percent    int    `json:"percent"`
-}
-
-// @Title post conversion doc
-// @Description post doc to onlyoffice conversion
-// @Success 200 {object} models.AddArticle
-// @Failure 400 Invalid page supplied
-// @Failure 404 articl not found
-// @router /conversion [post]
-func (c *OnlyController) Conversion() {
-	var nail Nail
-	nail.Aspect = 0
-	nail.First = true
-	nail.Height = 850
-	nail.Width = 600
-	var conversionsend Conversionsend
-	conversionsend.Async = false
-	conversionsend.Filetype = "docx"
-	conversionsend.Key = "Khirz6zTPdfd7"
-	conversionsend.Outputtype = "pdf"
-	conversionsend.Thumbnail = nail
-	conversionsend.Title = "Example Document Title.docx"
-	conversionsend.Url = "http://192.168.99.1/attachment/onlyoffice/111历史版本试验v4.docx"
-
-	req := httplib.Post("http://192.168.99.100:9000/convertservice.ashx")
-	// req.Header("contentType", "application/json")
-	req.Header("Content-Type", "application/json")
-	// 	bt,err:=ioutil.ReadFile("hello.txt")
-	// if err!=nil{
-	//     log.Fatal("read file err:",err)
-	// }
-	beego.Info(conversionsend)
-	b, err := json.Marshal(conversionsend)
-	req.Body(string(b))
-	beego.Info(string(b))
-	var conversionresponse Conversionresponse
-
-	jsonstring, err := req.String()
-	if err != nil {
-		beego.Error(err)
-	} else {
-		//json字符串解析到结构体，以便进行追加
-		beego.Info(jsonstring)
-		// err = json.Unmarshal([]byte(jsonstring), &conversionresponse)
-		err = xml.Unmarshal([]byte(jsonstring), &conversionresponse)
-		// 	fmt.Println(s)
-		if err != nil {
-			beego.Error(err)
-		}
-
-		resp, err := http.Get(conversionresponse.FileUrl)
-		if err != nil {
-			beego.Error(err)
-		}
-		beego.Info(resp)
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			beego.Error(err)
-		}
-		defer resp.Body.Close()
-		if err != nil {
-			beego.Error(err)
-		}
-		f, err := os.Create("./attachment/onlyoffice/" + "Example Document Title.pdf")
-		if err != nil {
-			beego.Error(err)
-		}
-		defer f.Close()
-		_, err = f.Write(body) //这里直接用resp.Body如何？
-		// _, err = f.WriteString(str)
-		// _, err = io.Copy(body, f)
-		if err != nil {
-			beego.Error(err)
-		}
-
-		// http.ServeFile(c.Ctx.ResponseWriter, c.Ctx.Request, "//attachment/onlyoffice/Example Document Title.docx")
-		filePath := "attachment/onlyoffice/Example Document Title.pdf"
-		c.Ctx.Output.Download(filePath) //这个能保证下载文件名称正确
-		c.Data["json"] = conversionresponse
-		c.ServeJSON()
-	}
 }

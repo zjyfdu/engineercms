@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	// "encoding/json"
 	"fmt"
 	"path"
 	"regexp"
@@ -15,17 +14,6 @@ import (
 	"github.com/casbin/casbin"
 	xormadapter "github.com/casbin/xorm-adapter"
 	_ "github.com/mattn/go-sqlite3"
-	// "engineercms/controllers/validator"
-	// "github.com/astaxie/beego/context"
-	// "github.com/asofdate/hauth/core/groupcache"
-	// "github.com/asofdate/hauth/core/hrpc"
-	// "github.com/asofdate/hauth/core/models"
-	// "github.com/asofdate/hauth/utils"
-	// "github.com/asofdate/hauth/utils/hret"
-	// "github.com/asofdate/hauth/utils/i18n"
-	// "github.com/asofdate/hauth/utils/jwt"
-	// "github.com/asofdate/hauth/utils/logs"
-	// "github.com/asofdate/hauth/utils/validator"
 )
 
 type RoleController struct {
@@ -44,25 +32,6 @@ type Tree struct {
 	Id    int64  `json:"id"`
 	Nodes []Tree `json:"nodes"`
 }
-
-// type CasbinRule struct {
-// 	Id    int
-// 	PType string
-// 	V0    string
-// 	V1    string
-// 	V2    string
-// 	V3    string
-// 	V4    string
-// 	V5    string
-// }
-
-// type RoleController struct {
-// 	models models.RoleModel
-// }
-
-// var RoleCtl = &RoleController{
-// 	models.RoleModel{},
-// }
 
 // 2019/5/27
 var e *casbin.Enforcer

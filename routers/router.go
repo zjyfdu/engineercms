@@ -22,72 +22,10 @@ func init() {
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
 		AllowCredentials: true,
 	}))
-	//自动化文档
-	ns :=
-		beego.NewNamespace("/v1",
-			beego.NSNamespace("/admin",
-				beego.NSInclude(
-					&controllers.AdminController{},
-					&controllers.FlowController{},
-					&controllers.AttachController{},
-				),
-			),
-			beego.NSNamespace("/wx",
-				beego.NSInclude(
-					&controllers.ArticleController{},
-					&controllers.FroalaController{},
-					&controllers.LoginController{},
-					&controllers.ReplyController{},
-					&controllers.SearchController{},
-					&controllers.MainController{},
-					&controllers.StandardController{},
-					&controllers.RegistController{},
-					&controllers.DiaryController{},
-				),
-			),
-			beego.NSNamespace("/adminlog",
-				beego.NSInclude(
-					&controllers.AdminLogController{},
-				),
-			),
-			beego.NSNamespace("/project",
-				beego.NSInclude(
-					&controllers.ProjController{},
-					&controllers.ProdController{},
-				),
-			),
-			beego.NSNamespace("/checkin",
-				beego.NSInclude(
-					&controllers.CheckController{},
-				),
-			),
-			beego.NSNamespace("/bbs",
-				beego.NSInclude(
-					&controllers.BbsController{},
-				),
-			),
-			beego.NSNamespace("/todo",
-				beego.NSInclude(
-					&controllers.TodoController{},
-				),
-			),
-			beego.NSNamespace("/onlyoffice",
-				beego.NSInclude(
-					&controllers.OnlyController{},
-				),
-			),
-			beego.NSNamespace("/fileinput",
-				beego.NSInclude(
-					&controllers.FileinputController{},
-				),
-			),
-		)
-	beego.AddNamespace(ns)
 
 	beego.Router("/test", &controllers.MainController{}, "*:Test")
 	beego.Router("/.well-known/pki-validation/*", &controllers.AdminController{}, "*:Testdown")
 
-	beego.Router("/doctree", &controllers.OnlyController{}, "*:GetTree")
 	//升级数据库
 	beego.Router("/updatedatabase", &controllers.MainController{}, "*:UpdateDatabase")
 	//删除数据表和字段测试
@@ -439,8 +377,6 @@ func init() {
 	//首页轮播图片的权限
 	beego.Router("/attachment/carousel/*.*", &controllers.AttachController{}, "get:GetCarousel")
 
-	//ue富文本编辑器
-	beego.Router("/controller", &controllers.UeditorController{}, "*:ControllerUE")
 	//添加文章——froala上传插入的图片
 	beego.Router("/uploadimg", &controllers.FroalaController{}, "*:UploadImg")
 	//添加wiki——froala上传插入的图片
