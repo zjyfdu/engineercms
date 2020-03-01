@@ -9,7 +9,7 @@ import (
 	// "os"
 	// "path"
 	// "github.com/astaxie/beego"
-	"strconv"
+
 	// "strings"
 	"time"
 	//"github.com/Unknwon/com
@@ -142,66 +142,6 @@ func GetAllTopicLikes(tid int64) (likes []*Like, err error) {
 	qs := o.QueryTable("Like")
 	_, err = qs.Filter("tid", tid).All(&likes)
 	return likes, err
-}
-
-func DeleteWikiReply(rid string) error {
-	ridNum, err := strconv.ParseInt(rid, 10, 64)
-	if err != nil {
-		return err
-	}
-	o := orm.NewOrm()
-
-	var tidNum int64
-	reply := &Commentwiki{Id: ridNum}
-	if o.Read(reply) == nil {
-		tidNum = reply.Tid
-		_, err = o.Delete(reply)
-		if err != nil {
-			return err
-		}
-	}
-	replies := make([]*Commentwiki, 0) //slice,将所有文章取出来
-	qs := o.QueryTable("commentwiki")
-	_, err = qs.Filter("tid", tidNum).OrderBy("-created").All(&replies)
-	if err != nil {
-		return err
-	}
-	wiki := &Wiki{Id: tidNum}
-	if o.Read(wiki) == nil { //如果错误为空
-		if len(replies) != 0 { //如果回复不为空，则……
-			wiki.ReplyTime = replies[0].Created
-			wiki.ReplyLastUserName = replies[0].Name
-			wiki.ReplyCount = int64(len(replies))
-			_, err = o.Update(wiki)
-		}
-	}
-	return err
-}
-
-func AddWikiReply(tid, nickname, content string) error {
-	tidNum, err := strconv.ParseInt(tid, 10, 64)
-	if err != nil {
-		return err
-	}
-	reply := &Commentwiki{
-		Tid:     tidNum,
-		Name:    nickname,
-		Content: content,
-		Created: time.Now(),
-	}
-	o := orm.NewOrm()
-	_, err = o.Insert(reply)
-	if err != nil {
-		return err
-	}
-	topic := &Wiki{Id: tidNum}
-	if o.Read(topic) == nil {
-		topic.ReplyTime = time.Now()
-		topic.ReplyLastUserName = nickname
-		topic.ReplyCount++
-		_, err = o.Update(topic)
-	}
-	return err
 }
 
 func GetAllWikiReplies(tid int64) (replies []*Commentwiki, err error) {

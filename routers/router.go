@@ -349,23 +349,6 @@ func init() {
 	//搜索某个项目——没意义
 	beego.Router("/projects/search", &controllers.SearchController{}, "get:SearchProjects")
 
-	//********gante
-	//项目进度甘特图
-	beego.Router("/projectgant", &controllers.ProjGantController{}, "get:Get")
-	//数据填充
-	// beego.Router("/projectgant/getprojgants", &controllers.ProjGantController{}, "get:GetProjGants")
-	//添加项目进度
-	beego.Router("/projectgant/addprojgant", &controllers.ProjGantController{}, "post:AddProjGant")
-	//导入项目进度数据
-	beego.Router("/projectgant/importprojgant", &controllers.ProjGantController{}, "post:ImportProjGant")
-
-	//修改项目进度
-	beego.Router("/projectgant/updateprojgant", &controllers.ProjGantController{}, "post:UpdateProjGant")
-	//删除项目进度
-	beego.Router("/projectgant/deleteprojgant", &controllers.ProjGantController{}, "post:DeleteProjGant")
-	//关闭项目进度
-	beego.Router("/projectgant/closeprojgant", &controllers.ProjGantController{}, "post:CloseProjGant")
-
 	//附件下载"/attachment/*", &controllers.AttachController{}
 	// beego.InsertFilter("/attachment/*", beego.BeforeRouter, controllers.ImageFilter)
 	//根据附件绝对地址下载
@@ -376,34 +359,5 @@ func init() {
 	//上面用attachment.ImageFilter是不行的，必须是package.func
 	//首页轮播图片的权限
 	beego.Router("/attachment/carousel/*.*", &controllers.AttachController{}, "get:GetCarousel")
-
-	//wiki页面
-	beego.Router("/wiki", &controllers.WikiController{}) //get
-	//发表文章界面
-	beego.Router("/wiki/add", &controllers.WikiController{}, "get:Add")
-	//发表文章提交
-	beego.Router("/wiki/addwiki", &controllers.WikiController{}, "post:AddWiki")
-
-	//查看一个文章
-	beego.Router("/wiki/view/", &controllers.WikiController{}, "get:View")
-	//删除wiki
-	beego.Router("/wiki/delete", &controllers.WikiController{}, "post:Delete")
-	//修改一个文章
-	// beego.Router("/wiki/modify", &controllers.WikiController{}, "get:Modify")
-	beego.AutoRouter(&controllers.WikiController{})
-	//添加删除wiki的评论
-	beego.Router("/reply/addwiki", &controllers.ReplyController{}, "post:AddWiki")
-	beego.Router("/reply/deletewiki", &controllers.ReplyController{}, "get:DeleteWiki")
-	//这个有哦何用？
-	beego.SetStaticPath("/attachment/wiki", "attachment/wiki")
-
-	// *全匹配方式 //匹配 /download/ceshi/file/api.json :splat=file/api.json
-	beego.Router("/searchwiki", &controllers.SearchController{}, "get:SearchWiki")
-
-	//对标
-	beego.Router("/legislation", &controllers.LegislationController{}, "*:Index")
-	beego.Router("/legislation/checklist", &controllers.LegislationController{}, "*:Checklist")
-	//上传文档，提供解析和替换（增加）标准号
-	beego.Router("/legislation/fileinput", &controllers.LegislationController{}, "get:FileInput")
 
 }

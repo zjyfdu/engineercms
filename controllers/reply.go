@@ -2,10 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/3xxx/engineercms/models"
-	"github.com/astaxie/beego"
 	"net/http"
 	"strconv"
+
+	"github.com/3xxx/engineercms/models"
+	"github.com/astaxie/beego"
 )
 
 type ReplyController struct {
@@ -206,63 +207,4 @@ func (c *ReplyController) AddWxLike() {
 			c.ServeJSON()
 		}
 	}
-}
-
-// @Title delete wx like by likeid
-// @Description delete like by likeid
-// @Param id query string  true "The id of like"
-// @Success 200 {object} models.DeleteTopicLike
-// @Failure 400 Invalid page supplied
-// @Failure 404 article not found
-// @router /deletewxlike/:id [post]
-//删除文章点赞
-// func (c *ReplyController) DeleteWxLike() {
-// 	id := c.Ctx.Input.Param(":id")
-// 	//id转成64为
-// 	idNum, err := strconv.ParseInt(id, 10, 64)
-// 	if err != nil {
-// 		beego.Error(err)
-// 	}
-// 	err = models.DeleteTopicLike(idNum)
-// 	if err != nil {
-// 		beego.Error(err)
-// 	} else {
-// 		c.Data["json"] = map[string]interface{}{"info": "SUCCESS", "likeid": id}
-// 		c.ServeJSON()
-// 	}
-// }
-
-//添加wiki评论
-func (c *ReplyController) AddWiki() {
-	tid := c.Input().Get("tid") //tid是文章id
-	username, _, _, _, _ := checkprodRole(c.Ctx)
-	err := models.AddWikiReply(tid, username, c.Input().Get("content"))
-	if err != nil {
-		beego.Error(err)
-	} else {
-		c.Data["json"] = tid
-		c.ServeJSON()
-	}
-	op := c.Input().Get("op")
-	switch op {
-	case "b":
-		c.Redirect("/topic/view_b/"+tid, 302)
-	case "c":
-		c.Redirect("/wiki/view/"+tid, 302)
-	default:
-		c.Redirect("/topic/view/"+tid, 302)
-	}
-}
-
-//删除wiki评论
-func (c *ReplyController) DeleteWiki() {
-	if !checkAccount(c.Ctx) {
-		return
-	}
-	tid := c.Input().Get("tid")
-	err := models.DeleteWikiReply(c.Input().Get("rid"))
-	if err != nil {
-		beego.Error(err)
-	}
-	c.Redirect("/wiki/view/"+tid, 302)
 }

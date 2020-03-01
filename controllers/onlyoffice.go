@@ -1246,9 +1246,7 @@ func (c *OnlyController) Getpermission() {
 				rolepermission1[0].Permission = v[2]
 			}
 			rolepermission = append(rolepermission, rolepermission1...)
-			// rolepermission1 = make([]Rolepermission, 0)
 		}
-		// myRes := e.GetPermissionsForUser(roleid)
 	}
 	c.Data["json"] = rolepermission
 	c.ServeJSON()

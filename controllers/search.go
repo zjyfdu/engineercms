@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/3xxx/engineercms/models"
-	"github.com/astaxie/beego"
 	"path"
 	"strconv"
+
+	"github.com/3xxx/engineercms/models"
+	"github.com/astaxie/beego"
 )
 
 type SearchController struct {
@@ -237,53 +238,6 @@ func (c *SearchController) SearchWxDrawings() {
 		c.Data["json"] = map[string]interface{}{"info": "关键字为空"}
 		c.ServeJSON()
 	}
-	// var user models.User
-	// //取出用户openid
-	// JSCODE := c.Input().Get("code")
-	// if JSCODE != "" {
-	// 	APPID := beego.AppConfig.String("wxAPPID2")
-	// 	SECRET := beego.AppConfig.String("wxSECRET2")
-	// 	app_version := c.Input().Get("app_version")
-	// 	if app_version == "3" {
-	// 		APPID = beego.AppConfig.String("wxAPPID3")
-	// 		SECRET = beego.AppConfig.String("wxSECRET3")
-	// 	}
-	// 	// APPID := "wx7f77b90a1a891d93"
-	// 	// SECRET := "f58ca4f28cbb52ccd805d66118060449"
-	// 	requestUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + APPID + "&secret=" + SECRET + "&js_code=" + JSCODE + "&grant_type=authorization_code"
-	// 	resp, err := http.Get(requestUrl)
-	// 	if err != nil {
-	// 		beego.Error(err)
-	// 		return
-	// 	}
-	// 	defer resp.Body.Close()
-	// 	if resp.StatusCode != 200 {
-	// 		beego.Error(err)
-	// 	}
-	// 	var data map[string]interface{}
-	// 	err = json.NewDecoder(resp.Body).Decode(&data)
-	// 	if err != nil {
-	// 		beego.Error(err)
-	// 	}
-	// 	var openID string
-	// 	if _, ok := data["session_key"]; !ok {
-	// 		errcode := data["errcode"]
-	// 		errmsg := data["errmsg"].(string)
-	// 		c.Data["json"] = map[string]interface{}{"errNo": errcode, "msg": errmsg, "data": "session_key 不存在"}
-	// 	} else {
-	// 		openID = data["openid"].(string)
-	// 		user, err = models.GetUserByOpenID(openID)
-	// 		if err != nil {
-	// 			beego.Error(err)
-	// 		}
-	// 	}
-	// }
-	// var userid int64
-	// if user.Nickname != "" {
-	// 	userid = user.Id
-	// } else {
-	// 	userid = 0
-	// }
 }
 
 //在某个项目里搜索成果：全文搜索，article全文，编号，名称，关键字，作者……
@@ -435,27 +389,5 @@ func (c *SearchController) SearchProjects() {
 			c.Data["json"] = products
 			c.ServeJSON()
 		}
-	}
-}
-
-//搜索wiki
-func (c *SearchController) SearchWiki() { //search用的是get方法
-	tid := c.Input().Get("wikiname")
-	if tid != "" {
-		c.Data["IsWiki"] = true
-		// c.Data["IsSearch"] = true
-		c.Data["IsLogin"] = checkAccount(c.Ctx)
-		c.TplName = "searchwiki.tpl"
-		Searchs, err := models.SearchWikis(tid, false)
-		if err != nil {
-			beego.Error(err.Error)
-		} else {
-			c.Data["Searchs"] = Searchs
-		}
-	} else {
-		c.Data["IsWiki"] = true
-		// c.Data["IsSearch"] = true
-		c.Data["IsLogin"] = checkAccount(c.Ctx)
-		c.TplName = "searchwiki.tpl"
 	}
 }
