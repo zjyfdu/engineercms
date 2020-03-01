@@ -3,8 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
 	"github.com/unidoc/unioffice/document"
@@ -21,7 +23,6 @@ import (
 
 	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/logs"
-	"github.com/tealeg/xlsx"
 )
 
 type OnlyController struct {
@@ -113,38 +114,61 @@ type Rolepermission struct {
 	Permission string `json:"role"`
 }
 
+func cellName(col, row int) string {
+	res := ""
+	col, row = col+1, row+1
+	for col > 0 {
+		col--
+		res = string(byte(col%26)+'A') + res
+		col /= 26
+	}
+	res += strconv.Itoa(row)
+	return res
+}
+
 func copyEmptyXlsx(dst string, src string) (err error) {
 	rowkeep, _ := beego.AppConfig.Int("rowkeep")
 	colkeep, _ := beego.AppConfig.Int("colkeep")
 	logs.Info(rowkeep, colkeep)
-	xlfile, err := xlsx.OpenFile(src)
+
+	f, err := excelize.OpenFile(src)
 	if err != nil {
 		return err
 	}
-	// 只保留第一个sheet
-	xlfile.Sheets = xlfile.Sheets[:1]
-	sheet := xlfile.Sheets[0]
-	// 修改sheet名
+
 	nowTime := time.Now()
 	nowTimeStr := nowTime.Format("0102")
-	sheet.Name = nowTimeStr
 
-	for rowIndex, row := range sheet.Rows {
-		if rowIndex < rowkeep {
+	sheetnames := f.GetSheetMap()
+	fmt.Println(sheetnames)
+	for k, v := range sheetnames {
+		if k == 1 {
+			f.SetSheetName(v, nowTimeStr)
+		} else {
+			fmt.Println(v)
+			f.DeleteSheet(v)
+		}
+	}
+
+	rows, err := f.GetRows(nowTimeStr)
+	for rowid, row := range rows {
+		if rowid < rowkeep {
 			continue
 		}
-		for cellIndex, cell := range row.Cells {
-			if cellIndex < colkeep {
+		for colid, _ := range row {
+			if colid < colkeep {
 				continue
 			}
-			logs.Info(rowIndex, cellIndex, cell.Value)
-			cell.Value = ""
+			f.SetCellDefault(nowTimeStr, cellName(colid, rowid), "")
+			f.DeletePicture(nowTimeStr, cellName(colid, rowid))
 		}
 	}
-	err = xlfile.Save(dst)
-	if err != nil {
+
+	// 根据指定路径保存文件
+	if err := f.SaveAs(dst); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -168,8 +192,6 @@ func (c *OnlyController) Get() {
 
 	nowTime := time.Now()
 	todayDate := nowTime.Format("20060102")
-	//yesTime := nowTime.AddDate(0, 0, -1)
-	//yesDate := yesTime.Format("20060102")
 	var yesDate string = ""
 
 	// 上一个日报的日期，用正则搜索
@@ -211,8 +233,6 @@ func (c *OnlyController) Get() {
 	if yesDoc != "" && todayDoc == "" {
 		todayDoc = strings.Replace(yesDoc, yesDate, todayDate, -1)
 
-		DiskDirectory := "./attachment/onlyoffice/"
-
 		date, err := time.Parse("20060102", todayDate)
 		if err != nil {
 			beego.Error(err)
@@ -228,8 +248,10 @@ func (c *OnlyController) Get() {
 		if err2 != nil {
 			beego.Error(err2)
 		} else {
+			DiskDirectory := "./attachment/onlyoffice"
 			todayDoc = DiskDirectory + "/" + todayDoc + ext
 			yesfilepath := DiskDirectory + "/" + yesDoc + ext
+			beego.Info(todayDoc)
 			beego.Info(yesfilepath)
 
 			err = copyEmptyXlsx(todayDoc, yesfilepath)
@@ -476,8 +498,8 @@ func (c *OnlyController) OnlyOffice() {
 			}
 			//如果设置了everyone用户权限，则按everyone的权限
 		}
-		// c.Data["Uname"] = c.Ctx.Input.IP()
-		// c.Data["Uid"] = 0
+		c.Data["Uname"] = c.Ctx.Input.IP()
+		c.Data["Uid"] = 0
 	}
 
 	if Permission == "1" {
@@ -778,22 +800,11 @@ func (c *OnlyController) UrltoCallback() {
 	onlyattachment, err := models.GetOnlyAttachbyId(idNum)
 	if err != nil {
 		beego.Error(err)
-		beego.Error(err)
-		beego.Error(err)
-		beego.Error(err)
-		beego.Error(err)
-		beego.Error(err)
 	}
 
 	var callback Callback
 	json.Unmarshal(c.Ctx.Input.RequestBody, &callback)
 
-	beego.Info(callback.Status)
-	beego.Info(callback.Status)
-	beego.Info(callback.Status)
-	beego.Info(callback.Status)
-	beego.Info(callback.Status)
-	beego.Info(callback.Status)
 	beego.Info(callback.Status)
 
 	if callback.Status == 1 || callback.Status == 4 {
@@ -813,17 +824,15 @@ func (c *OnlyController) UrltoCallback() {
 			beego.Error(err)
 		}
 
-		f, err := os.OpenFile("./ttachment/onlyoffice/"+onlyattachment.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
-		beego.Info(onlyattachment.FileName)
-		beego.Info(onlyattachment.FileName)
-		beego.Info(onlyattachment.FileName)
-		beego.Info(onlyattachment.FileName)
-		beego.Info(onlyattachment.FileName)
-		beego.Info(onlyattachment.FileName)
+		// 原来的代码有bug，不能用append
+		// f, err := os.OpenFile("./attachment/onlyoffice/"+onlyattachment.FileName, os.O_RDWR|os.O_CREATE, os.ModePerm)
+		f, err := os.Create("./attachment/onlyoffice/" + onlyattachment.FileName)
+		defer f.Close()
+
 		if err != nil {
 			beego.Error(err)
 		}
-		defer f.Close()
+
 		_, err = f.Write(body)
 
 		if err != nil {
@@ -834,211 +843,6 @@ func (c *OnlyController) UrltoCallback() {
 				beego.Error(err)
 			}
 		}
-		c.Data["json"] = map[string]interface{}{"error": 0}
-		c.ServeJSON()
-	}
-}
-
-//协作页面的保存和回调
-//关闭浏览器标签后获取最新文档保存到文件夹
-func (c *OnlyController) UrltoCallback_new() {
-	var actionuserid int64
-	// pk1 := c.Ctx.Input.RequestBody
-	id := c.Input().Get("id")
-	//pid转成64为
-	idNum, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		beego.Error(err)
-	}
-
-	//根据附件id取得附件的prodid，路径
-	onlyattachment, err := models.GetOnlyAttachbyId(idNum)
-	if err != nil {
-		beego.Error(err)
-	}
-
-	var callback Callback
-	json.Unmarshal(c.Ctx.Input.RequestBody, &callback)
-	// beego.Info(string(c.Ctx.Input.RequestBody))
-	// beego.Info(callback)
-	if callback.Status == 1 || callback.Status == 4 {
-		//•	1 - document is being edited,
-		//•	4 - document is closed with no changes,
-		c.Data["json"] = map[string]interface{}{"error": 0}
-		c.ServeJSON()
-	} else if callback.Status == 2 && callback.Notmodified == false {
-		//•	2 - document is ready for saving
-		resp, err := http.Get(callback.Url) //Changesurl
-		if err != nil {
-			beego.Error(err)
-		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			beego.Error(err)
-		}
-		defer resp.Body.Close()
-		if err != nil {
-			beego.Error(err)
-		}
-		//1.
-		//2.将document server中的文件下载下来存入，名称就是编号v1
-		//3.再将变化文件changesurl文件存下来，名称为changesv1.zip
-		//1.改名保存
-		FileSuffix := path.Ext(onlyattachment.FileName) //只留下后缀名
-		filenameOnly := strings.TrimSuffix(onlyattachment.FileName, FileSuffix)
-
-		var first int
-		//写入历史版本
-		historyversion, err := models.GetOnlyHistoryVersion(onlyattachment.Id)
-		if err != nil {
-			beego.Error(err)
-		}
-		for _, v := range historyversion {
-			if first < v.Version {
-				first = v.Version
-			}
-		}
-		//去掉版本号：要么用正则，要么用history中的版本号进行替换？风险有点大
-		filenameOnly = strings.Replace(filenameOnly, "v"+strconv.Itoa(first), "", -1)
-		vnumber := strconv.Itoa(first + 1)
-		f, err := os.Create("./attachment/onlyoffice/" + filenameOnly + "v" + vnumber + FileSuffix)
-		if err != nil {
-			beego.Error(err)
-		}
-		defer f.Close()
-		_, err = f.Write(body) //这里直接用resp.Body如何？
-		if err != nil {
-			beego.Error(err)
-		} else {
-			//更新文档更新时间
-			err = models.UpdateDocTime(onlyattachment.DocId)
-			if err != nil {
-				beego.Error(err)
-			}
-		}
-
-		//更新附件的时间和changesurl
-		err = models.UpdateOnlyAttachment(idNum, filenameOnly+"v"+vnumber+FileSuffix)
-		if err != nil {
-			beego.Error(err)
-		}
-
-		//写入历史版本数据
-		array := strings.Split(callback.Changesurl, "&")
-		Expires1 := strings.Split(array[1], "=")
-		Expires := Expires1[1]
-		Expirestime, err := strconv.ParseInt(Expires, 10, 64)
-		if err != nil {
-			beego.Error(err)
-		}
-
-		//changes文档保存存下来
-		respchanges, err := http.Get(callback.Changesurl) //Changesurl
-		if err != nil {
-			beego.Error(err)
-		}
-		bodychanges, err := ioutil.ReadAll(respchanges.Body)
-		if err != nil {
-			beego.Error(err)
-		}
-		defer respchanges.Body.Close()
-		if err != nil {
-			beego.Error(err)
-		}
-		//建立目录，并返回作为父级目录
-		err = os.MkdirAll("./attachment/onlyoffice/changes/", 0777) //..代表本当前exe文件目录的上级，.表示当前目录，没有.表示盘的根目录
-		if err != nil {
-			beego.Error(err)
-		}
-		fchanges, err := os.Create("./attachment/onlyoffice/changes/" + filenameOnly + "v" + vnumber + "changes.zip")
-		if err != nil {
-			beego.Error(err)
-		}
-		defer fchanges.Close()
-		_, err = fchanges.Write(bodychanges)
-		if err != nil {
-			beego.Error(err)
-		}
-		//写入历史数据库
-		nowdocurl := "/attachment/onlyoffice/" + filenameOnly + "v" + vnumber + FileSuffix
-		changeszipurl := "/attachment/onlyoffice/changes/" + filenameOnly + "v" + vnumber + "changes.zip"
-		//时间戳转日期
-		dataTimeStr := time.Unix(Expirestime, 0) //.Format(timeLayout) //设置时间戳 使用模板格式化为日期字符串
-		// t, _ := time.Parse(timeLayout, callback.Lastsave)
-		// beego.Info(callback.Lastsave)
-		// beego.Info(callback.Users[0])
-		if len(callback.Actions) == 0 {
-			actionuserid = 0
-		} else {
-			actionuserid = callback.Actions[0].Userid
-		}
-		// _, err1, err2 := models.AddOnlyHistory(onlyattachment.Id, actionuserid, callback.History.ServerVersion, first+1, callback.Key, callback.Url, callback.Changesurl, dataTimeStr, callback.Lastsave)
-		_, err1, err2 := models.AddOnlyHistory(onlyattachment.Id, actionuserid, callback.History.ServerVersion, first+1, callback.Key, nowdocurl, changeszipurl, dataTimeStr, callback.Lastsave)
-		if err1 != nil {
-			beego.Error(err1)
-		}
-		if err2 != nil {
-			beego.Error(err2)
-		}
-		//写入changes数据库
-		for _, v := range callback.History.Changes {
-			_, err1, err2 = models.AddOnlyChanges(callback.Key, v.User.Id, v.User.Name, v.Created)
-			if err1 != nil {
-				beego.Error(err1)
-			}
-			if err2 != nil {
-				beego.Error(err2)
-			}
-		}
-
-		c.Data["json"] = map[string]interface{}{"error": 0}
-		c.ServeJSON()
-	} else if callback.Status == 6 && callback.Forcesavetype == 1 {
-		//•	6 - document is being edited, but the current document state is saved,
-		resp, err := http.Get(callback.Url)
-		if err != nil {
-			beego.Error(err)
-		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			beego.Error(err)
-		}
-		defer resp.Body.Close()
-		if err != nil {
-			beego.Error(err)
-		}
-		// f, err := os.OpenFile("./attachment/onlyoffice/"+onlyattachment.FileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
-		//强制保存——不好用，前端不要设置成强制保存！！
-		f, err := os.Create("./attachment/onlyoffice/" + onlyattachment.FileName)
-		if err != nil {
-			beego.Error(err)
-		}
-		defer f.Close()
-		_, err = f.Write(body) //这里直接用resp.Body如何？
-		if err != nil {
-			beego.Error(err)
-		} else {
-			//更新文档更新时间
-			err = models.UpdateDocTime(onlyattachment.DocId)
-			if err != nil {
-				beego.Error(err)
-			}
-		}
-		c.Data["json"] = map[string]interface{}{"error": 0}
-		c.ServeJSON()
-	} else if callback.Status == 3 || callback.Status == 7 {
-		//•	3 - document saving error has occurred.
-		//•	7 - error has occurred while force saving the document.
-		//更新附件的时间和changesurl
-		//不更新可以吗？此时有人没有关闭浏览器，有人重新打开文档，
-		//用新的key在服务器上编辑文档了！！！
-		err = models.UpdateOnlyAttachment(idNum, onlyattachment.FileName)
-		if err != nil {
-			beego.Error(err)
-		}
-		c.Data["json"] = map[string]interface{}{"error": 0}
-		c.ServeJSON()
-	} else {
 		c.Data["json"] = map[string]interface{}{"error": 0}
 		c.ServeJSON()
 	}

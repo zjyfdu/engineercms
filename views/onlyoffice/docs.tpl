@@ -1,7 +1,7 @@
 <!-- 文档列表 -->
 <!DOCTYPE html>
 <head>
-  <title>fei-ONLYOFFICE</title>
+  <title>日报</title>
   <meta name="renderer" content="webkit">
   <!-- 加上这句，360等浏览器就会默认使用google内核，而不是IE内核 。 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -83,7 +83,7 @@
         data-show-columns="true"
         data-toolbar="#toolbar1"
         data-query-params="queryParams"
-        data-sort-name="Updated"
+        data-sort-name="Created"
         data-sort-order="desc"
         data-page-size="15"
         data-page-list="[10,15, 50, 100, All]"
@@ -104,9 +104,9 @@
         <th data-field="Principal" data-halign="center" data-align="center">说明</th>
         <!-- <th data-field="Uname" data-halign="center" data-align="center">上传者</th> -->
         <th data-field="Docxlink" data-formatter="setDocx" data-events="actionEvents" data-halign="center" data-align="center">协作</th>
-        <th data-field="Docxlink" data-formatter="setPermission" data-events="actionEvents" data-halign="center" data-align="center">权限</th>
-        <th data-field="End" data-formatter="localDateFormatter" data-halign="center" data-align="center">结束时间</th>
-        <th data-field="Updated" data-formatter="localDateFormatter1" data-halign="center" data-align="center">更新时间</th>
+        <!-- <th data-field="Docxlink" data-formatter="setPermission" data-events="actionEvents" data-halign="center" data-align="center">权限</th> -->
+        <!-- <th data-field="End" data-formatter="localDateFormatter" data-halign="center" data-align="center">结束时间</th> -->
+        <th data-field="Created" data-formatter="localDateFormatter1" data-halign="center" data-align="center">创建时间</th>
       </tr>
     </thead>
   </table>

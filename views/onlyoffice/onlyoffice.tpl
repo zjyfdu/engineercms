@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html style="height: 100%;">
 <head>
-    <title>fei-OnlyOffice</title>
+    <title>{{.Doc.FileName}}</title>
 </head>
 <body style="height: 100%; margin: 0;">
 
     <div id="placeholder" style="height: 100%"></div>
     <script type="text/javascript" src="http://192.168.1.104:9000/web-apps/apps/api/documents/api.js"></script>
     <script type="text/javascript">
-        // alert({{.Doc.FileName}});
         window.docEditor = new DocsAPI.DocEditor("placeholder",
             {
                 "document": {
