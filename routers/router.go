@@ -85,7 +85,6 @@ func init() {
 	beego.AddNamespace(ns)
 
 	beego.Router("/test", &controllers.MainController{}, "*:Test")
-	// beego.Router("/.well-known/pki-validation/AC9A20F9BD09F18D247337AABC67BC06.txt", &controllers.AdminController{}, "*:Testdown")
 	beego.Router("/.well-known/pki-validation/*", &controllers.AdminController{}, "*:Testdown")
 
 	beego.Router("/doctree", &controllers.OnlyController{}, "*:GetTree")
@@ -98,7 +97,6 @@ func init() {
 	//cms中预览office回调
 	beego.Router("/officeviewcallback", &controllers.OnlyController{}, "*:OfficeViewCallback")
 
-	// beego.Router("/onlyoffice/post", &controllers.OnlyController{}, "post:PostOnlyoffice")
 	beego.Router("/onlyoffice", &controllers.OnlyController{}, "get:Get")
 	//table获取所有数据给上面界面使用
 	beego.Router("/onlyoffice/data", &controllers.OnlyController{}, "*:GetData")
@@ -146,16 +144,6 @@ func init() {
 	beego.Router("/index/user", &controllers.IndexController{}, "*:GetUser")
 	//这里显示用户查看主人日程
 	beego.Router("/calendar", &controllers.IndexController{}, "*:Calendar")
-	//会议室预定日程
-	beego.Router("/meetingroom", &controllers.IndexController{}, "*:MeetingroomCalendar")
-	beego.Router("/meetingroom/searchcalendar", &controllers.IndexController{}, "*:SearchCalendar")
-
-	//车辆预定日程
-	beego.Router("/car", &controllers.IndexController{}, "*:GetCarCalendar")
-	//订餐
-	beego.Router("/order", &controllers.IndexController{}, "*:GetOrderCalendar")
-	//考勤
-	beego.Router("/attendance", &controllers.IndexController{}, "*:GetAttendanceCalendar")
 
 	//首页搜索项目或成果
 	beego.Router("/index/searchproject", &controllers.SearchController{}, "*:SearchProject")
@@ -459,32 +447,6 @@ func init() {
 	beego.Router("/uploadwikiimg", &controllers.FroalaController{}, "*:UploadWikiImg")
 	//添加文章——froala上传插入的视频
 	beego.Router("/uploadvideo", &controllers.FroalaController{}, "*:UploadVideo")
-
-	//添加日历
-	beego.Router("/index/carcalendar/addcalendar", &controllers.IndexController{}, "*:AddCarCalendar")
-	//查询
-	beego.Router("/index/carcalendar", &controllers.IndexController{}, "*:CarCalendar")
-	//修改
-	beego.Router("/index/carcalendar/updatecalendar", &controllers.IndexController{}, "*:UpdateCarCalendar")
-	//删除
-	beego.Router("/index/carcalendar/deletecalendar", &controllers.IndexController{}, "*:DeleteCarCalendar")
-	//拖曳事件
-	beego.Router("/index/carcalendar/dropcalendar", &controllers.IndexController{}, "*:DropCarCalendar")
-	//resize事件
-	beego.Router("/index/carcalendar/resizecalendar", &controllers.IndexController{}, "*:ResizeCarCalendar")
-
-	//添加日历
-	beego.Router("/index/meetingroomcalendar/addcalendar", &controllers.IndexController{}, "*:AddMeetCalendar")
-	//查询
-	beego.Router("/index/meetingroomcalendar", &controllers.IndexController{}, "*:MeetCalendar")
-	//修改
-	beego.Router("/index/meetingroomcalendar/updatecalendar", &controllers.IndexController{}, "*:UpdateMeetCalendar")
-	//删除
-	beego.Router("/index/meetingroomcalendar/deletecalendar", &controllers.IndexController{}, "*:DeleteMeetCalendar")
-	//拖曳事件
-	beego.Router("/index/meetingroomcalendar/dropcalendar", &controllers.IndexController{}, "*:DropMeetCalendar")
-	//resize事件
-	beego.Router("/index/meetingroomcalendar/resizecalendar", &controllers.IndexController{}, "*:ResizeMeetCalendar")
 
 	//wiki页面
 	beego.Router("/wiki", &controllers.WikiController{}) //get
