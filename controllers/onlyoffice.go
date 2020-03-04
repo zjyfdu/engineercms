@@ -803,11 +803,19 @@ func (c *OnlyController) UrltoCallback() {
 	json.Unmarshal(c.Ctx.Input.RequestBody, &callback)
 
 	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback.Status)
+	beego.Info(callback)
+	beego.Info(callback)
+	beego.Info(callback)
 
 	if callback.Status == 1 || callback.Status == 4 {
 		c.Data["json"] = map[string]interface{}{"error": 0}
 		c.ServeJSON()
-	} else if callback.Status == 2 {
+	} else if callback.Status == 2 || callback.Status == 6 {
 		resp, err := http.Get(callback.Url)
 		if err != nil {
 			beego.Error(err)

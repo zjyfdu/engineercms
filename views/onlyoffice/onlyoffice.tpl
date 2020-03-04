@@ -24,6 +24,10 @@
                         "name": "{{.Uname}}"
                     },
                     "lang": "zh-CN",//"en-US",
+                    "customization": {
+                        "autosave": true,
+                        "forcesave": true,
+                    },
                 },
                 "height": "100%",
                 "width": "100%"
