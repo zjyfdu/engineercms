@@ -61,7 +61,7 @@ func init() {
 func GetDocs() (docs []*OnlyOffice, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable("OnlyOffice")
-	_, err = qs.OrderBy("-updated").All(&docs)
+	_, err = qs.OrderBy("-Created").All(&docs)
 	return docs, err
 }
 

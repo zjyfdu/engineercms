@@ -238,3 +238,14 @@ git checkout 9b17d80 //in GPOATH/src/casbin/xorm-adapter
 2. onlyoffice.tpl，里面的ip要换点
 3. doc下面是Attachments，attachment里才有文档的扩展名
 4. 只剩下怎么编译成exe了，CGO_ENABLED=1 GOOS=windows GOARCH=amd64 go build main.go，会提示fatal error: 'windows.h' file not found，不用mac编windos了，
+
+## 20200223，在windows上安装
+- 安装go，修改GOPATH，GOBIN
+- 安装git
+- 安装goland
+- go get一系列的包
+- 安装gcc，mingw，x86_64-posix-seh
+- casbin reset到1.9.1，xorm-adapter reset到19年5月23的一个版本9b17d80119c
+
+## 20200301
+- 自动复制文档，自动清空excel
