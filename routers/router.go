@@ -53,6 +53,8 @@ func init() {
 	beego.Router("/attachment/onlyoffice/*", &controllers.OnlyController{}, "get:DownloadDoc")
 	//文档管理页面下载doc
 	beego.Router("/onlyoffice/download/:id:string", &controllers.OnlyController{}, "get:Download")
+	//文档管理页面下载doc
+	beego.Router("/onlyoffice/sync/:id:string", &controllers.OnlyController{}, "get:Sync")
 	// beego.Router("/onlyoffice/changes", &controllers.OnlyController{}, "post:ChangesUrl")
 	//*****onlyoffice document权限
 	//添加用户和角色权限

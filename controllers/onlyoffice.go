@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/3xxx/engineercms/cron"
 	"github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
 
@@ -1047,8 +1049,8 @@ func (c *OnlyController) DownloadDoc() {
 
 //文档管理页面下载文档
 func (c *OnlyController) Download() {
-	// cron.TodayDocSync()
-	// time.Sleep(1 * time.Second)
+	cron.TodayDocSync()
+	time.Sleep(2 * time.Second)
 	v := c.GetSession("uname")
 	if v != nil {
 		uname := v.(string)
@@ -1067,6 +1069,47 @@ func (c *OnlyController) Download() {
 	}
 	filePath := "attachment/onlyoffice/" + attachments[0].FileName
 	c.Ctx.Output.Download(filePath) //这个能保证下载文件名称正确
+}
+
+//文档管理页面下载文档
+func (c *OnlyController) Sync() {
+	// cron.TodayDocSync()
+	// time.Sleep(1 * time.Second)
+	v := c.GetSession("uname")
+	if v != nil {
+		uname := v.(string)
+		beego.Info(uname)
+	}
+	docid := c.Ctx.Input.Param(":id")
+	//pid转成64为
+	idNum, err := strconv.ParseInt(docid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+	//根据成果id取得所有附件
+	attachments, err := models.GetOnlyAttachments(idNum)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	todayKey := strconv.FormatInt(attachments[0].Updated.UnixNano(), 10)
+	url := beego.AppConfig.String("documentserverip") + "/coauthoring/CommandService.ashx"
+
+	postJson := `{"c":"forcesave","key":"` + todayKey + `"}`
+	var jsonStr = []byte(postJson)
+
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+	c.Data["json"] = "ok"
+	c.ServeJSON()
 }
 
 //编辑成果信息

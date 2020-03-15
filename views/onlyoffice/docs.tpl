@@ -21,8 +21,6 @@
   <script type="text/javascript" src="/static/js/bootstrap-table-export.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/font-awesome-4.7.0/css/font-awesome.min.css"/>
   <script src="/static/js/tableExport.js"></script>
-  <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.config.js"></script>
-  <script type="text/javascript" charset="utf-8" src="/static/ueditor/ueditor.all.min.js"> </script>
     <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
     <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
   <script type="text/javascript" charset="utf-8" src="/static/ueditor/lang/zh-cn/zh-cn.js"></script>
@@ -50,6 +48,9 @@
     #modalDialog9 .modal-header {cursor: move;}
     #modalDialog10 .modal-header {cursor: move;}
     #modalDialog11 .modal-header {cursor: move;}
+    .navbar-right {
+      margin-right: 0px;
+    }
   </style>
 </head>
 
@@ -63,17 +64,46 @@
   <div id="toolbar1" class="btn-group">
         <!-- <button type="button" data-name="createButton" id="createButton" class="btn btn-default" title="新建"> <i class="fa fa-plus">新建</i>
         </button> -->
-        <button type="button" data-name="addButton" id="addButton" class="btn btn-default" title="批量上传模式"> <i class="fa fa-plus">上传</i>
+        <button type="button" data-name="addButton" id="addButton" class="btn btn-default" title="批量上传模式"> <i class="fa fa-plus"> 上传</i>
         </button>
         <!-- <button type="button" data-name="editorProdButton" id="editorProdButton" class="btn btn-default"> <i class="fa fa-edit" title="修改成果信息">编辑</i>
         </button> -->
         <button type="button" data-name="deleteButton" id="deleteButton" class="btn btn-default">
-        <i class="fa fa-trash">删除</i>
+        <i class="fa fa-trash"> 删除</i>
         </button>
         <button type="button" data-name="download" id="download" class="btn btn-default">
-        <i class="fa fa-download">下载</i>
+        <i class="fa fa-download"> 下载</i>
+        </button>
+        <button type="button" data-name="sync" id="sync" class="btn btn-default">
+        <i class="fa fa-refresh"> 同步</i>
+        </button>
+        <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">
+        <i class="fa fa-info"> 说明</i>
         </button>
   </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">使用说明</h4>
+            </div>
+            <div class="modal-body">
+              <ul class="list-group">
+              <li class="list-group-item">写完日报后要怎么办？  <br><strong>写完后保存（ctrl+s），及时关闭网页</strong></li>
+              <li class="list-group-item">谁发邮件？           <br><strong>最后一个人发，发前确认一下所有人都写完了</strong></li>
+              <li class="list-group-item">下载按钮有什么用？    <br><strong>这里的下载文档不会及时更新，有1分钟的延迟，建议到文档页里下载</strong></li>
+              <li class="list-group-item">同步按钮有什么用？    <br><strong>因为有1分钟的延迟，这个按钮强行同步</strong></li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
   <table id="table0" 
         data-toggle="table" 
         data-url="/onlyoffice/data"
@@ -492,6 +522,29 @@
         alert("权限不够！"+selectRow[0].Docxlink[0].Permission);
         return;
       }
+  })
+
+  //同步到本地
+  $("#sync").click(function() {
+      var selectRow=$('#table0').bootstrapTable('getSelections');
+      if (selectRow.length<1){
+        alert("请先勾选成果！");
+        return;
+      }
+      if (selectRow.length>1){
+        alert("请不要勾选一个以上成果！");
+        return;
+      }
+      $.ajax({
+          type:"get",
+          url:"/onlyoffice/sync/"+selectRow[0].Id,
+          success:function(data,status){
+            alert("同步成功！(status:"+status+".)");
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            alert("同步失败，问题不大");
+          }
+        });
   })
 
   $(document).ready(function() {
