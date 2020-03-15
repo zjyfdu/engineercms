@@ -249,3 +249,9 @@ git checkout 9b17d80 //in GPOATH/src/casbin/xorm-adapter
 
 ## 20200301
 - 自动复制文档，自动清空excel
+
+## 20200315
+- 自动保存
+
+docker run -i -t -d -p 9000:80 -v D:\golib\src\github.com\3xxx\engineercms\docker_conf\:/var/www/onlyoffice/documentserver/web-apps/apps2/ onlyoffice/documentserver:5.2.7.2
+

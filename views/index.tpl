@@ -38,8 +38,6 @@
       和
       <a target="_blank" href="http://beego.me">beego</a>
       提供动力。
-      <a target="_blank" href="https://github.com/3xxx" target="_blank"><strong><i class="icon-github-sign"></i> Github</strong></a>
-                    - {{.PageStartTime|loadtimes}}ms.
     </p>
 
     <p>

@@ -10,12 +10,11 @@ import (
 
 	"path"
 	"strings"
-	"time"
+
+	"github.com/3xxx/engineercms/cron"
 )
 
 func main() {
-	// beego.AddFuncMap("dict", dict)
-	beego.AddFuncMap("loadtimes", loadtimes)
 	beego.AddFuncMap("subsuffix", subsuffix)
 	//开启orm调试模式
 	orm.Debug = true
@@ -27,12 +26,9 @@ func main() {
 	orm.RunSyncdb("default", false, true)
 	models.InsertUser()
 
-	beego.Run()
-}
+	cron.Init2()
 
-//显示页面加载时间
-func loadtimes(t time.Time) int {
-	return int(time.Now().Sub(t).Nanoseconds() / 1e6)
+	beego.Run()
 }
 
 //去除扩展名

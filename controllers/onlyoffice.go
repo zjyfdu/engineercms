@@ -199,9 +199,6 @@ func (c *OnlyController) Get() {
 	var ext string = ""
 
 	for _, w := range docs {
-		logs.Info(w.Title)
-	}
-	for _, w := range docs {
 		Attachments, err := models.GetOnlyAttachments(w.Id)
 		ext = path.Ext(Attachments[0].FileName)
 		logs.Info(ext)
@@ -590,7 +587,6 @@ func (c *OnlyController) OnlyOffice() {
 		}
 	}
 	c.Data["currentversion"] = first
-	// beego.Info(first)
 
 	if path.Ext(onlyattachment.FileName) == ".docx" || path.Ext(onlyattachment.FileName) == ".DOCX" {
 		c.Data["fileType"] = "docx"
@@ -641,6 +637,10 @@ func (c *OnlyController) OnlyOffice() {
 	} else {
 		c.Data["Type"] = "desktop"
 	}
+
+	c.Data["DocumentServerIP"] = beego.AppConfig.String("documentserverip")
+	c.Data["EntryServerIP"] = beego.AppConfig.String("entryserverip")
+
 	c.TplName = "onlyoffice/onlyoffice.tpl"
 }
 
@@ -758,12 +758,8 @@ func (c *OnlyController) OfficeView() {
 				beego.Error(err)
 			}
 			if matched == true {
-				// beego.Info("移动端~")
-				// c.TplName = "onlyoffice/onlyoffice.tpl"
 				c.Data["Type"] = "mobile"
 			} else {
-				// beego.Info("电脑端！")
-				// c.TplName = "onlyoffice/onlyoffice.tpl"
 				c.Data["Type"] = "desktop"
 			}
 			c.TplName = "onlyoffice/officeview.tpl"
@@ -813,9 +809,13 @@ func (c *OnlyController) UrltoCallback() {
 	beego.Info(callback)
 
 	if callback.Status == 1 || callback.Status == 4 {
+		//•	1 - document is being edited,
+		//•	4 - document is closed with no changes,
 		c.Data["json"] = map[string]interface{}{"error": 0}
 		c.ServeJSON()
 	} else if callback.Status == 2 || callback.Status == 6 {
+		//•	2 - document is ready for saving
+		//•	6 - document is being edited, but the current document state is saved,
 		resp, err := http.Get(callback.Url)
 		if err != nil {
 			beego.Error(err)
@@ -1047,6 +1047,8 @@ func (c *OnlyController) DownloadDoc() {
 
 //文档管理页面下载文档
 func (c *OnlyController) Download() {
+	// cron.TodayDocSync()
+	// time.Sleep(1 * time.Second)
 	v := c.GetSession("uname")
 	if v != nil {
 		uname := v.(string)
