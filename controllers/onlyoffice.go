@@ -495,7 +495,7 @@ func (c *OnlyController) OnlyOffice() {
 			//如果设置了everyone用户权限，则按everyone的权限
 		}
 		c.Data["Uname"] = c.Ctx.Input.IP()
-		c.Data["Uid"] = 0
+		c.Data["Uid"] = c.Ctx.Input.IP()
 	}
 
 	if Permission == "1" {
@@ -627,17 +627,6 @@ func (c *OnlyController) OnlyOffice() {
 		c.Data["fileType"] = "pdf"
 		c.Data["documentType"] = "text"
 		c.Data["Mode"] = "view"
-	}
-
-	u := c.Ctx.Input.UserAgent()
-	matched, err := regexp.MatchString("AppleWebKit.*Mobile.*", u)
-	if err != nil {
-		beego.Error(err)
-	}
-	if matched == true {
-		c.Data["Type"] = "mobile"
-	} else {
-		c.Data["Type"] = "desktop"
 	}
 
 	c.Data["DocumentServerIP"] = beego.AppConfig.String("documentserverip")

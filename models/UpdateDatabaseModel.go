@@ -1,18 +1,10 @@
 package models
 
 import (
-	// "crypto/md5"
-	// "encoding/hex"
-	// "errors"
 	"strconv"
-	// "fmt"
-	// "log"
-	// "time"
-	// "github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	// "github.com/astaxie/beego/validation"
-	// . "github.com/beego/admin/src/lib"
 	"strings"
+
+	"github.com/astaxie/beego/orm"
 )
 
 func UpdateDatabase() (err1, err2, err3, err4, err5, err6, err7 error) {

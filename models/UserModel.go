@@ -137,17 +137,13 @@ func ValidateUser(user User) error {
 	cond := orm.NewCondition()
 	cond1 := cond.Or("status", 1).Or("status", 2)
 	cond2 := cond.AndCond(cond1).And("username", user.Username).And("password", user.Password)
-	// _, err = qs.Distinct().OrderBy("-created").All(&proj) //qs.Filter("Drawn", user.Nickname).All(&aa)
 	orm := orm.NewOrm()
 	var u User
-	// user = new(User)
 	qs := orm.QueryTable("user")
 	qs = qs.SetCond(cond2)
 	err := qs.One(&u)
 	if err != nil {
 		return err
-
-		// orm.Where("username=? and pwd=?", user.Username, user.Pwd).Find(&u)
 	} else if u.Username == "" {
 		return errors.New("用户名或密码错误！或用户被禁止！")
 	} else {
@@ -355,39 +351,6 @@ func AddUser(u *User) (int64, error) {
 	return id, err
 }
 
-//更新用户
-// func UpdateUser(u *User) (int64, error) {
-// 	if err := checkUser(u); err != nil {
-// 		return 0, err
-// 	}
-// 	o := orm.NewOrm()
-// 	user := make(orm.Params)
-// 	if len(u.Username) > 0 {
-// 		user["Username"] = u.Username
-// 	}
-// 	if len(u.Nickname) > 0 {
-// 		user["Nickname"] = u.Nickname
-// 	}
-// 	if len(u.Email) > 0 {
-// 		user["Email"] = u.Email
-// 	}
-// 	if len(u.Remark) > 0 {
-// 		user["Remark"] = u.Remark
-// 	}
-// 	if len(u.Password) > 0 {
-// 		user["Password"] = Strtomd5(u.Password)
-// 	}
-// 	if u.Status != 0 {
-// 		user["Status"] = u.Status
-// 	}
-// 	if len(user) == 0 {
-// 		return 0, errors.New("update field is empty")
-// 	}
-// 	var table User
-// 	num, err := o.QueryTable(table).Filter("Id", u.Id).Update(user)
-// 	return num, err
-// }
-
 //用户修改一个用户的某个字段
 func UpdateUser(cid int64, fieldname, value string) error {
 	o := orm.NewOrm()
@@ -507,28 +470,6 @@ func UpdateUser(cid int64, fieldname, value string) error {
 	return nil
 }
 
-//这个作废，用在线修改代替
-// func UpdateUser(userid, nickname, email, password string) error {
-// 	id, err := strconv.ParseInt(userid, 10, 64)
-// 	o := orm.NewOrm()
-// 	user := User{Id: id}
-// 	user.Nickname = nickname
-// 	user.Email = email
-// 	if password != "" {
-// 		user.Password = password
-// 		_, err = o.Update(&user, "password", "nickname", "email")
-// 		if err != nil {
-// 			return err
-// 		}
-// 	} else {
-// 		_, err = o.Update(&user, "nickname", "email")
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }
-
 //更新用户登陆时间
 func UpdateUserlastlogintime(username string) error {
 	o := orm.NewOrm()
@@ -623,24 +564,9 @@ func InsertUser() {
 	}
 }
 
-// func insertGroup() {
-// 	fmt.Println("insert group ...")
-// 	g := new(Group)
-// 	g.Name = "APP"
-// 	g.Title = "System"
-// 	g.Sort = 1
-// 	g.Status = 2
-// 	o.Insert(g)
-// 	fmt.Println("insert group end")
-// }
-
 func GetRoleByUsername(username string) (roles []*Role, count int64, err error) { //*Topic, []*Attachment, error
 	roles = make([]*Role, 0)
 	o := orm.NewOrm()
-	// role := new(Role)
 	count, err = o.QueryTable("role").Filter("Users__User__Username", username).All(&roles)
 	return roles, count, err
-	// 通过 post title 查询这个 post 有哪些 tag
-	// var tags []*Tag
-	// num, err := dORM.QueryTable("tag").Filter("Posts__Post__Title", "Introduce Beego ORM").All(&tags)
 }

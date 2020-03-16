@@ -253,5 +253,7 @@ git checkout 9b17d80 //in GPOATH/src/casbin/xorm-adapter
 ## 20200315
 - 自动保存
 
-docker run -i -t -d -p 9000:80 -v D:\golib\src\github.com\3xxx\engineercms\docker_conf\:/var/www/onlyoffice/documentserver/web-apps/apps2/ onlyoffice/documentserver:5.2.7.2
+docker run -i -t -d -p 9000:80 -v D:\golib\src\github.com\3xxx\engineercms\docker_conf\:/var/www/onlyoffice/documentserver/web-apps/apps2/ onlyoffice/documentserver:5.4.0.22
+docker run -i -t -d -p 9000:80 onlyoffice/documentserver:5.4.0.22
+5.2.7.2
 

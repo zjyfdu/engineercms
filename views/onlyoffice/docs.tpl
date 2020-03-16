@@ -94,7 +94,7 @@
               <li class="list-group-item">写完日报后要怎么办？  <br><strong>写完后保存（ctrl+s），及时关闭网页</strong></li>
               <li class="list-group-item">谁发邮件？           <br><strong>最后一个人发，发前确认一下所有人都写完了</strong></li>
               <li class="list-group-item">下载按钮有什么用？    <br><strong>这里的下载文档不会及时更新，有1分钟的延迟，建议到文档页里下载</strong></li>
-              <li class="list-group-item">同步按钮有什么用？    <br><strong>因为有1分钟的延迟，这个按钮强行同步</strong></li>
+              <li class="list-group-item">同步按钮有什么用？    <br><strong>要是等不及1分钟，又不想到文档页里下载，点这个强行同步</strong></li>
               </ul>
             </div>
             <div class="modal-footer">
