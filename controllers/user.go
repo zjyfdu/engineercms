@@ -5,14 +5,17 @@ import (
 	// "github.com/astaxie/beego/orm"
 	"crypto/md5"
 	"encoding/hex"
+
 	m "github.com/3xxx/engineercms/models"
 	"github.com/astaxie/beego"
+
 	// "github.com/astaxie/beego/logs"
-	"github.com/tealeg/xlsx"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/tealeg/xlsx"
 )
 
 type UserController struct {
@@ -20,50 +23,8 @@ type UserController struct {
 }
 
 func (c *UserController) Index() {
-	// page, _ := c.GetInt64("page")
-	// page_size, _ := c.GetInt64("rows")
-	// sort := c.GetString("sort")
-	// order := c.GetString("order")
-	// if len(order) > 0 {
-	// 	if order == "desc" {
-	// 		sort = "-" + sort
-	// 	}
-	// } else {
-	// 	sort = "Id"
-	// }
-	// 	c.Data["IsCategory"] = true
-	// c.TplName = "category.tpl"
-	//1.首先判断是否注册
-	// if !checkAccount(c.Ctx) {
-	// 	// port := strconv.Itoa(c.Ctx.Input.Port())//c.Ctx.Input.Site() + ":" + port +
-	// 	route := c.Ctx.Request.URL.String()
-	// 	c.Data["Url"] = route
-	// 	c.Redirect("/login?url="+route, 302)
-	// 	// c.Redirect("/login", 302)
-	// 	return
-	// }
-	//2.取得客户端用户名
-	// sess, _ := globalSessions.SessionStart(c.Ctx.ResponseWriter, c.Ctx.Request)
-	// defer sess.SessionRelease(c.Ctx.ResponseWriter)
-	// v := sess.Get("uname")
-	// if v != nil {
-	// 	c.Data["Uname"] = v.(string)
 	// }
 	// v := c.GetSession("uname")
-	// if v != nil {
-	// 	c.Data["Uname"] = v.(string)
-	// }
-	// ck, err := c.Ctx.Request.Cookie("uname")
-	// if err == nil {
-	// 	c.Data["Uname"] = ck.Value
-	// } else {
-	// 	beego.Error(err)
-	// }
-	//2.取得客户端用户名
-	// ck, err := c.Ctx.Request.Cookie("uname")
-	// if err != nil {
-	// 	beego.Error(err)
-	// }
 	// uname := ck.Value
 	//3.取出用户的权限等级
 	// category, err := models.GetCategory(id)
@@ -226,25 +187,6 @@ func (c *UserController) AddUser() {
 	}
 }
 
-// func (c *UserController) UpdateUser() {
-// 	u := m.User{}
-// 	if err := c.ParseForm(&u); err != nil {
-// 		//handle error
-// 		// c.Rsp(false, err.Error())
-// 		beego.Error(err.Error)
-// 		return
-// 	}
-// 	id, err := m.UpdateUser(&u)
-// 	if err == nil && id > 0 {
-// 		// c.Rsp(true, "Success")
-// 		return
-// 	} else {
-// 		// c.Rsp(false, err.Error())
-// 		beego.Error(err.Error)
-// 		return
-// 	}
-// }
-
 // @Title post wx userpassword by uid
 // @Description post user password by uid
 // @Param uid query string  true "The id of user"
@@ -313,44 +255,6 @@ func (c *UserController) UpdateUser() {
 	}
 }
 
-//这个作废，用在线修改
-// func (c *UserController) UpdateUser() {
-// 	userid := c.Input().Get("userid")
-// 	nickname := c.Input().Get("nickname")
-// 	email := c.Input().Get("email")
-// 	Pwd1 := c.Input().Get("password")
-// 	if Pwd1 != "" {
-// 		md5Ctx := md5.New()
-// 		md5Ctx.Write([]byte(Pwd1))
-// 		cipherStr := md5Ctx.Sum(nil)
-// 		password := hex.EncodeToString(cipherStr)
-// 		err := m.UpdateUser(userid, nickname, email, password) //这里修改
-// 		if err != nil {
-// 			beego.Error(err)
-// 		}
-// 	} else {
-// 		err := m.UpdateUser(userid, nickname, email, "") //这里修改
-// 		if err != nil {
-// 			beego.Error(err)
-// 		}
-// 	}
-// 	c.TplName = "user_view.tpl"
-// }
-
-// func (c *UserController) DeleteUser() {
-// 	Id, _ := c.GetInt64("userid")
-// 	status, err := m.DelUserById(Id)
-// 	if err == nil && status > 0 {
-// 		// c.Rsp(true, "Success")
-// 		c.Redirect("/user/index", 302)
-// 		return
-// 	} else {
-// 		// c.Rsp(false, err.Error())
-// 		beego.Error(err.Error)
-// 		return
-// 	}
-// }
-
 //删除用户
 func (c *UserController) DeleteUser() {
 	ids := c.GetString("ids")
@@ -391,23 +295,6 @@ func (c *UserController) GetUserByUsername() {
 
 //用户个人数据，填充table，以便编辑
 func (c *UserController) Usermyself() {
-	// 	_, role := checkprodRole(c.Ctx)
-	// 	roleint, err := strconv.Atoi(role)
-	// 	if err != nil {
-	// 		beego.Error(err)
-	// 	}
-	// 	if role == "1" {
-	// 		c.Data["IsAdmin"] = true
-	// 	} else if roleint > 1 && roleint < 5 {
-	// 		c.Data["IsLogin"] = true
-	// 	} else {
-	// 		c.Data["IsAdmin"] = false
-	// 		c.Data["IsLogin"] = false
-	// 	}
-	// 	// c.Data["Username"] = username
-	// 	// c.Data["IsIndex"] = true
-	// 	// c.Data["Ip"] = c.Ctx.Input.IP()
-	// 	c.Data["role"] = role
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
@@ -415,21 +302,7 @@ func (c *UserController) Usermyself() {
 	c.Data["IsAdmin"] = isadmin
 	c.Data["IsLogin"] = islogin
 	c.Data["Uid"] = uid
-	//4.取得客户端用户名
-	// var uname string
-	// sess, _ := globalSessions.SessionStart(c.Ctx.ResponseWriter, c.Ctx.Request)
-	// defer sess.SessionRelease(c.Ctx.ResponseWriter)
-	// v := c.GetSession("uname")
-	// if v != nil {
-	// 	uname = v.(string)
-	// }
-	// if uname == "" {
-	// 	route := c.Ctx.Request.URL.String()
-	// 	c.Data["Url"] = route
-	// 	c.Redirect("/roleerr?url="+route, 302)
-	// 	// c.Redirect("/roleerr", 302)
-	// 	return
-	// }
+
 	user, err := m.GetUserByUsername(username)
 	if err != nil {
 		beego.Error(err)

@@ -419,15 +419,6 @@ func (c *OnlyController) OnlyOffice() {
 		beego.Error(err)
 	}
 
-	//docid——uid——me
-	doc, err := models.Getdocbyid(onlyattachment.DocId)
-	if err != nil {
-		beego.Error(err)
-	}
-
-	var useridstring, Permission string
-	var myRes, roleRes [][]string
-
 	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
 	c.Data["Username"] = username
 	c.Data["Ip"] = c.Ctx.Input.IP()
@@ -435,160 +426,51 @@ func (c *OnlyController) OnlyOffice() {
 	c.Data["IsAdmin"] = isadmin
 	c.Data["IsLogin"] = islogin
 	c.Data["Uid"] = uid
-	useridstring = strconv.FormatInt(uid, 10)
 	//增加admin，everyone，isme
+	beego.Info(username)
+	beego.Info(username)
+	beego.Info(username)
+	beego.Info(username)
 
 	var usersessionid string //客户端sesssionid
 	if islogin {
 		usersessionid = c.Ctx.Input.Cookie("hotqinsessionid")
 	}
-	myResall := e.GetPermissionsForUser("") //取出所有设置了权限的数据
-	if uid != 0 {                           //无论是登录还是ip查出了用户id
-		myRes = e.GetPermissionsForUser(useridstring)
-		if doc.Uid == uid { //isme
-			Permission = "1"
-		} else { //如果是登录用户，则设置了权限的文档根据权限查看
-			Permission = "1"
-			for _, k := range myResall {
-				if strconv.FormatInt(onlyattachment.Id, 10) == path.Base(k[1]) {
-					Permission = "3"
-				}
-			}
-			for _, k := range myRes {
-				if strconv.FormatInt(onlyattachment.Id, 10) == path.Base(k[1]) {
-					Permission = k[2]
-				}
-			}
-
-			roles, _ := e.GetRolesForUser(useridstring) //取出用户的所有角色
-			for _, w1 := range roles {                  //2018.4.30修改这个bug，这里原先w改为w1
-				roleRes = e.GetPermissionsForUser(w1) //取出角色的所有权限，改为w1
-				for _, k := range roleRes {
-					// beego.Info(k)
-					if id == path.Base(k[1]) {
-						// docxarr[0].Permission = k[2]
-						int1, err := strconv.Atoi(k[2])
-						if err != nil {
-							beego.Error(err)
-						}
-						int2, err := strconv.Atoi(Permission)
-						if err != nil {
-							beego.Error(err)
-						}
-						if int1 < int2 {
-							Permission = k[2] //按最小值权限
-						}
-						//补充everyone权限，如果登录用户权限大于everyone，则用小的
-					}
-				}
-			}
-		}
+	if uid != 0 { //无论是登录还是ip查出了用户id
 		// c.Data["Uid"] = user.Id
 		// userrole = user.Role
-	} else { //如果用户没登录，则设置了权限的文档不能看
-		Permission = "1"
-		for _, k := range myResall { //所有设置了权限的不能看
-			if strconv.FormatInt(onlyattachment.Id, 10) == path.Base(k[1]) {
-				Permission = "3"
-				// Permission = "4"
-			}
-			//如果设置了everyone用户权限，则按everyone的权限
-		}
-		c.Data["Uname"] = c.Ctx.Input.IP()
+		c.Data["Uname"] = username
 		c.Data["Uid"] = c.Ctx.Input.IP()
+	} else { //如果用户没登录，则设置了权限的文档不能看
+
+		v := c.GetSession("uname")
+		if v != nil {
+			c.Data["Uname"] = v
+			c.Data["Uid"] = c.Ctx.Input.IP()
+		} else {
+			c.Data["Uname"] = c.Ctx.Input.IP()
+			c.Data["Uid"] = c.Ctx.Input.IP()
+		}
+		beego.Info(c.Data["Uname"])
+		beego.Info(c.Data["Uname"])
+		beego.Info(c.Data["Uname"])
+		beego.Info(c.Data["Uid"])
+		beego.Info(c.Data["Uid"])
+		beego.Info(c.Data["Uid"])
+
 	}
 
-	if Permission == "1" {
-		c.Data["Mode"] = "edit"
-		c.Data["Edit"] = true
-		c.Data["Review"] = true
-		c.Data["Comment"] = true
-		c.Data["Download"] = true
-		c.Data["Print"] = true
-	} else if Permission == "2" {
-		c.Data["Mode"] = "edit"
-		c.Data["Edit"] = false
-		c.Data["Review"] = true
-		c.Data["Comment"] = true
-		c.Data["Download"] = false
-		c.Data["Print"] = false
-	} else if Permission == "3" {
-		c.Data["Mode"] = "view"
-		c.Data["Edit"] = false
-		c.Data["Review"] = false
-		c.Data["Comment"] = false
-		c.Data["Download"] = false
-		c.Data["Print"] = false
-	} else if Permission == "4" {
-		return
-	}
+	c.Data["Mode"] = "edit"
+	c.Data["Edit"] = true
+	c.Data["Review"] = true
+	c.Data["Comment"] = true
+	c.Data["Download"] = true
+	c.Data["Print"] = true
 
 	c.Data["Doc"] = onlyattachment
 	c.Data["Sessionid"] = usersessionid
 	c.Data["attachid"] = idNum
 	c.Data["Key"] = strconv.FormatInt(onlyattachment.Updated.UnixNano(), 10)
-
-	//构造[]history
-	history, err := models.GetOnlyHistory(onlyattachment.Id)
-	if err != nil {
-		beego.Error(err)
-	}
-
-	onlyhistory := make([]history1, 0)
-	onlychanges := make([]change, 0)
-	onlychangesurl := make([]changesurl, 0)
-	for _, v := range history {
-		aa := make([]history1, 1)
-		cc := make([]changesurl, 1)
-		// aa[0].Created = v.Created
-		aa[0].Key = v.HistoryKey
-		aa[0].User.Id = strconv.FormatInt(v.UserId, 10) //
-
-		if v.UserId != 0 {
-			user := models.GetUserByUserId(v.UserId)
-			aa[0].User.Name = user.Nickname
-		}
-		aa[0].ServerVersion = v.ServerVersion
-		aa[0].Version = v.Version
-		aa[0].FileUrl = v.FileUrl
-		aa[0].ChangesUrl = v.ChangesUrl
-		//取得changes
-		changes, err := models.GetOnlyChanges(v.HistoryKey)
-		if err != nil {
-			beego.Error(err)
-		}
-		for _, v1 := range changes {
-			bb := make([]change, 1)
-			bb[0].Created = v1.Created
-			bb[0].User.Id = v1.UserId
-			bb[0].User.Name = v1.UserName
-			onlychanges = append(onlychanges, bb...)
-		}
-		aa[0].Changes = onlychanges
-		// aa[0].ChangesUrl = v.ChangesUrl
-		aa[0].Created = v.Created
-
-		cc[0].Version = v.Version
-		cc[0].ChangesUrl = v.ChangesUrl
-		onlychanges = make([]change, 0)
-		onlyhistory = append(onlyhistory, aa...)
-		onlychangesurl = append(onlychangesurl, cc...)
-	}
-
-	c.Data["onlyhistory"] = onlyhistory
-	c.Data["changesurl"] = onlychangesurl
-
-	historyversion, err := models.GetOnlyHistoryVersion(onlyattachment.Id)
-	if err != nil {
-		beego.Error(err)
-	}
-	var first int
-	for _, v := range historyversion {
-		if first < v.Version {
-			first = v.Version
-		}
-	}
-	c.Data["currentversion"] = first
 
 	if path.Ext(onlyattachment.FileName) == ".docx" || path.Ext(onlyattachment.FileName) == ".DOCX" {
 		c.Data["fileType"] = "docx"
