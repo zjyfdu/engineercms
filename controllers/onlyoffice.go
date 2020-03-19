@@ -419,46 +419,21 @@ func (c *OnlyController) OnlyOffice() {
 		beego.Error(err)
 	}
 
-	username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
-	c.Data["Username"] = username
-	c.Data["Ip"] = c.Ctx.Input.IP()
-	c.Data["role"] = role
-	c.Data["IsAdmin"] = isadmin
-	c.Data["IsLogin"] = islogin
-	c.Data["Uid"] = uid
-	//增加admin，everyone，isme
-	beego.Info(username)
-	beego.Info(username)
-	beego.Info(username)
-	beego.Info(username)
-
-	var usersessionid string //客户端sesssionid
-	if islogin {
-		usersessionid = c.Ctx.Input.Cookie("hotqinsessionid")
-	}
-	if uid != 0 { //无论是登录还是ip查出了用户id
-		// c.Data["Uid"] = user.Id
-		// userrole = user.Role
+	// username, role, uid, isadmin, islogin := checkprodRole(c.Ctx)
+	username := c.Ctx.Input.CruSession.Get("uname")
+	if username == nil {
+		c.Data["Uname"] = c.Ctx.Input.IP()
+	} else {
 		c.Data["Uname"] = username
-		c.Data["Uid"] = c.Ctx.Input.IP()
-	} else { //如果用户没登录，则设置了权限的文档不能看
-
-		v := c.GetSession("uname")
-		if v != nil {
-			c.Data["Uname"] = v
-			c.Data["Uid"] = c.Ctx.Input.IP()
-		} else {
-			c.Data["Uname"] = c.Ctx.Input.IP()
-			c.Data["Uid"] = c.Ctx.Input.IP()
-		}
-		beego.Info(c.Data["Uname"])
-		beego.Info(c.Data["Uname"])
-		beego.Info(c.Data["Uname"])
-		beego.Info(c.Data["Uid"])
-		beego.Info(c.Data["Uid"])
-		beego.Info(c.Data["Uid"])
-
 	}
+	c.Data["Uid"] = c.Ctx.Input.IP()
+
+	beego.Info(c.Data["Uname"])
+	beego.Info(c.Data["Uname"])
+	beego.Info(c.Data["Uname"])
+	beego.Info(c.Data["Uid"])
+	beego.Info(c.Data["Uid"])
+	beego.Info(c.Data["Uid"])
 
 	c.Data["Mode"] = "edit"
 	c.Data["Edit"] = true
@@ -468,7 +443,6 @@ func (c *OnlyController) OnlyOffice() {
 	c.Data["Print"] = true
 
 	c.Data["Doc"] = onlyattachment
-	c.Data["Sessionid"] = usersessionid
 	c.Data["attachid"] = idNum
 	c.Data["Key"] = strconv.FormatInt(onlyattachment.Updated.UnixNano(), 10)
 
@@ -547,7 +521,6 @@ func (c *OnlyController) OfficeView() {
 	if proj.ParentIdPath == "" || proj.ParentIdPath == "$#" {
 		projurl = "/" + strconv.FormatInt(proj.Id, 10) + "/"
 	} else {
-		// projurl = "/" + strings.Replace(proj.ParentIdPath, "-", "/", -1) + "/" + strconv.FormatInt(proj.Id, 10) + "/"
 		projurl = "/" + strings.Replace(strings.Replace(proj.ParentIdPath, "#", "/", -1), "$", "", -1) + strconv.FormatInt(proj.Id, 10) + "/"
 	}
 	//由proj id取得url

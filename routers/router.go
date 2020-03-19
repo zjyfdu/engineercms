@@ -32,8 +32,6 @@ func init() {
 	beego.Router("/modifydatabase", &controllers.MainController{}, "*:ModifyDatabase")
 
 	beego.Router("/url-to-callback", &controllers.OnlyController{}, "*:UrltoCallback")
-	//cms中预览office回调
-	beego.Router("/officeviewcallback", &controllers.OnlyController{}, "*:OfficeViewCallback")
 
 	beego.Router("/onlyoffice", &controllers.OnlyController{}, "get:Get")
 	//table获取所有数据给上面界面使用
@@ -42,8 +40,6 @@ func init() {
 	beego.Router("/onlyoffice/addattachment", &controllers.OnlyController{}, "post:AddOnlyAttachment")
 	//在onlyoffice中打开文档协作
 	beego.Router("/onlyoffice/:id:string", &controllers.OnlyController{}, "*:OnlyOffice")
-	//cms中预览office
-	beego.Router("/officeview/:id:string", &controllers.OnlyController{}, "*:OfficeView")
 
 	//删除
 	beego.Router("/onlyoffice/deletedoc", &controllers.OnlyController{}, "*:DeleteDoc")

@@ -487,14 +487,6 @@ func checkRole(ctx *context.Context) (role string, err error) { //这里返回�
 	return user.Role, err
 }
 
-// type Session struct {
-// 	Session int
-// }
-// type Login struct {
-// 	UserName string
-// 	Password string
-// }
-
 func Authorizer(ctx *context.Context) (uname, role string, uid int64) {
 	v := ctx.Input.CruSession.Get("uname") //用来获取存储在服务器端中的数据??。
 	// beego.Info(v)                          //qin.xc
@@ -543,87 +535,15 @@ func checkprodRole(ctx *context.Context) (uname, role string, uid int64, isadmin
 				userrole = user.Role
 			}
 		}
-	} else { //如果没登录,查询ip对应的用户
+	} else {
 		islogin = false
 		isadmin = false
 		uid = 0
 		uname = ctx.Input.IP()
-		// beego.Info(uname)
-		user, err = models.GetUserByIp(uname)
-		if err != nil { //如果查不到，则用户名就是ip，role再根据ip地址段权限查询
-			// beego.Error(err)
-			iprole = Getiprole(ctx.Input.IP()) //查不到，则是5——这个应该取消，采用casbin里的ip区段
-			userrole = strconv.Itoa(iprole)
-		} else { //如果查到，则role和用户名
-			if user.Role == "1" {
-				isadmin = true
-			}
-			uid = user.Id
-			userrole = user.Role
-			uname = user.Username
-			islogin = true
-		}
+
+		iprole = Getiprole(ctx.Input.IP()) //查不到，则是5——这个应该取消，采用casbin里的ip区段
+		userrole = strconv.Itoa(iprole)
+
 	}
 	return uname, userrole, uid, isadmin, islogin
-}
-
-// @Title get user login...
-// @Description get login..
-// @Success 200 {object} models.GetProductsPage
-// @Failure 400 Invalid page supplied
-// @Failure 404 data not found
-// @router /islogin [get]
-//login弹框输入用户名和密码后登陆提交
-func (c *LoginController) Islogin() {
-	var islogin, isadmin bool
-	var uname string
-	var uid int64
-	v := c.GetSession("uname")
-	// v := c.Ctx.CruSession.Get("uname") //用来获取存储在服务器端中的数据??。
-	var userrole string
-	var user models.User
-	var err error
-	var iprole int
-	if v != nil { //如果登录了
-		islogin = true
-		uname = v.(string)
-		user, err = models.GetUserByUsername(uname)
-		if err != nil {
-			beego.Error(err)
-		} else {
-			uid = user.Id
-			if user.Role == "0" {
-				isadmin = false
-				userrole = "4"
-			} else if user.Role == "1" {
-				isadmin = true
-				userrole = user.Role
-			} else {
-				isadmin = false
-				userrole = user.Role
-			}
-		}
-	} else { //如果没登录,查询ip对应的用户
-		islogin = false
-		isadmin = false
-		uid = 0
-		uname = c.Ctx.Input.IP()
-		// beego.Info(uname)
-		user, err = models.GetUserByIp(uname)
-		if err != nil { //如果查不到，则用户名就是ip，role再根据ip地址段权限查询
-			// beego.Error(err)
-			iprole = Getiprole(c.Ctx.Input.IP()) //查不到，则是5——这个应该取消，采用casbin里的ip区段
-			userrole = strconv.Itoa(iprole)
-		} else { //如果查到，则role和用户名
-			if user.Role == "1" {
-				isadmin = true
-			}
-			uid = user.Id
-			userrole = user.Role
-			uname = user.Username
-			islogin = true
-		}
-	}
-	c.Data["json"] = map[string]interface{}{"uname": uname, "role": userrole, "uid": uid, "islogin": islogin, "isadmin": isadmin}
-	c.ServeJSON()
 }
