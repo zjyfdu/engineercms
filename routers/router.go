@@ -24,7 +24,6 @@ func init() {
 	}))
 
 	beego.Router("/test", &controllers.MainController{}, "*:Test")
-	beego.Router("/.well-known/pki-validation/*", &controllers.AdminController{}, "*:Testdown")
 
 	//升级数据库
 	beego.Router("/updatedatabase", &controllers.MainController{}, "*:UpdateDatabase")
@@ -81,135 +80,6 @@ func init() {
 	//这里显示用户查看主人日程
 	beego.Router("/calendar", &controllers.IndexController{}, "*:Calendar")
 
-	//首页搜索项目或成果
-	beego.Router("/index/searchproject", &controllers.SearchController{}, "*:SearchProject")
-	beego.Router("/index/searchproduct", &controllers.SearchController{}, "*:SearchProduct")
-
-	//后台
-	beego.Router("/admin", &controllers.AdminController{})
-	// beego.Router("/admincategory", &controllers.AdminController{}, "*:GetAdminCategory")
-	//显示对应侧栏id的右侧界面
-	beego.Router("/admin/:id:string", &controllers.AdminController{}, "*:Admin")
-
-	//批量添加首页轮播图片
-	beego.Router("/admin/base/addcarousel", &controllers.AdminController{}, "*:AddCarousel")
-	//获取首页轮播图片填充表格
-	beego.Router("/admin/base/carousel", &controllers.AdminController{}, "*:Carousel")
-	//删除首页轮播图片
-	beego.Router("/admin/base/deletecarousel", &controllers.AdminController{}, "*:DeleteCarousel")
-
-	//根据数字id查询类别或目录分级表
-	beego.Router("/admin/category/?:id:string", &controllers.AdminController{}, "*:Category")
-	//根据名字查询目录分级表_这里应该放多一个/category路径下
-	beego.Router("/admin/categorytitle", &controllers.AdminController{}, "*:CategoryTitle")
-	//添加目录类别
-	beego.Router("/admin/category/addcategory", &controllers.AdminController{}, "*:AddCategory")
-	//修改目录类别
-	beego.Router("/admin/category/updatecategory", &controllers.AdminController{}, "*:UpdateCategory")
-	//删除目录类
-	beego.Router("/admin/category/deletecategory", &controllers.AdminController{}, "*:DeleteCategory")
-
-	//添加IP地址段
-	beego.Router("/admin/ipsegment/addipsegment", &controllers.AdminController{}, "*:AddIpsegment")
-	//修改IP地址段
-	beego.Router("/admin/ipsegment/updateipsegment", &controllers.AdminController{}, "*:UpdateIpsegment")
-	//删除IP地址段
-	beego.Router("/admin/ipsegment/deleteipsegment", &controllers.AdminController{}, "*:DeleteIpsegment")
-
-	//查询所有ip地址段
-	beego.Router("/admin/ipsegment", &controllers.AdminController{}, "*:Ipsegment")
-
-	//添加日历
-	beego.Router("/admin/calendar/addcalendar", &controllers.AdminController{}, "*:AddCalendar")
-	//查询
-	beego.Router("/admin/calendar", &controllers.AdminController{}, "*:Calendar")
-	//修改
-	beego.Router("/admin/calendar/updatecalendar", &controllers.AdminController{}, "*:UpdateCalendar")
-	//删除
-	beego.Router("/admin/calendar/deletecalendar", &controllers.AdminController{}, "*:DeleteCalendar")
-	//拖曳事件
-	beego.Router("/admin/calendar/dropcalendar", &controllers.AdminController{}, "*:DropCalendar")
-	//resize事件
-	beego.Router("/admin/calendar/resizecalendar", &controllers.AdminController{}, "*:ResizeCalendar")
-	//搜索事件
-	beego.Router("/admin/calendar/searchcalendar", &controllers.AdminController{}, "*:SearchCalendar")
-
-	//显示项目目录:注意这个方法放在projcontroller中
-	beego.Router("/admin/project/getprojectcate/:id:string", &controllers.ProjController{}, "*:GetProjectCate")
-	//添加子节点
-	beego.Router("/admin/project/addprojectcate", &controllers.ProjController{}, "*:AddProjectCate")
-	//修改节点名
-	beego.Router("/admin/project/updateprojectcate", &controllers.ProjController{}, "*:UpdateProjectCate")
-	//删除节点和其下子节点——和删除项目一样
-	beego.Router("/admin/project/deleteprojectcate", &controllers.ProjController{}, "*:DeleteProject")
-
-	//根据项目id查询项目同步ip
-	beego.Router("/admin/project/synchip/:id:string", &controllers.AdminController{}, "*:SynchIp")
-	//添加项目同步ip:注意这是在admincontrollers中
-	beego.Router("/admin/project/addsynchip", &controllers.AdminController{}, "*:AddsynchIp")
-	//修改项目同步ip:注意这是在admincontrollers中
-	beego.Router("/admin/project/updatesynchip", &controllers.AdminController{}, "*:UpdatesynchIp")
-	//删除项目同步ip:注意这是在admincontrollers中
-	beego.Router("/admin/project/deletesynchip", &controllers.AdminController{}, "*:DeletesynchIp")
-	//后台部门结构
-	//填充部门表格数据
-	beego.Router("/admin/department", &controllers.AdminController{}, "*:Department")
-	//根据数字id查询类别或目录分级表
-	beego.Router("/admin/department/?:id:string", &controllers.AdminController{}, "*:Department")
-	//根据名字查询目录分级表
-	beego.Router("/admin/departmenttitle", &controllers.AdminController{}, "*:DepartmentTitle")
-	//添加目录类别
-	beego.Router("/admin/department/adddepartment", &controllers.AdminController{}, "*:AddDepartment")
-	//修改目录类别
-	beego.Router("/admin/department/updatedepartment", &controllers.AdminController{}, "*:UpdateDepartment")
-	//删除目录类
-	beego.Router("/admin/department/deletedepartment", &controllers.AdminController{}, "*:DeleteDepartment")
-
-	//***后台用户管理
-	//如果后面不带id，则显示所有用户
-	beego.Router("/admin/user/?:id:string", &controllers.UserController{}, "*:User")
-	//添加用户
-	beego.Router("/admin/user/adduser", &controllers.UserController{}, "*:AddUser")
-	//导入用户
-	beego.Router("/admin/user/importusers", &controllers.UserController{}, "*:ImportUsers")
-
-	//修改用户
-	beego.Router("/admin/user/updateuser", &controllers.UserController{}, "*:UpdateUser")
-	//删除用户
-	beego.Router("/admin/user/deleteuser", &controllers.UserController{}, "*:DeleteUser")
-
-	//新建角色
-	beego.Router("/admin/role/post", &controllers.RoleController{}, "post:Post")
-	beego.Router("/admin/role/update", &controllers.RoleController{}, "put:Update")
-	beego.Router("/admin/role/delete", &controllers.RoleController{}, "post:Delete")
-	beego.Router("/admin/role/get/?:id:string", &controllers.RoleController{}, "get:Get")
-	//添加用户角色
-	beego.Router("/admin/role/userrole", &controllers.RoleController{}, "post:UserRole")
-	//添加角色对项目目录文件操作权限
-	beego.Router("/admin/role/permission", &controllers.RoleController{}, "post:RolePermission")
-	//查询角色对项目目录文件操作的权限
-	beego.Router("/admin/role/getpermission", &controllers.RoleController{}, "get:GetRolePermission")
-
-	//meritbasic表格数据填充
-	beego.Router("/admin/merit/meritbasic", &controllers.AdminController{}, "*:MeritBasic")
-	//修改meritbasic表格数据
-	beego.Router("/admin/merit/updatemeritbasic", &controllers.AdminController{}, "*:UpdateMeritBasic")
-	//未提交和已提交的merit的成果列表
-	beego.Router("/admin/merit/meritlist/:id:int", &controllers.AdminController{}, "*:GetPostMerit")
-	//提交成果给merit
-	beego.Router("/admin/merit/sendmeritlist", &controllers.AdminController{}, "post:SendMeritlist")
-	//删除成果merit
-	beego.Router("/admin/merit/deletemeritlist", &controllers.AdminController{}, "post:DeleteMeritlist")
-	//回退merit已提交成果给未提交
-	beego.Router("/admin/merit/downmeritlist", &controllers.AdminController{}, "post:DownMeritlist")
-
-	//查看附件列表
-	beego.Router("/admin/merit/meritlist/attachment/:id:string", &controllers.AdminController{}, "get:CatalogAttachment")
-	//修改附件
-	beego.Router("/admin/merit/meritlist/modify", &controllers.AdminController{}, "post:ModifyCatalog")
-	//修改附件
-	beego.Router("/admin/merit/meritlist/modifylink", &controllers.AdminController{}, "post:ModifyLink")
-
 	//用户修改自己密码
 	beego.Router("/user", &controllers.UserController{}, "get:GetUserByUsername")
 	//用户登录后查看自己的资料
@@ -226,9 +96,6 @@ func init() {
 	beego.Router("/loginerr", &controllers.LoginController{}, "get:Loginerr")
 	beego.Router("/roleerr", &controllers.UserController{}, "*:Roleerr") //显示权限不够
 
-	beego.Router("/regist", &controllers.RegistController{})
-	beego.Router("/regist/checkuname", &controllers.RegistController{}, "post:CheckUname")
-	beego.Router("/regist/getuname", &controllers.RegistController{}, "*:GetUname")
 	//项目列表界面
 	beego.Router("/project", &controllers.ProjController{}, "*:Get")
 	//table获取所有项目数据给上面界面使用_后续扩展按标签获取
@@ -309,21 +176,6 @@ func init() {
 	//提供同步成果中所有pdf列表
 	beego.Router("/project/product/providesynchpdf", &controllers.AttachController{}, "*:ProvidePdfs")
 
-	//根据文章id取得成果中的文章
-	beego.Router("/project/product/article/:id:string", &controllers.ArticleController{}, "*:GetArticle")
-	//根据成果id取得成果的所有文章列表_注意articles是复数
-	beego.Router("/project/product/articles/:id:string", &controllers.ArticleController{}, "*:GetArticles")
-	//取得同步成果的所有文章列表_注意articles是复数
-	beego.Router("/project/product/syncharticles", &controllers.ArticleController{}, "*:GetsynchArticles")
-	//根据成果id取得成果的所有文章列表_注意articles是复数
-	beego.Router("/project/product/providesyncharticles", &controllers.ArticleController{}, "*:ProvideArticles")
-	//文章进行编辑页面
-	beego.Router("/project/product/modifyarticle/:id:string", &controllers.ArticleController{}, "*:ModifyArticle")
-	//文章进行编辑
-	beego.Router("/project/product/updatearticle", &controllers.ArticleController{}, "*:UpdateArticle")
-	//删除文章
-	beego.Router("/project/product/deletearticle", &controllers.ArticleController{}, "*:DeleteArticle")
-
 	//向成果里添加附件：批量一对一模式
 	beego.Router("/project/product/addattachment", &controllers.AttachController{}, "post:AddAttachment")
 	//dwg写入服务器
@@ -337,15 +189,6 @@ func init() {
 	beego.Router("/project/product/updateattachment", &controllers.AttachController{}, "post:UpdateAttachment")
 	//删除附件列表中的附件
 	beego.Router("/project/product/deleteattachment", &controllers.AttachController{}, "post:DeleteAttachment")
-
-	//向成果里添加文章
-	//向侧栏下添加文章
-	beego.Router("/project/product/addarticle", &controllers.ArticleController{}, "post:AddArticle")
-	//在某个项目里搜索成果
-	beego.Router("/search", &controllers.SearchController{}, "get:Get")
-	beego.Router("/project/product/search", &controllers.SearchController{}, "get:SearchProjProducts")
-	//搜索某个项目——没意义
-	beego.Router("/projects/search", &controllers.SearchController{}, "get:SearchProjects")
 
 	//附件下载"/attachment/*", &controllers.AttachController{}
 	// beego.InsertFilter("/attachment/*", beego.BeforeRouter, controllers.ImageFilter)

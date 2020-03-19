@@ -515,7 +515,6 @@ func checkprodRole(ctx *context.Context) (uname, role string, uid int64, isadmin
 	var userrole string
 	var user models.User
 	var err error
-	var iprole int
 	if v != nil { //如果登录了
 		islogin = true
 		uname = v.(string)
@@ -541,8 +540,7 @@ func checkprodRole(ctx *context.Context) (uname, role string, uid int64, isadmin
 		uid = 0
 		uname = ctx.Input.IP()
 
-		iprole = Getiprole(ctx.Input.IP()) //查不到，则是5——这个应该取消，采用casbin里的ip区段
-		userrole = strconv.Itoa(iprole)
+		userrole = "4"
 
 	}
 	return uname, userrole, uid, isadmin, islogin
